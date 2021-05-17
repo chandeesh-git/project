@@ -1,0 +1,52 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/inquest-pro-154/dev_cloud_app', '.']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/inquest-pro-154/dev_cloud_app']
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'dev-cloud-app'
+  - '--image'
+  - 'gcr.io/inquest-pro-154/dev_cloud_app'
+  - '--port'
+  - '3000'
+  - '--region'
+  - 'us-east4'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
+  - '--service-account'
+  - 'sa-inquest-pro-154-dev@inquest-pro-154.iam.gserviceaccount.com'
+  - '--max-instances'
+  - '5'
+  - '--timeout'
+  - '60'
+  - '--memory'
+  - '512Mi'
+  - '--set-env-vars'
+  - 'INQUEST_NODE_ENV=development,
+     INQUEST_BASE_URL=dev-app.inquestpro.com,
+     INQUEST_SWAGGER_ORIGIN=https://dev-app.inquestpro.com/api-docs,
+     INQUEST_PORT=3000,
+     INQUEST_JWT_KEY=inquestpro_jwt_key,
+     INQUEST_DB_DIALECT=mysql,
+     INQUEST_DB_HOST=127.0.0.1,
+     INQUEST_DB_USERNAME=cloudproxy,
+     INQUEST_DB_PASSWORD=VqZG9aupY7243CWH,
+     INQUEST_DB_NAME=inquest_pro_154_dev_db,
+     INQUEST_DB_POOL_MAX=5,
+     INQUEST_DB_POOL_MIN=0,
+     INQUEST_DB_POOL_ACQUIRE=30000,
+     INQUEST_DB_POOL_IDLE=10000,
+     INQUEST_ENCRYPT_KEY=inquestpro_encrypt_key,
+     INQUEST_MONGO_DB_URL=mongodb+srv://inquest-pro-154-dev-mongo-db-user:xOEEd4Cve4NTIgJ7@development.mwhv7.mongodb.net/inquest_pro_154_dev_mongo_db?retryWrites=true&w=majority,
+     INQUEST_MONGO_DB_POOL=5,
+     INQUEST_MONGO_CONNECTION_TIMEOUT=10000,
+     INQUEST_MONGO_SOCKET_TIMEOUT_MS=45000'
+   
+images:
+- gcr.io/inquest-pro-154/dev_cloud_app

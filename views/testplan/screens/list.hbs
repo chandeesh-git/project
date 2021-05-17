@@ -1,0 +1,999 @@
+<div id="page-content-wrapper">
+
+
+
+
+
+
+    <div class="listing-dev">
+
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom" style="background-color: #FAFAFA;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24.005 24">
+                    <g transform="translate(0 -0.05)">
+                        <g transform="translate(0 0.05)">
+                            <path class="a"
+                                d="M184.145,10.673a2.286,2.286,0,1,0,1.678,2.2,2.249,2.249,0,0,0-.083-.608L192.108,5.9l1.03.137,3.224-3.224-2.439-.324L193.6.05l-3.224,3.224.137,1.03Z"
+                                transform="translate(-172.357 -0.05)" />
+                            <path class="a"
+                                d="M99.7,128.621l1.884-1.884a6.625,6.625,0,1,0,4.146,4.141l-1.884,1.884a4.4,4.4,0,1,1-4.146-4.141Z"
+                                transform="translate(-88.271 -120.187)" />
+                            <path class="a"
+                                d="M19.079,41.1a8.743,8.743,0,1,1-4.146-4.146l1.8-1.8a11.175,11.175,0,1,0,4.141,4.141Z"
+                                transform="translate(0 -32.028)" />
+                        </g>
+                    </g>
+                </svg>
+                <label class="main-title" id="current_page_tag">Test Plan</label>
+            </button>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <li class="nav-item active" style="display: inline-block;">
+
+                        <button class="aui-button aui-dropdown2-trigger aui-dropdown2-trigger-arrowless table-column-sort-icon tooltip_btn" title="Columns" aria-controls="testplan-table-checkbox-items" id="button-spin-1">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg" width="19" height="14" viewBox="0 0 19 14">
+                                <g transform="translate(0 -53.333)">
+                                    <g transform="translate(0 53.333)">
+                                        <path
+                                            d="M4,53.333H1a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1H4a1,1,0,0,0,1-1v-12A1,1,0,0,0,4,53.333Z"
+                                            transform="translate(0 -53.333)"></path>
+                                        <path
+                                            d="M153.334,53.333h-3a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1h3a1,1,0,0,0,1-1v-12A1,1,0,0,0,153.334,53.333Z"
+                                            transform="translate(-142.334 -53.333)"></path>
+                                        <path
+                                            d="M302.667,53.333h-3a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1h3a1,1,0,0,0,1-1v-12A1,1,0,0,0,302.667,53.333Z"
+                                            transform="translate(-284.667 -53.333)"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+
+                        <span id="testplanTableColumnCheckList"></span>
+
+                        <button class="aui-button tooltip_btn table-column-sort-icon" id="filter-enable-disable-button" title="Filters" resolved="" onclick="showHideFilter('testplan')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13.309" height="14" viewBox="0 0 13.309 14">
+                                <g transform="translate(-10.118)">
+                                    <g transform="translate(10.118)">
+                                        <path
+                                            d="M23.186,0H10.359a.239.239,0,0,0-.192.384l4.7,6.588A1.716,1.716,0,0,1,15.2,7.986v5.749c.017.192.175.315.332.245l2.674-1.014a.211.211,0,0,0,.14-.21V7.986a1.757,1.757,0,0,1,.332-1.014l4.7-6.588A.239.239,0,0,0,23.186,0Z"
+                                            transform="translate(-10.118)"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+
+                        <input id="testplanSearchKeyword" type="text" placeholder="Search..." class="search-bar" onchange="updateTestPlanListing()">
+
+                        {{!-- <button class="aui-button" id="button-spin-1" resolved="">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="20"
+                                style="margin-right: 10px;margin-top: -6px;" viewBox="0 0 20.077 20">
+                                <g transform="translate(0 -0.117)">
+                                    <path
+                                        d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                        transform="translate(0 -10.958)" fill="#344563"></path>
+                                    <path
+                                        d="M25.481,9.64a.986.986,0,0,0-.7.29l-1.238,1.238V1.106a.989.989,0,1,0-1.978,0V11.234L20.26,9.93a.989.989,0,0,0-1.4,1.4l2.953,2.953a.985.985,0,0,0,.7.289h.015a.984.984,0,0,0,.7-.289l2.953-2.953a.989.989,0,0,0-.7-1.688Z"
+                                        transform="translate(-12.45 0)" fill="#344563"></path>
+                                </g>
+                            </svg>
+                            Import
+                        </button> --}}
+
+
+                        {{!-- export button --}}
+                        {{!-- <button class="aui-button aui-dropdown2-trigger btn_spinner export-report-icon" aria-controls="example-dropdown">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                style="margin-right: 10px;margin-top: -6px;" viewBox="0 0 20.077 21">
+                                <g transform="translate(0 0.883)">
+                                    <path class="a"
+                                        d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                        transform="translate(0 -10.958)"></path>
+                                    <path class="a"
+                                        d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                        transform="translate(-12.449 -1)"></path>
+                                </g>
+                            </svg>
+                            Export
+                        </button>
+                        <aui-dropdown-menu id="example-dropdown">
+                            <aui-section label="Export File as">
+                                <aui-item-link href="javascript:void(0)" onclick="exportCsv('testplan', 'csv')">.CSV Format</aui-item-link>
+                                <aui-item-link href="javascript:void(0)" onclick="exportCsv('testplan', 'xlsx')">.XLS Formate</aui-item-link>
+                            </aui-section>
+                        </aui-dropdown-menu> --}}
+
+                        <a href="javascript:void(0)" onclick="mainSidebarDirectRedirection('testplan', 'add')" id="spinnerbutton" class="create-test-button create-testplan-button aui-button aui-button-primary">
+                            + Create 
+                        </a>
+
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!---sub-sidebar-section--->
+        <div id="sub-sidebar-div">
+            <div class="aui-page-panel">
+                <aside class="aui-page-panel-sidebar sub-sidebar"
+                    style="width: 226.5px; background: background: #344563 ;">
+                    <ul>
+                        <li class="active">
+                            <a id="addFolderButtonImg" href="javascript:void(0);" onclick="enabledAddFolderBox()" style="margin-right: 0 !important;">                                
+                                <img src={{furl "/images/add_folder.svg"}} />
+                            </a>
+                            <a href="javascript:void(0);">
+                                <img src={{furl "/images/expand_folder.svg"}} />                                
+                            </a>
+                            <a style="margin-left: 50.25px; margin-right: 6px;" href="javascript:void(0)" onclick="getFolderListByDataType('testplan')">
+                                <img src={{furl "/images/home.png"}} style="width: 21px;"/>
+                            </a>
+                        </li>
+
+                        <div id="testplan_folder_list" class="folder_list"></div>
+                    
+                        <button id="addFolderButton" onclick="enabledAddFolderBox()" class="create-button create_folder_button aui-button">+ Create New Folder</button>
+
+                        <div id="addFolderInputBox" style="display: none;">
+                            <form class="aui" action="javascript:void(0);" onsubmit="addNewFolderFormSubmit('testplan')">                      
+                                <input class="text medium-field" type="text" id="folderName" name="folderName" required="required"/>
+                                <button style="border: none;">
+                                    <img src={{furl "/images/folder-save.svg"}} />
+                                </button>
+                                <a href="javascript:void(0)" onclick="disabledAddFolderBoxPopup()" style="float: right;margin-right: 9px;">cancel</a>
+                            </form>
+                        </div>
+                    </ul>
+                </aside>
+                <section class="aui-page-panel-content content-section">
+                    <div id="testplan-filter-section" class="filter-section hide">
+                        <div>
+                            <b>Filter: </b> 
+                            <span id="testplan-saved-filter"></span>
+                            <span class="filter-save-edit-action">
+                                <a id="f-save-a" class="f-action hide" href="javascript:void(0)" onclick="openFilter()">Save</a>
+                                <a id="f-edit-a" class="f-action hide" href="javascript:void(0)" onclick="editCurrentFilter()">Edit</a>
+                                <a id="f-delete-a" class="f-action hide" href="javascript:void(0)" onclick="deleteCurrentFilter()">Delete</a>
+                                <a id="f-clear-all-a" class="f-action hide" href="javascript:void(0)" onclick="clearAllFilter()">Clear All</a>
+                                <a id="f-reset-all-a" class="f-action hide" href="javascript:void(0)" onclick="resetFilter()">Reset All</a>
+                            </span>
+                        </div>
+                        <div style="margin-top: 7.5px;">
+
+                            <span class="filter-span" id="testplan-Name-filter"></span>
+                            <span class="filter-span" id="testplan-Owner-filter"></span>
+                            <span class="filter-span" id="testplan-Status-filter"></span>
+                            <span class="filter-span" id="testplan-Created-On-filter"></span>
+                            <span class="filter-span" id="testplan-Last-Execution-filter"></span>
+                            <span id="all-filter-span"></span>
+
+                        </div>
+                    </div>
+                    <table class="aui">
+                        <thead>
+                            <tr>
+                                <th id="basic-checkbox" style="width: 1px;">
+                                    <input class="checkbox" type="checkbox" name="checkBoxOne" id="testplan-header-checkbox">
+                                </th>
+                                <th id="basic-Key" style="width: 60px;"><b>Key</b></th>
+                                <th id="basic-Name"><b>Name</b></th>
+                                <th id="basic-Owner"><b>Owner</b></th>
+                                <th id="basic-Status"><b>Status</b></th>
+                                <th id="basic-Create-On"><b>Created On</b></th>
+                                <th id="basic-Last-Execution"><b>Last-Execution</b></th>
+                                <th id="basic-Actions test-action" style="text-align: right; padding-right: 18.75px;"><b>Actions</b></th>
+                            </tr>
+                        </thead>
+                        <tbody id="testplan_table_body" style="background-color: #F5F6F9;"></tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{!-- filter add edit Dialog --}}
+<section
+    id="filter-add-edit-dialog"
+    class="aui-dialog2 aui-dialog2-small aui-layer"
+    role="dialog"
+    tabindex="-1"
+    aria-labelledby="filter-add-edit-dialog-heading"
+    hidden
+>
+    <header class="aui-dialog2-header">
+        <h3 class="aui-dialog2-header-main" id="filter-add-edit-dialog-heading">Save Filter</h3>
+        <button class="aui-close-button" type="button" aria-label="close" onclick="closeFilter()"></button>
+    </header>
+    <form class="aui" name="myform" action="javascript:void(0);" style="margin: 0;">
+        <input id="filter_id" type="hidden" name="filter_id">
+        <div class="aui-dialog2-content">
+            <div class="form-group">
+                <label class="label required-field">Name</label>
+                <input id="filter_name" type="text" class="form-control text medium-field" name="filter_name" placeholder="Enter name" required="required">
+            </div>
+            <div class="form-group select-field-type">
+                <label class="label required-field">Visibility</label>
+                <select id="filter_visibility" class="form-control select customFieldTypeSelect" name="filter_visibility" required="required" style="max-width: 100%;">
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
+            </div>
+        </div>
+        <footer class="aui-dialog2-footer">
+            <div class="aui-dialog2-footer-actions">
+                <button type="submit" class="aui-button aui-button-primary" onclick="addUpdateFilter('testplan')">Save</button>
+                <button type="button" class="aui-button" onclick="closeFilter()">Cancel</button>
+            </div>
+        </footer>
+    </form>
+</section>
+
+
+
+
+
+
+<script>
+
+    loadList("{{selectedFolderId}}");
+
+    function loadList(folder_id="")
+    {
+        if(folder_id === "" || folder_id === "null" || folder_id === null)
+        {
+            getFolderListByDataType('testplan');
+        }
+        else
+        {
+            getFolderListByDataType('testplan', false, folder_id);
+        }
+    } 
+
+
+    const uniqueArrayFilter = (value, index, self) => {
+        return self.indexOf(value) === index
+    }
+
+
+    const uniqueArrayFilterObject = (v, index, self) => {
+        return self.findIndex(v.filter) === index
+    }
+
+
+    function updateTableColumnFilterValue() 
+    {
+        let all_column = ["Key", "Name", "Owner", "Status", "Create-On", "Last-Execution"];
+
+        let tableColumnSortHtml = '<aui-dropdown-menu id="testplan-table-checkbox-items"><aui-section label="Select Columns">';
+        for (let j = 0; j < all_column.length; j++) 
+        {
+            let temp_index = testplanTableColumn.indexOf(all_column[j]);
+
+            if(temp_index !== -1) {
+                tableColumnSortHtml += '<aui-item-checkbox interactive checked>'+all_column[j]+'</aui-item-checkbox>';
+            } else {
+                tableColumnSortHtml += '<aui-item-checkbox interactive>'+all_column[j]+'</aui-item-checkbox>';
+            }                
+        }
+        tableColumnSortHtml += '</aui-section></aui-dropdown-menu>';
+        
+        $('#testplanTableColumnCheckList').html(tableColumnSortHtml);
+
+
+
+        var dropdown = document.getElementById('testplan-table-checkbox-items');
+        dropdown.addEventListener('change', function (e) {        
+            var isChecked = e.target.hasAttribute('checked');
+            if (isChecked) {
+                testplanTableColumn.push(e.target.textContent);
+            } else {            
+                let index = testplanTableColumn.indexOf(e.target.textContent)
+                testplanTableColumn.splice(index, 1);
+            }
+
+            testplanTableColumn = testplanTableColumn.filter(uniqueArrayFilter);
+            AP.cookie.save('testplanTableColumn', JSON.stringify(testplanTableColumn));
+            updateTestTableColumBestOnSelection()
+        });
+    }  
+
+
+    function updateTestTableColumBestOnSelection()
+    {        
+        let all_column = ["Key", "Name", "Owner", "Status", "Create-On", "Last-Execution"];
+            
+        for (let j = 0; j < all_column.length; j++) 
+        {
+            let temp_index = testplanTableColumn.indexOf(all_column[j]);
+
+            if(temp_index !== -1) {
+                $('#basic-'+all_column[j]).css('display', '');
+                $('.basic-'+all_column[j]).css('display', '');
+            } else {
+                $('#basic-'+all_column[j]).css('display', 'none');
+                $('.basic-'+all_column[j]).css('display', 'none');
+            }
+        }
+    }   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    var savedFilterList = [];
+    var selectedSavedFilter = null;
+    var selectedFilterCriteria = [];
+
+
+    getAllFilter();
+    updateAllFilters();
+
+
+
+    function updateAllFilters() 
+    {       
+        $('#all-filter-span').html("");
+
+        let all_filter = ["Name", "Owner", "Status", "Created-On", "Last-Execution"];
+
+        let filterHtml = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="filter-criteria">Add criteria</button>
+                        <aui-dropdown-menu id="filter-criteria"><aui-section label="Select Columns">`;
+
+        for (let j = 0; j < all_filter.length; j++) 
+        {
+            let temp_index = selectedFilterCriteria.findIndex(x => x.filter == all_filter[j]);
+            if(temp_index !== -1) {
+                filterHtml += '<aui-item-checkbox checked>'+all_filter[j]+'</aui-item-checkbox>';
+            } else {
+                filterHtml += '<aui-item-checkbox>'+all_filter[j]+'</aui-item-checkbox>';
+            }                
+        }
+        filterHtml += '</aui-section></aui-dropdown-menu>';        
+        $('#all-filter-span').html(filterHtml);
+
+        var dropdown = document.getElementById('filter-criteria');
+        dropdown.addEventListener('change', function (e) {        
+            var isChecked = e.target.hasAttribute('checked');
+            if (isChecked) {
+                if(e.target.textContent == 'Name' || e.target.textContent == 'Created-On' || e.target.textContent == 'Last-Execution') {
+                    selectedFilterCriteria.push({
+                        'filter': e.target.textContent,
+                        'value': 'All'
+                    });
+                } else {
+                    selectedFilterCriteria.push({
+                        'filter': e.target.textContent,
+                        'value': []
+                    });
+                }
+            } else {            
+                let index = selectedFilterCriteria.findIndex(x => x.filter == e.target.textContent);
+                selectedFilterCriteria.splice(index, 1);
+            }
+
+            const result = [];
+            const map = new Map();
+            for (const item of selectedFilterCriteria) {
+                if(!map.has(item.filter)){
+                    map.set(item.filter, true);
+                    result.push({
+                        filter: item.filter,
+                        value: item.value
+                    });
+                }
+            }            
+            selectedFilterCriteria = result;
+            updateTestPlanListingWithFilter(selectedFilterCriteria);
+            addFilter()
+        });
+    } 
+
+
+
+    function addFilter (type='testplan') 
+    {
+        let all_filter = ["Name", "Owner", "Status", "Created-On", "Last-Execution"];
+             
+        $('.filter-span').html('');
+        
+        $('.f-action').addClass('hide');
+        $('.f-action').removeClass('show');
+
+        if(selectedFilterCriteria.length > 0) {
+            if(selectedSavedFilter !== null)
+            {
+                if(selectedSavedFilter.acct_id == "{{userAccountId}}")
+                {
+                    $('#f-save-a').removeClass('hide');
+                    $('#f-save-a').addClass('show');
+
+                    $('#f-edit-a').removeClass('hide');
+                    $('#f-edit-a').addClass('show');
+
+                    $('#f-delete-a').removeClass('hide');
+                    $('#f-delete-a').addClass('show');
+                } 
+
+                $('#f-clear-all-a').removeClass('show');
+                $('#f-clear-all-a').addClass('hide');
+
+                $('#f-reset-all-a').removeClass('hide');
+                $('#f-reset-all-a').addClass('show');
+            } 
+            else 
+            {
+                $('#f-save-a').removeClass('hide');
+                $('#f-save-a').addClass('show');
+
+                $('#f-reset-all-a').addClass('hide');
+                $('#f-reset-all-a').removeClass('show');
+
+                $('#f-clear-all-a').removeClass('hide');
+                $('#f-clear-all-a').addClass('show');
+            }
+        }
+
+        for (let j = 0; j < all_filter.length; j++) 
+        {
+            let filter = '';
+
+            let temp_index = selectedFilterCriteria.findIndex(x => x.filter == all_filter[j]);
+
+            if(temp_index !== -1) 
+            {
+                if(all_filter[j] == "Name")
+                {
+                    filter = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+all_filter[j]+`-select">`+all_filter[j]+`: <span id='filter-value-`+all_filter[j]+`'>`+selectedFilterCriteria[temp_index].value+`</span></button>
+                                <span onclick="removeFilter('`+all_filter[j]+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+                                <aui-dropdown-menu id="save-filter-`+all_filter[j]+`-select">
+                                    <form action="javascript:void(0)" onsubmit="submitFromInputSearch('`+all_filter[j]+`')" class="aui filter-form">
+                                        <div class="form-group">
+                                            <input id="filter`+all_filter[j]+`Input" class="form-control text medium-field" placeholder="Contains text">
+                                        </div>
+                                        <div class="filter-form-action">                                                      
+                                            <button type="submit" class="aui-button aui-button-primary">Update</button>
+                                            <button type="button" class="aui-button aui-button-primary" onclick="clearFromInputSearch('`+all_filter[j]+`')">Cancel</button>
+                                        </div>
+                                    </form>
+                                </aui-dropdown-menu>`;
+    
+                    $('#testplan-'+all_filter[j]+'-filter').html(filter);
+                    clearFromInputSearch(all_filter[j]);
+                }
+                else if(all_filter[j] == "Created-On" || all_filter[j] == "Last-Execution")
+                {
+                    filter = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+all_filter[j]+`-select">`+all_filter[j]+`: <span id='filter-value-`+all_filter[j]+`'>`+selectedFilterCriteria[temp_index].value+`</span></button>
+                                <span onclick="removeFilter('`+all_filter[j]+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+                                <aui-dropdown-menu id="save-filter-`+all_filter[j]+`-select">
+                                    <form action="javascript:void(0)" onsubmit="submitDateFromInputSearch('`+all_filter[j]+`')" class="aui filter-form" style="width: 161.25px;">
+                                        <div class="form-group">
+                                            <label class="label">Min</label>
+                                            <input type="date" id="filterMin`+all_filter[j]+`Input" onchange="onchangeFilterDate('`+all_filter[j]+`')" class="form-control text medium-field" placeholder="Min date">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="label">Max</label>
+                                            <input type="date" id="filterMax`+all_filter[j]+`Input" onchange="onchangeFilterDate('`+all_filter[j]+`')" class="form-control text medium-field" placeholder="Max date">
+                                        </div>
+                                        <div id="date`+all_filter[j]+`warning" style="display: none;color: red;margin-bottom: 7.5px;">Note: Min date should be less than or equal to max date</div>
+                                        <div class="filter-form-action">                                                      
+                                            <button id="date`+all_filter[j]+`FormSubmitButton" type="submit" class="aui-button aui-button-primary" disabled >Update</button>
+                                            <button type="button" class="aui-button aui-button-primary" onclick="clearDateFromInputSearch('`+all_filter[j]+`')">Cancel</button>
+                                            <button type="button" class="aui-button aui-button-primary" onclick="clearAllDateFromInputSearch('`+all_filter[j]+`')">Clear</a>
+                                        </div>
+                                    </form>
+                                </aui-dropdown-menu>`;
+                                
+                    $('#testplan-'+all_filter[j]+'-filter').html(filter);
+                    clearDateFromInputSearch(all_filter[j])
+                }
+                else
+                {                  
+                    if(all_filter[j] == "Owner") 
+                    {
+                        let temp_jiraUserListArray = jiraUserListArray;
+                        dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, temp_jiraUserListArray, 'id');
+                    }
+                    else if(all_filter[j] == "Status") 
+                    {
+                        if(testplan_status_list == 0)
+                        {
+                            $('#action-loader-wrapper').css('display', 'flex');
+                            $.ajax({
+                                "type": "GET",
+                                "url": "/configuration/statusList?project_id={{projectId}}&user={{userAccountId}}&sc_type="+type+"&domain_id=" + domain_id,
+                                "headers": {
+                                    'Authorization': "JWT "+user_token,
+                                },
+                                "dataType": "json",
+                                "error": function (xhr, textStatus, errorThrown) {
+                                    toaster('Error while fetching project details', 'error');
+                                    $('#loader-wrapper').css('display', 'none');
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                },
+                                "success": function (data) {
+                                    if (data.res.status === 200) 
+                                    {
+                                        testplan_status_list = data.res.data;
+                                        dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, testplan_status_list, 'sc_name');
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, testplan_status_list, 'sc_name');
+                        }
+
+                    }
+                    else
+                    {
+                        filter = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+all_filter[j]+`-select">`+all_filter[j]+`: `+selectedFilterCriteria[temp_index].value+`</button>
+                        <span onclick="removeFilter('`+all_filter[j]+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+                        <aui-dropdown-menu id="save-filter-`+all_filter[j]+`-select">
+                        <aui-section><aui-item-radio>dfgdfgdgdg</aui-item-radio>
+                        </aui-section></aui-dropdown-menu>`;
+
+                        $('#testplan-'+all_filter[j]+'-filter').html(filter);
+                    }           
+                }
+            }            
+        }
+    }
+
+
+
+    function removeFilter(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria.splice(index, 1);
+        updateAllFilters();
+        addFilter();
+    }
+
+
+
+    function clearAllFilter()
+    {
+        selectedFilterCriteria = [];
+        updateAllFilters();
+        addFilter();
+    }
+
+
+
+    function openFilter()
+    {
+        if(selectedSavedFilter && selectedSavedFilter.id && selectedSavedFilter.id != '') {
+            $('#filter_id').val(selectedSavedFilter.id);
+            $('#filter_name').val(selectedSavedFilter.filter_name);
+            addUpdateFilter('testplan');
+
+        } else {
+            $('#filter_id').val('');
+            $('#filter_name').val('');
+            $('#filter-add-edit-dialog-heading').html('Save Filter');
+            AJS.dialog2("#filter-add-edit-dialog").show();
+        }
+    }
+
+
+
+    function editCurrentFilter()
+    {
+        $('#filter_id').val(selectedSavedFilter.id);
+        $('#filter_name').val(selectedSavedFilter.filter_name);
+        $('#filter-add-edit-dialog-heading').html('Update Filter');
+        AJS.dialog2("#filter-add-edit-dialog").show();
+    }
+
+
+
+    function closeFilter()
+    {
+        $('#filter_id').val('');
+        $('#filter_name').val('');
+        AJS.dialog2("#filter-add-edit-dialog").hide();
+    }
+
+
+
+    function getValueHtmlFromArr(val_arr)
+    {
+        let value_html = '';
+
+        val_arr = val_arr.filter(uniqueArrayFilter);
+
+        if(val_arr.length > 0) 
+        {
+            for (let l = 0; l < val_arr.length; l++) 
+            {                
+                if(l+1 == val_arr.length) {
+                    value_html += val_arr[l];
+                } else {
+                    value_html += val_arr[l]+', ';
+                }
+            } 
+        }
+        else
+        {
+            value_html = 'All'
+        }
+
+        return value_html;
+    }
+
+
+
+    function dropdownValueUpdateFunction(filter, value, list, key)
+    {   
+        let value_html = getValueHtmlFromArr(value);
+
+        let html = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+filter+`-select">`+filter+`: <span id='filter-value-`+filter+`'>`+value_html+`</span></button>
+        <span onclick="removeFilter('`+filter+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+        <aui-dropdown-menu id="save-filter-`+filter+`-select">
+        <aui-section>`;
+
+        for (let k = 0; k < list.length; k++) 
+        {
+            let check = value.indexOf(list[k][key]) != -1 ? 'checked' : '';
+            html += `<aui-item-checkbox `+check+`>`+list[k][key]+`</aui-item-checkbox>`;
+        }
+        html += `</aui-section></aui-dropdown-menu>`;
+
+        $('#testplan-'+filter+'-filter').html(html);
+
+
+        var dropdown = document.getElementById(`save-filter-`+filter+`-select`);
+        dropdown.addEventListener('change', function (e) {   
+
+            let index = selectedFilterCriteria.findIndex(x => x.filter == filter);     
+            selectedFilterCriteria[index].value = selectedFilterCriteria[index].value.filter(uniqueArrayFilter);
+
+            var isChecked = e.target.hasAttribute('checked');
+
+            if (isChecked) {
+                selectedFilterCriteria[index].value.push(e.target.textContent);                
+            } else {            
+                let remove_index = selectedFilterCriteria[index].value.indexOf(e.target.textContent);
+                selectedFilterCriteria[index].value.splice(remove_index, 1);
+            }
+            let value_html = getValueHtmlFromArr(selectedFilterCriteria[index].value);
+            $('#filter-value-'+filter).html(value_html)
+            updateTestPlanListingWithFilter(selectedFilterCriteria);
+        });
+
+        $('#action-loader-wrapper').css('display', 'none');
+    }
+
+
+
+    function clearFromInputSearch(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        $('#filter'+filter+'Input').val(selectedFilterCriteria[index].value);
+    }
+
+
+
+    function resetFilter(filter)
+    {
+        selectedFilterCriteria = JSON.parse(selectedSavedFilter.filter_key);
+        updateTestPlanListingWithFilter(selectedFilterCriteria);
+        addFilter();
+    }
+
+
+
+    function submitFromInputSearch(filter)
+    {
+        let new_val =  $('#filter'+filter+'Input').val();
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria[index].value = new_val;
+        $('#filter-value-'+filter).html(new_val == '' ? 'All' : new_val);
+        updateTestPlanListingWithFilter(selectedFilterCriteria);
+    }
+
+
+
+    function submitDateFromInputSearch(filter)
+    {
+        let max_date =  $('#filterMax'+filter+'Input').val();
+        let min_date =  $('#filterMin'+filter+'Input').val();
+        
+        let value_html = max_date+' to '+min_date;
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria[index].value = value_html;
+        $('#filter-value-'+filter).html(value_html);
+        updateTestPlanListingWithFilter(selectedFilterCriteria);
+    }
+
+
+
+    function clearDateFromInputSearch(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        let date_arr = selectedFilterCriteria[index].value.split(" to "); 
+        $('#filterMax'+filter+'Input').val(date_arr[0]);
+        $('#filterMin'+filter+'Input').val(date_arr[1]);
+    }
+
+
+
+    function clearAllDateFromInputSearch(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria[index].value = 'All';
+        $('#filter-value-'+filter).html('All');
+        $('#filterMax'+filter+'Input').val('');
+        $('#filterMin'+filter+'Input').val('');
+        updateTestPlanListingWithFilter(selectedFilterCriteria);
+    }
+
+
+
+    function onchangeFilterDate(filter)
+    {
+        let min_date =  $('#filterMin'+filter+'Input').val();
+        let max_date =  $('#filterMax'+filter+'Input').val();
+
+        console.log(min_date)
+
+        if(max_date !== "" && min_date !== "") {
+            if(Date.parse(min_date) <= Date.parse(max_date)) {
+                $('#date'+filter+'FormSubmitButton').attr("disabled", false);
+                $('#date'+filter+'warning').css('display', 'none');
+            } else {
+                $('#date'+filter+'FormSubmitButton').attr("disabled", true);
+                $('#date'+filter+'warning').css('display', 'block');
+            }
+        } else {
+            $('#date'+filter+'FormSubmitButton').attr("disabled", true);
+        }
+    }
+
+
+
+    function addUpdateFilter(type) 
+    {
+        let filter_id = $('#filter_id').val();
+        let filter_name = $('#filter_name').val();
+        let filter_type = $('#filter_visibility').val();
+
+        if(filter_name !== "")
+        {
+            let url = filter_id ? "/customFilter/update?user={{userAccountId}}" : "/customFilter/create?user={{userAccountId}}";
+
+            let data = {
+                'acct_id': "{{userAccountId}}",
+                'project_id': "{{projectId}}",
+                'domain_id': domain_id,
+                'filter_name': filter_name,
+                'test_type': type,
+                'filter_key': JSON.stringify(selectedFilterCriteria),
+                'filter_type': filter_type
+            }
+
+            if(filter_id !== '') {
+                data.custom_filter_id = filter_id;
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": filter_id ? "PUT" : "POST",
+                "url": url,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": data,
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        closeFilter();
+                        if(filter_id == '') {
+                            selectedSavedFilter = data.res.data;
+                        } else {
+                            selectedSavedFilter.filter_name = filter_name
+                            selectedSavedFilter.filter_type = filter_type
+                        }
+                        if(filter_id !== '') {
+                            toaster('Filter added successfully');
+                        } else {
+                            toaster('Filter updated successfully');
+                        }
+                        updateTestPlanListingWithFilter(selectedFilterCriteria);
+                        getAllFilter();
+                    }
+                }
+            });
+        }
+        else
+        {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+
+
+
+    function deleteCurrentFilter() 
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "PUT",
+            "url": "/customFilter/delete?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": {
+                'acct_id': "{{userAccountId}}",
+                'project_id': "{{projectId}}",
+                'domain_id': domain_id,
+                'custom_filter_id': selectedSavedFilter.id
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    selectedSavedFilter = null;
+                    updateTestPlanListingWithFilter(selectedFilterCriteria);
+                    getAllFilter();
+                }
+            }
+        });
+    }
+
+
+
+    function getAllFilter(type='testplan')
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/customFilter/list?project_id={{projectId}}&acct_id={{userAccountId}}&test_type=" + type + "&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    savedFilterList = [{filter_key: '[]', filter_name: 'none' }, ...data.res.data];
+
+                    let html = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="saved-filter-select"><span id='saved-filter-value'>Choose saved filter</span></button>
+                    <aui-dropdown-menu id="saved-filter-select">
+                    <aui-section>`;
+
+                    for (let k = 0; k < savedFilterList.length; k++) 
+                    {
+                        let check = selectedSavedFilter ? selectedSavedFilter.filter_name == savedFilterList[k].filter_name ? 'checked' : '' : '';
+
+                        if(selectedSavedFilter == null && savedFilterList[k].filter_name == 'none') {
+                            check = 'checked';
+                        }
+
+                        html += `<aui-item-radio `+check+`>`+savedFilterList[k].filter_name+`</aui-item-radio>`;
+                    }
+                    html += `</aui-section></aui-dropdown-menu><span class="filter-type hide" id="testplan-selected-saved-filter-type"></span>`;
+
+                    $('#testplan-saved-filter').html(html);
+
+                    var dropdown = document.getElementById(`saved-filter-select`);
+                    dropdown.addEventListener('change', function (e) {   
+
+                        let index = savedFilterList.findIndex(x => x.filter_name == e.target.textContent);
+                        var isChecked = e.target.hasAttribute('checked');
+                        if (isChecked) {
+                            if(e.target.textContent == 'none') {
+                                selectedSavedFilter = null;
+                                $('#testplan-selected-saved-filter-type').removeClass('show2');
+                                $('#testplan-selected-saved-filter-type').addClass('hide');     
+                                $('#saved-filter-value').html('Choose saved filter');                            
+                            } else {
+                                selectedSavedFilter = savedFilterList[index];  
+                                $('#testplan-selected-saved-filter-type').removeClass('hide'); 
+                                $('#testplan-selected-saved-filter-type').addClass('show2');   
+                                $('#testplan-selected-saved-filter-type').html(savedFilterList[index].filter_type); 
+                                $('#saved-filter-value').html(e.target.textContent);
+                            }   
+                            selectedFilterCriteria = JSON.parse(savedFilterList[index].filter_key);    
+                            updateAllFilters();
+                            addFilter();   
+                        }
+
+                    });        
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>

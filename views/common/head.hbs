@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="ap-local-base-url" content="{{localBaseUrl}}">
+    <title>{{title}}</title>
+
+    {{!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.2/css/aui.css" media="all"> --}}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/5.2/css/aui-experimental.css" media="all">
+    <link rel="stylesheet" href="https://unpkg.com/@atlassian/aui@9.1/dist/aui/aui-prototyping.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aui/9.0.3/aui/aui-prototyping.nodeps.min.css" crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" media="all">
+    {{!-- <link rel="stylesheet" href="{{furl '/css/addon.css'}}" type="text/css" /> --}}
+    <link rel="stylesheet" href="{{furl '/css/sidebar.css'}}" type="text/css" />
+    <link rel="stylesheet" href="{{furl '/css/navbar.css'}}" type="text/css" />
+    <link rel="stylesheet" href="{{furl '/css/subsidebar.css'}}" type="text/css" />
+    <link rel="stylesheet" href="{{furl '/css/content.css'}}" type="text/css" />
+    <link rel="stylesheet" href="{{furl '/css/test-case.css'}}" type="text/css" />
+    <link rel="stylesheet" href="{{furl '/css/test-cycle.css'}}" type="text/css" />
+
+    <link rel="stylesheet" href="{{furl '/css/report.css'}}" type="text/css" />
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    {{!-- <script src="//cdnjs.cloudflare.com/ajax/libs/aui/5.2/js/aui.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aui/9.0.3/aui/aui-css-deprecations.min.js" crossorigin="anonymous"></script>
+    <script src="{{furl '/js/aui-prototyping.js'}}" crossorigin="anonymous"></script>
+    <script src="{{hostScriptUrl}}" type="text/javascript"></script>
+    <script src="//cdn.ckeditor.com/4.5.5/standard/ckeditor.js"></script>  
+
+
+    <script src="{{furl '/js/addon.js'}}"></script>
+
+    <style>
+        .main-body-look {
+            {{!-- zoom: 75%; --}}
+        }
+    </style>
+
+    <script>
+
+        var user_token = "{{token}}";
+
+        AP.context.getToken(function(token){
+            user_token = token;
+        });
+
+
+        setInterval(function(){ 
+            AP.context.getToken(function(token){
+                user_token = token;
+            });
+        }, 300000);
+        
+    </script>
+
+</head>
+
+<body class="aui-page-hybrid main-body-look">
+    
+

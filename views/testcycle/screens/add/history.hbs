@@ -1,0 +1,109 @@
+<section class="aui-page-panel-content history" style="display: flow-root;width: 100%;padding: 0;">
+    <div id="testcycle-history-section" class="main-history"></div>
+</section>
+
+
+
+
+
+
+
+
+<script>
+
+    getTestHisterLog();
+
+    function getTestHisterLog() 
+    {        
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        $.ajax({
+            "type": "GET",
+            "url": "/testcycle/history/?project_id={{projectId}}&acct_id={{userAccountId}}&domain_id=" + domain_id + "&testcycle_id={{editId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let logs = data.res.data
+
+                    $('#testcycle-history-section').html('');
+
+                    if (logs.length > 0) 
+                    {
+                        for (let i = 0; i < logs.length; i++) {
+                            let updated_at = new Date(logs[i].updated_at);
+
+                            let log_html = '<div class="timeline">' +
+                                '<div class="logs-container right">' +
+                                '<div class="content">' +
+                                '<span class="log-ball"></span><p><b>' + getJiraUserNameByJiraId(logs[i].created_by) + '</b> ' + logs[i].description + ' <u>' + getFormattedDate(updated_at.getDate()) + ' ' + months[updated_at.getMonth()] + ' ' + updated_at.getFullYear() + ', ' + formatAMPM(updated_at) + '</u>.</p>' +
+                                '</div>' +
+                                '</div>';
+
+
+                            let log_table_data = JSON.parse(logs[i].field_data);
+
+                            if (log_table_data && log_table_data.length > 0) {
+                                log_html += '<div class="expander-table">' +
+                                    '<table class="aui">' +
+                                    '<thead style="background: #F0F1F2;">' +
+                                    '<tr>' +
+                                    '<th>Field</th>' +
+                                    '<th>Old Value</th>' +
+                                    '<th>New Value</th>' +
+                                    '</tr>' +
+                                    '</thead>' +
+                                    '<tbody>';
+
+                                for (let j = 0; j < log_table_data.length; j++) {
+
+                                    if(log_table_data[j].field === "Basic Detail - (owner)" || log_table_data[j].field === "Basic Detail - (Owner)")
+                                    {
+                                        log_html += '<tr>' +
+                                            '<td style="text-transform: capitalize;">' + log_table_data[j].field + '</td>' +
+                                            '<td>' + getJiraUserNameByJiraId(log_table_data[j].original_value) + '</td>' +
+                                            '<td>' + getJiraUserNameByJiraId(log_table_data[j].new_value) + '</td>' +
+                                            '</tr>';
+                                    }
+                                    else
+                                    {
+                                        log_html += '<tr>' +
+                                            '<td style="text-transform: capitalize;">' + log_table_data[j].field + '</td>' +
+                                            '<td>' + log_table_data[j].original_value + '</td>' +
+                                            '<td>' + log_table_data[j].new_value + '</td>' +
+                                            '</tr>';
+                                    }
+                                }
+
+                                log_html += '</tbody>' +
+                                        '</table>' +
+                                    '</div>';
+                            }
+
+                            log_html += '</div>';
+
+                            $('#testcycle-history-section').append(log_html);
+                        }
+                    }
+                    else 
+                    {
+                        $('#testcycle-history-section').html('<div class="aui-message aui-message-info"><p class="title"><strong>Info !</strong></p><p>No logs are available</p></div>');
+                    }
+
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+</script>

@@ -1,0 +1,313 @@
+<form class="aui" name="myForm" method="post" id="testCaseAddEditForm" action="javascript:void(0);"
+    autocomplete="off">
+
+    <div id="testcaseBasicDetails">
+        <div class="container1">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label" for="form-control">Select Folder</label>
+                        <select id="testcase_folder_select" class="form-control select customFieldTypeSelect"
+                            name="folder_id">
+                            <option value="">Select Folder</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    {{#ifCond viewPage "edit" }}
+                    <div id="testcaseVersionSection" class="form-group select-field-type">
+                        <label class="label" for="form-control">Version</label>
+                        <div id="versionTestBox">
+
+                            <span id="lockTestCaseStatusSpan"></span>
+
+                            <select id="testcase_version_select"
+                                onchange="updateTestCaseEditDataWithSelectedOldVersion()"
+                                class="form-control select customFieldTypeSelect" name="version"></select>
+                            <button id="testcase_version_add_button" type="button" onclick="createNewVersion()"
+                                class="aui-button aui-button-primary"
+                                style="margin-left: 6px;font-size: 18.75px;line-height: 1px;height: 27.75px;"> + </button>
+                        </div>
+                    </div>
+                    {{/ifCond}}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="label required-field">Test Case Name</label>
+            <input id="testcase_name" type="text" class="form-control text medium-field" name="name" data-aui-validation-field
+                placeholder="Enter test case name" required="required" style="width: 540px;">
+        </div>
+
+
+        <div class="form-group">
+            <label class="label required-field">Description</label>
+            <textarea id="testcase_description" class="form-control textarea" rows="5" name="description"
+                style="width: 540px; height: unset !important; padding: .28125rem .5625rem !important;"
+                required="required">
+            </textarea>
+        </div>
+
+
+        <div class="form-group">
+            <label class="label">Objective</label>
+            <input id="testcase_objective" type="text" class="form-control text medium-field" name="objective"
+                placeholder="Enter Objective" style="width: 540px;">
+        </div>
+
+
+        <div class="form-group">
+            <label class="label">Precondition</label>
+            <input id="testcase_precondition" type="text" class="form-control text medium-field" name="precondition"
+                placeholder="Enter Precondition" style="width: 540px;">
+        </div>
+
+
+        <div class="container2">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Owner</label>
+                        <select id="testcase_owner_select" class="form-control select customFieldTypeSelect" data-aui-validation-field
+                            name="owner" required="required" style="width: 156.75px;">
+                            <option value="">Select Owner</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group">
+                        <label class="label">Estimated Time(s)</label>
+                        <input id="testcase_estimated_time" type="number" class="form-control text medium-field"
+                            placeholder="Enter time" name="estimated_time" style="width: 156.75px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container1">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Status</label>
+                        <select id="testcase_status_select" class="form-control select customFieldTypeSelect" data-aui-validation-field
+                            name="status" required="required" style="width: 156.75px;">
+                            <option value="">Select Status</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Priority</label>
+                        <select id="testcase_priority_select" class="form-control select customFieldTypeSelect" data-aui-validation-field
+                            name="priority" required="required" style="width: 156.75px;">
+                            <option value="">Select Priority</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label" for="form-control">Components</label>
+                        <select id="testcase_component_select" class="form-control select customFieldTypeSelect"
+                            name="component" style="width: 156.75px;">
+                            <option value="">Select Component</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="label" for="test-case-name">Labels</label>
+            <br>
+            <select id="testcase_label_select" class="select multi-selector-dropdown" name="label" multiple
+                style="width: 540px;padding: 0px;border: none;"></select>
+        </div>
+
+    </div>
+
+
+    <span class="head testcaseCustomFieldDiv-head" style="display: none;">
+        <h4 class="other-info" style="margin-top: 15px;">Other Information</h4>
+        <hr class="heading-line" size="8" color="#FFFFFF">
+    </span>
+
+
+    <div id="testcaseCustomFieldDiv"></div>
+
+
+    <div style="opacity: 0;">
+        <button type="submit" id="testCaseSubmitButton"></button>
+    </div>
+
+</form>
+
+<button type="btn" class="aui-button btn1 skip-disabled-class" id="spinnerbutton"
+    onclick="changeAddSubPages('test-scripts')">Next: Test Scripts</button>
+
+
+
+
+<script>
+
+    AJS.$('.multi-selector-dropdown').auiSelect2();
+
+
+
+    commonOwnerSelectListing('testcase', '{{editId}}');
+    getCommonFolderData('testcase');
+    getCommonComponentData('testcase');
+    getCommonPriorityData('testcase');
+    getCommonCustomFieldData('testcase');
+    getCommonConfigurationLabelData('testcase');
+    getCommonStatusData('testcase');
+
+
+
+    function createNewVersion() {
+        editTest('testcase', false)
+    }
+
+
+    function updateTestCaseEditDataWithSelectedOldVersion() {
+        const update_version = $('#testcase_version_select').val();
+
+        editTest('testcase', true, update_version)
+    }
+    
+
+    function submitFormDataTestCase(type) 
+    {   
+        let allAreFilled = true;
+
+        if(type == 'save') 
+        {
+            document.getElementById("testCaseAddEditForm").querySelectorAll("[required]").forEach(function(i) {
+                if (!allAreFilled) return;
+                if (!i.value) allAreFilled = false;
+                if (i.type === "radio") {
+                    let radioValueCheck = false;
+                    document.getElementById("myForm").querySelectorAll(`[name=${i.name}]`).forEach(function(r) {
+                        if (r.checked) radioValueCheck = true;
+                    })
+                    allAreFilled = radioValueCheck;
+                }
+            })        
+
+            if (!allAreFilled) 
+            {
+                toaster('Please enter required details', 'warning');
+                $("#testCaseSubmitButton").trigger("click");
+            }
+            else 
+            {
+              let inputHidden = document.createElement("INPUT");
+              inputHidden.setAttribute("type", "hidden");
+              inputHidden.setAttribute("value", 'save');
+              inputHidden.setAttribute('id', 'submitFormType');
+              document.getElementById('testcaseBasicDetails').append(inputHidden);
+
+              const queryString = window.location.search;
+              const urlParams = new URLSearchParams(queryString);
+              const editId = urlParams.get('editId')
+              
+              $('#action-loader-wrapper').css('display', 'flex');
+
+              if(editId !== null)
+              {
+                $.ajax({
+                  "type": "GET",
+                  "url": "/testcase/versionList?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id + "&testcase_id=" + editId,
+                  "headers": {
+                      'Authorization': "JWT "+user_token,
+                  },
+                  "dataType": "json",
+                  "error": function (xhr, textStatus, errorThrown) {
+                      toaster('Error while fetching project details', 'error');
+                      $('#action-loader-wrapper').css('display', 'none');
+                  },
+                  "success": function (data) {
+                      if (data.res.status === 200) 
+                      {
+                          let version_list = data.res.data;
+
+                          if(version_list.length > 1) 
+                          {
+                              let selected_value = document.getElementById("testcase_version_select").value;
+
+                              if(parseInt(selected_value) < parseInt(version_list[version_list.length - 1].version)) 
+                              {
+                                $('#action-loader-wrapper').css('display', 'none');
+                                toaster('Old version can not be edited', 'warning');                                  
+                              }
+                              else 
+                              {
+                                $('#action-loader-wrapper').css('display', 'none');
+                                submitCreationDataByType('testcase')
+                              }
+                          }
+                          else
+                          {
+                            $('#action-loader-wrapper').css('display', 'none');
+                            submitCreationDataByType('testcase')
+                          }
+                      }
+                  }
+                });
+              }
+              else
+              {
+                $('#action-loader-wrapper').css('display', 'none');
+                submitCreationDataByType('testcase')
+              }
+            }
+        }
+        else if(type == 'lock_update')
+        {
+            let inputHidden = document.createElement("INPUT");
+            inputHidden.setAttribute("type", "hidden");
+            inputHidden.setAttribute("value", "save");
+            inputHidden.setAttribute('id', 'submitFormType');
+            document.getElementById('testcaseBasicDetails').append(inputHidden);
+
+            submitCreationDataByType('testcase', false);
+        }
+        else 
+        {
+            let inputHidden = document.createElement("INPUT");
+            inputHidden.setAttribute("type", "hidden");
+            inputHidden.setAttribute("value", "draft");
+            inputHidden.setAttribute('id', 'submitFormType');
+            document.getElementById('testcaseBasicDetails').append(inputHidden);
+
+            submitCreationDataByType('testcase')
+        }
+    }
+
+
+
+
+</script>
+
+<script> 
+    
+    CKEDITOR.replace( 'testcase_description', {
+        toolbar: [
+            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+            { name: 'insert', items: [ 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak' ] },
+            '/',
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] },
+        ]
+    });
+
+</script>

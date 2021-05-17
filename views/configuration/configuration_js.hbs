@@ -1,0 +1,2615 @@
+<script>
+
+
+    var configurationCustomFieldSelect = null;
+
+    var configurationEnvironmentReloadCheck = false;
+    var configurationLabelReloadCheck = false;
+    var configurationDatasetReloadCheck = false;
+    var statusTestCasesReloadCheck = false;
+    var statusTestPlansReloadCheck = false;
+    var statusTestCyclesReloadCheck = false;
+    var statusTestExecutionsReloadCheck = false;
+    var customFieldsTestCasesReloadCheck = false;
+    var customFieldsTestPlansReloadCheck = false;
+    var customFieldsTestCyclesReloadCheck = false;
+    var customFieldsTestStepsReloadCheck = false;
+    var customFieldsTestExecutionsReloadCheck = false;
+    var priorityTestCasesReloadCheck = false;
+    var priorityTestPlansReloadCheck = false;
+    var priorityTestCyclesReloadCheck = false;
+    var priorityTestExecutionsReloadCheck = false;
+    var componentTestCasesReloadCheck = false;
+    var componentTestPlansReloadCheck = false;
+    var componentTestCyclesReloadCheck = false;
+    var componentTestExecutionsReloadCheck = false;
+
+
+
+    var environment_list = [];
+    var label_list = [];
+    var dataset_list = [];
+
+    var testcase_status_list = [];
+    var testplan_status_list = [];
+    var testcycle_status_list = [];
+    var testexecution_status_list = [];
+
+    var testcase_customfield_list = [];
+    var testplan_customfield_list = [];
+    var testcycle_customfield_list = [];
+    var teststep_customfield_list = [];
+    var testexecution_customfield_list = [];
+
+    var testcase_priority_list = [];
+    var testplan_priority_list = [];
+    var testcycle_priority_list = [];
+    var testexecution_priority_list = [];
+
+    var testcase_component_list = [];
+    var testplan_component_list = [];
+    var testcycle_component_list = [];
+    var testexecution_component_list = [];
+
+
+
+
+
+
+    {{!-- AP.request('/rest/api/2/user/groups?accountId={{userAccountId}}', {
+        success: function (response) {
+            let site_admin_check = response.includes("site-admins");
+            if (site_admin_check) {
+                changeConfigurationPage('configuration-environment')
+                getConfigurationCustomFieldSelectOptionList()
+            } else {
+                $('#configurationFunctionality').remove();
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        }
+    }); --}}
+
+
+
+
+
+
+
+
+    changeConfigurationPage('configuration-environment')
+    getConfigurationCustomFieldSelectOptionList()
+
+
+    
+
+
+
+
+
+    /** -------------------- Project Configuration custom field Data Section ----------------- **/
+
+    /**
+    * Function for get Project Configuration custom field details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getConfigurationCustomFieldSelectOptionList() {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $('.customFieldTypeSelect').html('<option value="">Choose Field Type</option>');
+        $.ajax({
+            "type": "GET",
+            "url": "/fieldType/allList?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    configurationCustomFieldSelect = data.res.data.fieldType;
+                    let tmpList = data.res.data.fieldType;
+
+                    if(tmpList.length > 0)
+                    {
+                        for (let i = 0; i < tmpList.length; i++) 
+                        {
+                            if(tmpList[i].ftd_name !== "Radio") {
+                                $('.customFieldTypeSelect').append('<option value="'+tmpList[i].ftd_name+'">'+tmpList[i].ftd_name+'</option>');
+                            }
+                        }
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project Configuration Environment Data Section ----------------- **/
+
+    /**
+    * Function for get Project Configuration Environment details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getProjectConfigurationEnvironmentData() {
+        $.ajax({
+            "type": "GET",
+            "url": "/environment/allList?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    configurationEnvironmentReloadCheck = true
+                    environment_list = data.res.data.environment;
+                    $('#configuration_environment_tbody').html('');
+                    if(environment_list.length > 0)
+                    {
+                        for (let i = 0; i < environment_list.length; i++) 
+                        {
+                            $('#configuration_environment_tbody').append('<tr id="configurationEnvironment_'+environment_list[i].id+'">' +
+                            '<td>' + environment_list[i].ec_name + '</td>' +
+                            '<td>' + environment_list[i].ec_description + '</td>' +
+                            '<td class="trash">' +
+                                '<a href="javascript:void(0)" onclick="editProjectConfigurationEnvironment(' + environment_list[i].id + ')" style="margin-right: 14.25px;margin-left: 7.5px;">' + 
+                                    '<img src={{furl "/images/edit.svg"}} />'+
+                                '</a>' +
+                                '<a href="javascript:void(0)" onclick="deleteProjectConfigurationEnvironment(' + environment_list[i].id + ')">' + redDeleteIcon + '</a>' +
+                            '</td>' +
+                            '</tr>');
+                        }
+                    }
+                }
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+    /**
+    * Function for adding Project Configuration Environment in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{ec_name}} 
+    * @param {{ec_description}} 
+    * @return success error message
+    */
+    function addProjectConfigurationEnvironmentData() {
+        var configurationEnvironmentName = $('#configurationEnvironmentNameInput').val();
+        var configurationEnvironmentDesc = $('#configurationEnvironmentDescInput').val();
+        if (configurationEnvironmentName !== "") 
+        {
+            const tempcheck = environment_list.findIndex(e => e.ec_name.toLowerCase() == configurationEnvironmentName.toLowerCase());
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique name', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/environment?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'ec_name': configurationEnvironmentName,
+                        'ec_description': configurationEnvironmentDesc,
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectConfigurationEnvironmentData();
+                            toaster('New role <b>' + configurationEnvironmentName + '</b> created successfully');
+                            $('#configurationEnvironmentNameInput').val('');
+                            $('#configurationEnvironmentDescInput').val('');                        
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for deleteing Project Configuration Environment in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function deleteProjectConfigurationEnvironment(env_id) {
+        if (env_id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/environment?user={{userAccountId}}&project_id={{projectId}}&env_id=" + env_id + "&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getProjectConfigurationEnvironmentData();
+                        toaster('Configuration environment variable deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    /**
+    * Function for editing Configuration Environment in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function editProjectConfigurationEnvironment(id) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/environment/id?project_id={{projectId}}&user={{userAccountId}}&env_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textSAtatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let environment = data.res.data.environment;
+
+                    let edit_html_data = '<td><input class="text medium-field editBox_input" type="text" id="editConfigurationEnvironmentName'+id+'" name="editConfigurationEnvironmentName'+id+'" value="' + environment.ec_name + '" placeholder="Type a name" style="width: 176.25px;"></td>' +
+                        '<td><input class="text medium-field editBox_input" type="text" id="editConfigurationEnvironmentDesc'+id+'" name="editConfigurationEnvironmentDesc'+id+'" value="' + environment.ec_description + '" placeholder="Type a description" style="width: 471.75px;"></td>' +
+                        '<td class="trash">'+
+                            '<a class="aui-button aui-button-primary" href="javascript:void(0)" onClick="saveConfigurationEnvironment('+id+')">Save</a>'+
+                            '<a class="aui-button aui-button-default" href="javascript:void(0)" onClick="cancelConfigurationEnvironment('+id+')">Cancel</a>'+
+                        '</td>';
+                    
+                    $('#configurationEnvironment_'+id).html(edit_html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+    
+    
+    /**
+    * Function for save edit Configuration Environment in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function saveConfigurationEnvironment(id) {
+
+        var editedName = $('#editConfigurationEnvironmentName'+id).val();
+        var editedDescription = $('#editConfigurationEnvironmentDesc'+id).val();
+        
+        const tempcheck = environment_list.findIndex(e => e.ec_name.toLowerCase() == editedName.toLowerCase() && e.id != id);
+        if(tempcheck >= 0) 
+        {
+            toaster('Please enter unique name', 'warning');
+        } 
+        else 
+        {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "PUT",
+                "url": "/environment?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'acct_id': "{{userAccountId}}",
+                    'project_id': "{{projectId}}",
+                    'domain_id': domain_id,
+                    'env_id': id,
+                    'ec_name': editedName,
+                    'ec_description': editedDescription
+                },
+                "dataType": "json",
+                "error": function (xhr, textSAtatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {      
+                        getProjectConfigurationEnvironmentData()
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    /**
+    * Function for cancel edit Configuration Environment in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function cancelConfigurationEnvironment(id) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/environment/id?project_id={{projectId}}&user={{userAccountId}}&env_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textSAtatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let environment = data.res.data.environment;
+
+                    let html_data = '<td>' + environment.ec_name + '</td>' +
+                        '<td>' + environment.ec_description + '</td>' +
+                        '<td class="trash">' +
+                            '<a href="javascript:void(0)" onclick="editProjectConfigurationEnvironment(' + id + ')" style="margin-right: 14.25px;margin-left: 7.5px;">' + 
+                                '<img src={{furl "/images/edit.svg"}} />'+
+                            '</a>' +
+                            '<a href="javascript:void(0)" onclick="deleteProjectConfigurationEnvironment(' + id + ')">' + redDeleteIcon + '</a>' +
+                        '</td>';
+                    
+                    $('#configurationEnvironment_'+id).html(html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project Configuration Label Data Section ----------------- **/
+
+    /**
+    * Function for get Project Configuration Label details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getProjectConfigurationLabelData() {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/label/allList?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    configurationLabelReloadCheck = true
+                    label_list = data.res.data.label;
+                    $('#configuration_label_tbody').html('');
+                    if(label_list.length > 0)
+                    {
+                        for (let i = 0; i < label_list.length; i++) 
+                        {
+                            $('#configuration_label_tbody').append('<span id="closeable-label-nourl" class="aui-label aui-label-closeable custom-label">'+label_list[i].lc_name+'<span tabindex="0" class="aui-icon aui-icon-close" onclick="deleteProjectConfigurationLabel(' + label_list[i].id + ')">(remove closableNoUrl)</span></span>');
+                        }
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+    /**
+    * Function for adding Project Configuration Label in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{ec_name}} 
+    * @param {{ec_description}} 
+    * @return success error message
+    */
+    function addProjectConfigurationLabelData() {
+        var configurationLabelName = $('#configurationLabelNameInput').val();
+        if (configurationLabelName !== "") 
+        {
+            const tempcheck = label_list.findIndex(e => e.lc_name.toLowerCase() == configurationLabelName.toLowerCase());
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique name', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/label?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'lc_name': configurationLabelName,
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectConfigurationLabelData();
+                            toaster('New label <b>' + configurationLabelName + '</b> created successfully');
+                            $('#configurationLabelNameInput').val('');                      
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for deleteing Project Configuration Label in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function deleteProjectConfigurationLabel(label_id) {
+        if (label_id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/label?user={{userAccountId}}&project_id={{projectId}}&label_id=" + label_id + "&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getProjectConfigurationLabelData();
+                        toaster('Configuration label variable deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project Configuration Dataset Data Section ----------------- **/
+
+    /**
+    * Function for get Project Configuration Dataset details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getProjectConfigurationDatasetData() 
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/dataset/allList?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    configurationDatasetReloadCheck = true
+                    dataset_list = data.res.data.dataset;
+                    $('#configuration_dataset_tbody').html('');
+                    if(dataset_list.length > 0)
+                    {
+                        for (let i = 0; i < dataset_list.length; i++) 
+                        {
+                            $('#configuration_dataset_tbody').append('<tr id="configurationDataset_'+dataset_list[i].id+'">' +
+                            '<td>' + dataset_list[i].dc_name + '</td>' +
+                            '<td class="trash">'+
+                                '<a href="javascript:void(0)" onclick="editProjectConfigurationDataset(' + dataset_list[i].id + ')" style="margin-right: 14.25px;margin-left: 7.5px;">' + 
+                                    '<img src={{furl "/images/edit.svg"}} />'+
+                                '</a>' +
+                                '<a href="javascript:void(0)" onclick="deleteProjectConfigurationDataset(' + dataset_list[i].id + ')">' + redDeleteIcon + '</a>'+
+                            '</td>' +
+                            '</tr>');
+                        }
+                    }
+                }
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+    /**
+    * Function for adding Project Configuration Dataset in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{dc_name}} 
+    * @param {{ec_description}} 
+    * @return success error message
+    */
+    function addProjectConfigurationDatasetData() {
+        var configurationDatasetName = $('#configurationDatasetNameInput').val();
+        if (configurationDatasetName !== "") 
+        {
+            const tempcheck = dataset_list.findIndex(e => e.dc_name.toLowerCase() == configurationDatasetName.toLowerCase());
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique name', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/dataset?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'dc_name': configurationDatasetName,
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectConfigurationDatasetData();
+                            toaster('New dataset <b>' + configurationDatasetName + '</b> created successfully');
+                            $('#configurationDatasetNameInput').val('');                      
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for deleteing Project Configuration Dataset in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function deleteProjectConfigurationDataset(dataset_id) {
+        if (dataset_id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/dataset?user={{userAccountId}}&project_id={{projectId}}&dataset_id=" + dataset_id + "&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getProjectConfigurationDatasetData();
+                        toaster('Configuration dataset variable deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    /**
+    * Function for editing Configuration Dataset in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function editProjectConfigurationDataset(id) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/dataset/id?project_id={{projectId}}&user={{userAccountId}}&dataset_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textSAtatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let dataset = data.res.data.dataset;
+
+                    let edit_html_data = '<td><input class="text medium-field editBox_input" type="text" id="editConfigurationDatasetName'+id+'" name="editConfigurationDatasetName'+id+'" value="' + dataset.dc_name + '" placeholder="Type a name" style="width: 386.25px;"></td>' +
+                        '<td class="trash">'+
+                            '<a class="aui-button aui-button-primary" href="javascript:void(0)" onClick="saveConfigurationDataset('+id+')">Save</a>'+
+                            '<a class="aui-button aui-button-default" href="javascript:void(0)" onClick="cancelConfigurationDataset('+id+')">Cancel</a>'+
+                        '</td>';
+                    
+                    $('#configurationDataset_'+id).html(edit_html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+    
+    
+    /**
+    * Function for save edit Configuration Dataset in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function saveConfigurationDataset(id) {
+
+        var editedName = $('#editConfigurationDatasetName'+id).val();
+        var editedDescription = $('#editConfigurationDatasetDesc'+id).val();
+
+        if(editedName !== "")
+        {
+            const tempcheck = dataset_list.findIndex(e => e.dc_name.toLowerCase() == editedName.toLowerCase() && e.id != id);
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique name', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "PUT",
+                    "url": "/dataset?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'dataset_id': id,
+                        'dc_name': editedName,
+                        'ec_description': editedDescription
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textSAtatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {  
+                            getProjectConfigurationDatasetData()
+                        }
+                    }
+                });
+            }
+        }
+        else
+        {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for cancel edit Configuration Dataset in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function cancelConfigurationDataset(id) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/dataset/id?project_id={{projectId}}&user={{userAccountId}}&dataset_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textSAtatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let dataset = data.res.data.dataset;
+
+                    let html_data = '<td>' + dataset.dc_name + '</td>' +
+                        '<td class="trash">' +
+                            '<a href="javascript:void(0)" onclick="editProjectConfigurationDataset(' + id + ')" style="margin-right: 14.25px;margin-left: 7.5px;">' + 
+                                '<img src={{furl "/images/edit.svg"}} />'+
+                            '</a>' +
+                            '<a href="javascript:void(0)" onclick="deleteProjectConfigurationDataset(' + id + ')">' + redDeleteIcon + '</a>' +
+                        '</td>';
+                    
+                    $('#configurationDataset_'+id).html(html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project status test case Data Section ----------------- **/
+
+    /**
+    * Function for get Project status details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getProjectStatusDataByType(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/configuration/statusList?project_id={{projectId}}&user={{userAccountId}}&sc_type="+type+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    if(type === 'testcase') {
+                        testcase_status_list = data.res.data;
+                        statusTestCasesReloadCheck = true;
+                    } else if(type === 'testplan') {
+                        testplan_status_list = data.res.data;
+                        statusTestPlansReloadCheck = true;
+                    } else if(type === 'testcycle') {
+                        testcycle_status_list = data.res.data;
+                        statusTestCyclesReloadCheck = true;
+                    } else if(type === 'testexecution') {
+                        testexecution_status_list = data.res.data;
+                        statusTestExecutionsReloadCheck = true;
+                    }
+                    
+                    let data_list = data.res.data;
+
+                    $('#status_'+type+'s_tbody').html('');
+                    if(data_list.length > 0)
+                    {
+                        let typeString = "'"+type+"'";
+
+                        for (let i = 0; i < data_list.length; i++) 
+                        {
+                            let action_data = "";
+
+                            if(data_list[i].sc_status === 1)
+                            {
+                                action_data = '<a href="javascript:void(0)" onclick="editProjectStatusDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 6px;">'+
+                                    '<img src={{furl "/images/edit.svg"}} />'+
+                                '</a>'+
+                                '<a href="javascript:void(0)" onclick="deleteProjectStatusDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>';                                   
+                            }
+                            else
+                            {
+                                action_data = '<a href="javascript:void(0)" style="margin: 0 26.25px;pointer-events: none;">'+
+                                        '<img src={{furl "/images/lock_grey.svg"}} />'+
+                                    '</a>';
+                            }
+                            
+                            let html_data = '<tr id="status_'+type+'_'+data_list[i].id+'">' +
+                                '<td>' + data_list[i].sc_name + '</td>' +
+                                '<td>' + data_list[i].sc_description + '</td>' +
+                                '<td><span class="color-box" style="background: '+data_list[i].sc_color+';"></span></td>' +
+                                '<td style="width: 7.5px;" class="trash">'+action_data+'</td>' +
+                            '</tr>';
+                            
+                            $('#status_'+type+'s_tbody').append(html_data);
+                        }
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+    /**
+    * Function for add Project status details in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{name}} 
+    * @param {{description}} 
+    * @param {{color}} 
+    * @return success error message
+    */
+    function addProjectStatusDataWithType(type) {
+        var name = $('#status'+type+'NameInput').val();
+        var description = $('#status'+type+'DescInput').val();
+        var color = $('#status'+type+'ColorInput').val();
+
+        if (name !== "") 
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_status_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_status_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_status_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_status_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.sc_name.toLowerCase() == name.toLowerCase());
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique name', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/configuration/status?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'sc_name': name,
+                        'sc_description': description,
+                        'sc_color': color,
+                        'sc_status': 1,
+                        'sc_type': type.toLowerCase(),
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectStatusDataByType(type.toLowerCase());
+                            toaster('New status added successfully');
+                            $('#status'+type+'NameInput').val('');
+                            $('#status'+type+'DescInput').val('');
+                            $('#status'+type+'ColorInput').val('#DFE1E5');                    
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for deleteing status in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function deleteProjectStatusDataWithType(id, type) {
+        if (id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/configuration/status?project_id={{projectId}}&user={{userAccountId}}&config_status_id=" + id +"&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getProjectStatusDataByType(type);
+                        toaster('Status deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    /**
+    * Function for editing status in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function editProjectStatusDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/configuration/status/id?project_id={{projectId}}&user={{userAccountId}}&config_status_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let status = data.res.data;
+
+                    let edit_html_data = '<td><input class="text medium-field editBox_input" type="text" id="editStatus'+type+'Name'+id+'" name="editStatus'+type+'Name'+id+'" value="' + status.sc_name + '" placeholder="Type a name" style="width: 176.25px;"></td>' +
+                        '<td><input class="text medium-field editBox_input" type="text" id="editStatus'+type+'Desc'+id+'" name="editStatus'+type+'Desc'+id+'" value="' + status.sc_description + '" placeholder="Type a description" style="width: 471.75px;"></td>' +
+                        '<td><input class="text medium-field color-picker" type="color" id="editStatus'+type+'Color'+id+'" name="editStatus'+type+'Color'+id+'" value="'+status.sc_color+'"></td>' +
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a class="aui-button aui-button-primary" href="javascript:void(0)" onClick="saveStatusDataWithType('+id+', '+typeString+')">Save</a>'+
+                            '<a class="aui-button aui-button-default" href="javascript:void(0)" onClick="cancelStatusDataWithType('+id+', '+typeString+')">Cancel</a>'+
+                        '</td>';
+                    
+                    $('#status_'+type+'_'+id).html(edit_html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+    
+    
+    /**
+    * Function for cancel edit status in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function saveStatusDataWithType(id, type) {
+
+        var editedName = $('#editStatus'+type+'Name'+id).val();
+        var editedDescription = $('#editStatus'+type+'Desc'+id).val();
+        var editedColor = $('#editStatus'+type+'Color'+id).val();
+
+        if(editedName !== "")
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_status_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_status_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_status_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_status_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.sc_name.toLowerCase() == editedName.toLowerCase() && e.id != id);
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique name', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "PUT",
+                    "url": "/configuration/status?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'config_status_id': id,
+                        'sc_name': editedName,
+                        'sc_description': editedDescription,
+                        'sc_color': editedColor,
+                        'sc_type': type.toLowerCase()
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {                 
+                            getProjectStatusDataByType(type.toLowerCase())
+                        }
+                    }
+                });
+            }
+        }
+        else
+        {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for cancel edit status in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function cancelStatusDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/configuration/status/id?project_id={{projectId}}&user={{userAccountId}}&config_status_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let status = data.res.data;
+
+                    let html_data = '<td>' + status.sc_name + '</td>' +
+                        '<td>' + status.sc_description + '</td>' +
+                        '<td><span class="color-box" style="background: '+status.sc_color+';"></span></td>' +
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a href="javascript:void(0)" onclick="editProjectStatusDataWithType('+id+', '+typeString+')" style="margin-left: 22.5px;">'+
+                                '<img src={{furl "/images/edit.svg"}} />'+
+                            '</a>'+
+                            '<a href="javascript:void(0)" onclick="deleteProjectStatusDataWithType('+id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>'    
+                        '</td>';
+                    
+                    $('#status_'+type+'_'+id).html(html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project custom field test case Data Section ----------------- **/
+
+
+
+    function getCheckInputField(check) {
+        if (check === 0) {
+            return '<input class="text medium-field checkbox" type="checkbox" readonly/>';
+        }
+        else {
+            return '<input class="text medium-field checkbox" type="checkbox" checked readonly/>';
+        }
+    }
+
+
+    /**
+    * Function for get Project custom fields details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getProjectCustomFieldDataByType(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/customField/allList?project_id={{projectId}}&user={{userAccountId}}&cfc_type="+type+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    if(type === 'testcase') {
+                        testcase_customfield_list = data.res.data.customField;
+                        customFieldsTestCasesReloadCheck = true;
+                    } else if(type === 'testplan') {
+                        testplan_customfield_list = data.res.data.customField;
+                        customFieldsTestPlansReloadCheck = true;
+                    } else if(type === 'testcycle') {
+                        testcycle_customfield_list = data.res.data.customField;
+                        customFieldsTestCyclesReloadCheck = true;
+                    } else if(type === 'teststep') {
+                        teststep_customfield_list = data.res.data.customField;
+                        customFieldsTestStepsReloadCheck = true;
+                    } else if(type === 'testexecution') {
+                        testexecution_customfield_list = data.res.data.customField;
+                        customFieldsTestExecutionsReloadCheck = true;
+                    }
+                    
+                    let data_list = data.res.data.customField;
+                    
+                    $('#custom-fields_'+type+'s_tbody').html('');
+                    if(data_list.length > 0)
+                    {
+                        let typeString = "'"+type+"'";
+                        
+                        for (let i = 0; i < data_list.length; i++) 
+                        {                                
+                            let html_data = '<tr id="custom-fields_'+type+'_'+data_list[i].id+'">' +
+                                '<td>' + data_list[i].cfc_name + '</td>' +
+                                '<td>' + data_list[i].cfc_field_type + '</td>' +
+                                '<td>' + getCheckInputField(data_list[i].cfc_required_flag) + '</td>' +
+                                '<td style="width: 7.5px;" class="trash">'+
+                                    '<a href="javascript:void(0)" onclick="editProjectCustomFieldDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 6px;">'+
+                                        '<img src={{furl "/images/edit.svg"}} />'+
+                                    '</a>'+
+                                    '<a href="javascript:void(0)" onclick="deleteProjectCustomFieldDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>'+
+                                '</td>' +
+                            '</tr>';
+
+                            $('#custom-fields_'+type+'s_tbody').append(html_data);
+                        }
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+    /**
+    * Function for add customer fields details in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{name}} 
+    * @param {{input_type}}
+    * @return success error message
+    */
+    function addProjectCustomFieldDataWithType(type) {
+        var name = $('#customFields'+type+'NameInput').val();
+        var field_type = $('#customFields'+type+'FieldTypeSelect').val();
+        var is_required_checkbox = document.getElementById('customFields'+type+'IsRequired');
+        var is_required = 0;
+
+        if (is_required_checkbox.checked) {
+            is_required = 1;
+        }
+
+        if (name !== "" && field_type !== "Choose Field Type") 
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_customfield_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_customfield_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_customfield_list;
+            } else if(type.toLowerCase() === 'teststep') {
+                local_data_list = teststep_customfield_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_customfield_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.cfc_name.toLowerCase() == name.toLowerCase() && e.cfc_field_type == field_type);
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique data', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/customField?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'cfc_name': name,
+                        'cfc_field_type': field_type,
+                        'cfc_required_flag': is_required,
+                        'cfc_status': 1,
+                        'cfc_type': type.toLowerCase(),
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectCustomFieldDataByType(type.toLowerCase());
+                            toaster('New custom field added successfully');
+                            $('#customFields'+type+'NameInput').val('');
+                            $('#customFields'+type+'FieldTypeSelect').val('');
+                            document.getElementById('customFields'+type+'IsRequired').checked = false;                  
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for deleteing custom field in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function deleteProjectCustomFieldDataWithType(id, type) {
+        if (id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/customField?user={{userAccountId}}&project_id={{projectId}}&cfield_id=" + id + "&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getProjectCustomFieldDataByType(type);
+                        toaster('Custom field deleted successfully');
+                    }
+                }
+            });
+        }
+    }   
+    
+    
+    /**
+    * Function for editing custom fields in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function editProjectCustomFieldDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/customField/id?project_id={{projectId}}&user={{userAccountId}}&cfield_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let customField = data.res.data.customField;   
+
+                    let edit_html_data = '<td><input class="text medium-field editBox_input" type="text" id="editCustomField'+type+'Name'+id+'" name="editCustomField'+type+'Name'+id+'" value="' + customField.cfc_name + '" placeholder="Type a name" style="width: 187.5px;"></td>' +
+                        '<td class="select-field-type">'+
+                            '<select class="select editBox_input" id="editCustomField'+type+'Select'+id+'" name="editCustomField'+type+'Select'+id+'" style="width: 187.5px;">'+
+                                '<option value="">Choose Field Type</option>';                           
+
+                        if(configurationCustomFieldSelect.length > 0)
+                        {
+                            for (let i = 0; i < configurationCustomFieldSelect.length; i++) 
+                            {
+                                edit_html_data += '<option value="'+configurationCustomFieldSelect[i].ftd_name+'">'+configurationCustomFieldSelect[i].ftd_name+'</option>';
+                            }
+                        }
+
+                        edit_html_data += '</select></td><td>';
+
+                        if(customField.cfc_required_flag === 1) {
+                            edit_html_data += '<input class="text medium-field checkbox" type="checkbox" id="editCustomField'+type+'Checkbox'+id+'" name="editCustomField'+type+'Checkbox'+id+'" checked>';                         
+                        } else {
+                            edit_html_data += '<input class="text medium-field checkbox" type="checkbox" id="editCustomField'+type+'Checkbox'+id+'" name="editCustomField'+type+'Checkbox'+id+'">';                         
+                        }
+
+                        edit_html_data += '</td>' +
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a class="aui-button aui-button-primary" href="javascript:void(0)" onClick="saveCustomFieldDataWithType('+id+', '+typeString+')">Save</a>'+
+                            '<a class="aui-button aui-button-default" href="javascript:void(0)" onClick="cancelCustomFieldDataWithType('+id+', '+typeString+')">Cancel</a>'+
+                        '</td>';
+                    
+                    $('#custom-fields_'+type+'_'+id).html(edit_html_data);
+                    $('#editCustomField'+type+'Select'+id+' option[value="'+customField.cfc_field_type+'"]').attr('selected', 'selected');
+
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+    
+    
+    /**
+    * Function for cancel edit custom fields in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function saveCustomFieldDataWithType(id, type) {
+
+        var editedName = $('#editCustomField'+type+'Name'+id).val();
+        var editedSelect = $('#editCustomField'+type+'Select'+id).val();
+
+        var editedCheckbox = document.getElementById('editCustomField'+type+'Checkbox'+id);
+        var is_required = 0;
+
+        if (editedCheckbox.checked) {
+            is_required = 1;
+        }
+
+        if(editedName !== "" && editedSelect !== "")
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_customfield_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_customfield_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_customfield_list;
+            } else if(type.toLowerCase() === 'teststep') {
+                local_data_list = teststep_customfield_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_customfield_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.cfc_name.toLowerCase() == editedName.toLowerCase() && e.cfc_field_type == editedSelect && e.id != id);
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique data', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "PUT",
+                    "url": "/customField?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'cfield_id': id,
+                        'cfc_name': editedName,
+                        'cfc_field_type': editedSelect,
+                        'cfc_required_flag': is_required
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectCustomFieldDataByType(type.toLowerCase());
+                        }
+                    }
+                });
+            }
+        }
+        else
+        {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for cancel edit custom fields in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function cancelCustomFieldDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/customField/id?project_id={{projectId}}&user={{userAccountId}}&cfield_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let customField = data.res.data.customField;   
+
+                    let html_data = '<td>' + customField.cfc_name + '</td>' +
+                        '<td>' + customField.cfc_field_type + '</td>' +
+                        '<td>' + getCheckInputField(customField.cfc_required_flag) + '</td>' +
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a href="javascript:void(0)" onclick="editProjectCustomFieldDataWithType('+id+', '+typeString+')" style="margin-left: 6px;">'+
+                                '<img src={{furl "/images/edit.svg"}} />'+
+                            '</a>'+
+                            '<a href="javascript:void(0)" onclick="deleteProjectCustomFieldDataWithType('+id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>'+
+                        '</td>';
+                    
+                    $('#custom-fields_'+type+'_'+id).html(html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project priority Data Section ----------------- **/
+
+
+    /**
+    * Function for get Project priority details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getProjectPriorityDataByType(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/priority/allList?project_id={{projectId}}&user={{userAccountId}}&priority_type="+type+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    if(type === 'testcase') {
+                        testcase_priority_list = data.res.data.priority;
+                        priorityTestCasesReloadCheck = true;
+                    } else if(type === 'testplan') {
+                        testplan_priority_list = data.res.data.priority;
+                        priorityTestPlansReloadCheck = true;
+                    } else if(type === 'testcycle') {
+                        testcycle_priority_list = data.res.data.priority;
+                        priorityTestCyclesReloadCheck = true;
+                    } else if(type === 'testexecution') {
+                        testexecution_priority_list = data.res.data.priority;
+                        priorityTestExecutionsReloadCheck = true;
+                    }
+                    
+                    let data_list = data.res.data.priority;
+
+                    $('#priority_'+type+'s_tbody').html('');
+                    if(data_list.length > 0)
+                    {
+                        let typeString = "'"+type+"'";
+
+                        for (let i = 0; i < data_list.length; i++) 
+                        {                                 
+                            let html_data = '<tr id="priority_'+type+'_'+data_list[i].id+'">' +
+                                '<td>' + data_list[i].pc_name + '</td>' +
+                                '<td><span class="color-box" style="background: '+data_list[i].priority_color+';"></span></td>' +
+                                '<td style="width: 7.5px;" class="trash">'+
+                                    '<a href="javascript:void(0)" onclick="editProjectPriorityDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 6px;">'+
+                                        '<img src={{furl "/images/edit.svg"}} />'+
+                                    '</a>'+
+                                    '<a href="javascript:void(0)" onclick="deleteProjectPriorityDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>'+
+                                '</td>' +
+                            '</tr>';
+                            
+                            $('#priority_'+type+'s_tbody').append(html_data);
+                        }
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+    /**
+    * Function for add Project priority details in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{name}} 
+    * @param {{label}} 
+    * @param {{color}} 
+    * @return success error message
+    */
+    function addProjectPriorityDataWithType(type) {
+        var name = $('#priority'+type+'NameInput').val();
+        var color = $('#priority'+type+'ColorInput').val();
+
+        if (name !== "") 
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_priority_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_priority_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_priority_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_priority_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.pc_name.toLowerCase() == name.toLowerCase());
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique data', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/priority?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'pc_name': name,
+                        'priority_color': color,
+                        'priority_type': type.toLowerCase(),
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textPriority, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectPriorityDataByType(type.toLowerCase());
+                            toaster('New priority added successfully');
+                            $('#priority'+type+'NameInput').val('');
+                            $('#priority'+type+'LabelInput').val('');                   
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for deleteing priority in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function deleteProjectPriorityDataWithType(id, type) {
+        if (id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/priority?project_id={{projectId}}&user={{userAccountId}}&priority_id=" + id +"&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textPriority, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getProjectPriorityDataByType(type);
+                        toaster('Priority deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    /**
+    * Function for editing priority in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function editProjectPriorityDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/priority/id?project_id={{projectId}}&user={{userAccountId}}&priority_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textSAtatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let priority = data.res.data.priority;
+
+                    let edit_html_data = '<td><input class="text medium-field editBox_input" type="text" id="editPriority'+type+'Name'+id+'" name="editPriority'+type+'Name'+id+'" value="' + priority.pc_name + '" placeholder="Type a name" style="width: 405.75px;"></td>' +
+                        '<td><input class="text medium-field color-picker" type="color" id="editPriority'+type+'Color'+id+'" name="editPriority'+type+'Color'+id+'" value="'+priority.priority_color+'"></td>' +
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a class="aui-button aui-button-primary" href="javascript:void(0)" onClick="savePriorityDataWithType('+id+', '+typeString+')">Save</a>'+
+                            '<a class="aui-button aui-button-default" href="javascript:void(0)" onClick="cancelPriorityDataWithType('+id+', '+typeString+')">Cancel</a>'+
+                        '</td>';
+                    
+                    $('#priority_'+type+'_'+id).html(edit_html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+    
+    
+    /**
+    * Function for cancel edit priority in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function savePriorityDataWithType(id, type) {
+
+        var editedName = $('#editPriority'+type+'Name'+id).val();
+        var editedColor = $('#editPriority'+type+'Color'+id).val();
+
+        if(editedName !== "")
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_priority_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_priority_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_priority_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_priority_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.pc_name.toLowerCase() == editedName.toLowerCase() && e.id != id);
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique data', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "PUT",
+                    "url": "/priority?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'acct_id': "{{userAccountId}}",
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'priority_id': id,
+                        'pc_name': editedName,
+                        'priority_color': editedColor
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textSAtatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectPriorityDataByType(type.toLowerCase());
+                        }
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                });
+            }
+        }
+        else
+        {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for cancel edit status in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function cancelPriorityDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/priority/id?project_id={{projectId}}&user={{userAccountId}}&priority_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textSAtatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let priority = data.res.data.priority;
+
+                    let html_data = '<td>' + priority.pc_name + '</td>' +
+                        '<td><span class="color-box" style="background: '+priority.priority_color+';"></span></td>' +
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a href="javascript:void(0)" onclick="editProjectPriorityDataWithType('+id+', '+typeString+')" style="margin-left: 6px;">'+
+                                '<img src={{furl "/images/edit.svg"}} />'+
+                            '</a>'+
+                            '<a href="javascript:void(0)" onclick="deleteProjectPriorityDataWithType('+id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>'    
+                        '</td>';
+                    
+                    $('#priority_'+type+'_'+id).html(html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project component test case Data Section ----------------- **/
+
+    /**
+    * Function for get Project component details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getProjectComponentDataByType(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/component/componentList?project_id={{projectId}}&user={{userAccountId}}&cp_type="+type+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textComponent, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    if(type === 'testcase') {
+                        testcase_component_list = data.res.data;
+                        componentTestCasesReloadCheck = true;
+                    } else if(type === 'testplan') {
+                        testplan_component_list = data.res.data;
+                        componentTestPlansReloadCheck = true;
+                    } else if(type === 'testcycle') {
+                        testcycle_component_list = data.res.data;
+                        componentTestCyclesReloadCheck = true;
+                    } else if(type === 'testexecution') {
+                        testexecution_component_list = data.res.data;
+                        componentTestExecutionsReloadCheck = true;
+                    }
+                    
+                    let data_list = data.res.data;
+
+                    $('#component_'+type+'s_tbody').html('');
+                    if(data_list.length > 0)
+                    {
+                        let typeString = "'"+type+"'";
+
+                        for (let i = 0; i < data_list.length; i++) 
+                        {
+                            let action_data = "";
+
+                            action_data = '<a href="javascript:void(0)" onclick="editProjectComponentDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 6px;">'+
+                                    '<img src={{furl "/images/edit.svg"}} />'+
+                                '</a>'+
+                                '<a href="javascript:void(0)" onclick="deleteProjectComponentDataWithType('+data_list[i].id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>';                                   
+
+                            let html_data = '<tr id="component_'+type+'_'+data_list[i].id+'">' +
+                                '<td>' + data_list[i].cp_name + '</td>' +
+                                '<td>' + data_list[i].cp_description + '</td>' +
+                                {{!-- '<td><span class="color-box" style="background: '+data_list[i].cp_color+';"></span></td>' + --}}
+                                '<td style="width: 7.5px;" class="trash">'+action_data+'</td>' +
+                            '</tr>';
+                            
+                            $('#component_'+type+'s_tbody').append(html_data);
+                        }
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+    /**
+    * Function for add Project component details in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{name}} 
+    * @param {{description}} 
+    * @param {{color}} 
+    * @return success error message
+    */
+    function addProjectComponentDataWithType(type) {
+        var name = $('#component'+type+'NameInput').val();
+        var description = $('#component'+type+'DescInput').val();
+        var color = ""; //$('#component'+type+'ColorInput').val();
+
+        if (name !== "") 
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_component_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_component_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_component_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_component_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.cp_name.toLowerCase() == name.toLowerCase());
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique data', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/component/create?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'cp_name': name,
+                        'cp_description': description,
+                        'cp_color': "#ffffff",
+                        'cp_type': type.toLowerCase(),
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textComponent, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            getProjectComponentDataByType(type.toLowerCase());
+                            toaster('New component added successfully');
+                            $('#component'+type+'NameInput').val('');
+                            $('#component'+type+'DescInput').val('');
+                            $('#component'+type+'ColorInput').val('#DFE1E5');                    
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for deleteing component in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function deleteProjectComponentDataWithType(id, type) {
+        if (id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/component/delete?project_id={{projectId}}&user={{userAccountId}}&component_id=" + id +"&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textComponent, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getProjectComponentDataByType(type);
+                        toaster('Component deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    /**
+    * Function for editing component in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function editProjectComponentDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/component/id?project_id={{projectId}}&user={{userAccountId}}&component_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textComponent, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let component = data.res.data;
+
+                    let edit_html_data = '<td><input class="text medium-field editBox_input" type="text" id="editComponent'+type+'Name'+id+'" name="editComponent'+type+'Name'+id+'" value="' + component.cp_name + '" placeholder="Type a name" style="width: 176.25px;"></td>' +
+                        '<td><input class="text medium-field editBox_input" type="text" id="editComponent'+type+'Desc'+id+'" name="editComponent'+type+'Desc'+id+'" value="' + component.cp_description + '" placeholder="Type a description" style="width: 471.75px;"></td>' +
+                        {{!-- '<td><input class="text medium-field color-picker" type="color" id="editComponent'+type+'Color'+id+'" name="editComponent'+type+'Color'+id+'" value="'+component.cp_color+'"></td>' + --}}
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a class="aui-button aui-button-primary" href="javascript:void(0)" onClick="saveComponentDataWithType('+id+', '+typeString+')">Save</a>'+
+                            '<a class="aui-button aui-button-default" href="javascript:void(0)" onClick="cancelComponentDataWithType('+id+', '+typeString+')">Cancel</a>'+
+                        '</td>';
+                    
+                    $('#component_'+type+'_'+id).html(edit_html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+    
+    
+    /**
+    * Function for cancel edit component in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function saveComponentDataWithType(id, type) {
+
+        var editedName = $('#editComponent'+type+'Name'+id).val();
+        var editedDescription = $('#editComponent'+type+'Desc'+id).val();
+        var editedColor = ""; //$('#editComponent'+type+'Color'+id).val();
+
+        if(editedName !== "")
+        {
+            let local_data_list = [];
+
+            if(type.toLowerCase() === 'testcase') {
+                local_data_list = testcase_component_list;
+            } else if(type.toLowerCase() === 'testplan') {
+                local_data_list = testplan_component_list;
+            } else if(type.toLowerCase() === 'testcycle') {
+                local_data_list = testcycle_component_list;
+            } else if(type.toLowerCase() === 'testexecution') {
+                local_data_list = testexecution_component_list;
+            }
+
+            const tempcheck = local_data_list.findIndex(e => e.cp_name.toLowerCase() == editedName.toLowerCase() && e.id != id);
+            if(tempcheck >= 0) 
+            {
+                toaster('Please enter unique data', 'warning');
+            } 
+            else 
+            {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "PUT",
+                    "url": "/component/update?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        'project_id': "{{projectId}}",
+                        'domain_id': domain_id,
+                        'component_id': id,
+                        'cp_name': editedName,
+                        'cp_description': editedDescription,
+                        'cp_color': "#ffffff",
+                        'cp_type': type.toLowerCase(),
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textComponent, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {                    
+                            getProjectComponentDataByType(type.toLowerCase())
+                        }
+                    }
+                });
+            }
+        }
+        else
+        {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+    
+    
+    /**
+    * Function for cancel edit component in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{id}}
+    * @return success error message
+    */
+    function cancelComponentDataWithType(id, type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/component/id?project_id={{projectId}}&user={{userAccountId}}&component_id="+id+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textComponent, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    let typeString = "'"+type+"'";
+                    let component = data.res.data;
+
+                    let html_data = '<td>' + component.cp_name + '</td>' +
+                        '<td>' + component.cp_description + '</td>' +
+                        {{!-- '<td><span class="color-box" style="background: '+component.cp_color+';"></span></td>' + --}}
+                        '<td style="width: 7.5px;" class="trash">'+
+                            '<a href="javascript:void(0)" onclick="editProjectComponentDataWithType('+id+', '+typeString+')" style="margin-left:6px;">'+
+                                '<img src={{furl "/images/edit.svg"}} />'+
+                            '</a>'+
+                            '<a href="javascript:void(0)" onclick="deleteProjectComponentDataWithType('+id+', '+typeString+')" style="margin-left: 15px;">'+redDeleteIcon+'</a>'    
+                        '</td>';
+                    
+                    $('#component_'+type+'_'+id).html(html_data);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Sub Menu clicking functionality Section ----------------- **/
+
+    /**
+    * Function for changing submenu tabs
+    *
+    * @param {{page}}
+    * @return Active Page
+    */
+
+    function changeConfigurationPage(page) {
+
+        $(".configuration-common-class").removeClass("active");
+        $(".configuration-common-class-div").css("display", "none");
+
+        if (page === "configuration-environment") {
+
+            if(!configurationEnvironmentReloadCheck) {
+                getProjectConfigurationEnvironmentData();
+            }
+            $("#current_page_tag").html("Environment");
+        }
+        else if (page === "configuration-label") {
+
+            if(!configurationLabelReloadCheck) {
+                getProjectConfigurationLabelData();
+            }
+            $("#current_page_tag").html("Label");
+        }
+        else if (page === "configuration-dataset") {
+
+            if(!configurationDatasetReloadCheck) {
+                getProjectConfigurationDatasetData()
+            }
+            $("#current_page_tag").html("Dataset");
+        }
+        else if (page === "status-test-cases") {    
+
+            if(!statusTestCasesReloadCheck) {
+                getProjectStatusDataByType('testcase')
+            }       
+            $("#current_page_tag").html("Test Case Statuses");
+        }
+        else if (page === "status-test-plans") {       
+
+            if(!statusTestPlansReloadCheck) {
+                getProjectStatusDataByType('testplan')
+            }            
+            $("#current_page_tag").html("Test Plans Statuses");
+        }
+        else if (page === "status-test-cycles") {          
+
+            if(!statusTestCyclesReloadCheck) {
+                getProjectStatusDataByType('testcycle')
+            }           
+            $("#current_page_tag").html("Test Cycles Statuses");
+        }
+        else if (page === "status-test-executions") {         
+
+            if(!statusTestExecutionsReloadCheck) {
+                getProjectStatusDataByType('testexecution')
+            }            
+            $("#current_page_tag").html("Test Executions Statuses");
+        }
+        else if (page === "custom-fields-test-cases") {  
+
+            if(!customFieldsTestCasesReloadCheck) {
+                getProjectCustomFieldDataByType('testcase')
+            }          
+            $("#current_page_tag").html("Custom Field For Test Case");
+        }
+        else if (page === "custom-fields-test-plans") {     
+
+            if(!customFieldsTestPlansReloadCheck) {
+                getProjectCustomFieldDataByType('testplan')
+            }       
+            $("#current_page_tag").html("Custom Field For Test Plans");
+        }
+        else if (page === "custom-fields-test-cycles") {   
+
+            if(!customFieldsTestCyclesReloadCheck ) {
+                getProjectCustomFieldDataByType('testcycle')
+            }         
+            $("#current_page_tag").html("Custom Field For Test Cycles");
+        }
+        else if (page === "custom-fields-test-steps") {  
+
+            if(!customFieldsTestStepsReloadCheck ) {
+                getProjectCustomFieldDataByType('teststep')
+            }          
+            $("#current_page_tag").html("Custom Field For Test Steps");
+        }
+        else if (page === "custom-fields-test-executions") {  
+
+            if(!customFieldsTestExecutionsReloadCheck ) {
+                getProjectCustomFieldDataByType('testexecution')
+            }          
+            $("#current_page_tag").html("Custom Field For Test Executions");
+        }
+        else if (page === "priority-test-cases") {  
+
+            if(!priorityTestCasesReloadCheck ) {
+                getProjectPriorityDataByType('testcase')
+            }          
+            $("#current_page_tag").html("Priority For Test Case");
+        }
+        else if (page === "priority-test-plans") {  
+
+            if(!priorityTestPlansReloadCheck ) {
+                getProjectPriorityDataByType('testplan')
+            }          
+            $("#current_page_tag").html("Priority For Test Plans");
+        }
+        else if (page === "priority-test-cycles") {  
+
+            if(!priorityTestCyclesReloadCheck ) {
+                getProjectPriorityDataByType('testcycle')
+            }          
+            $("#current_page_tag").html("Priority For Test Cycles");
+        }
+        else if (page === "priority-test-executions") {  
+
+            if(!priorityTestExecutionsReloadCheck ) {
+                getProjectPriorityDataByType('testexecution')
+            }          
+            $("#current_page_tag").html("Priority For Test Executions");
+        }
+        else if (page === "component-test-cases") {    
+
+            if(!componentTestCasesReloadCheck) {
+                getProjectComponentDataByType('testcase')
+            }       
+            $("#current_page_tag").html("Test Case Component");
+        }
+        else if (page === "component-test-plans") {       
+
+            if(!componentTestPlansReloadCheck) {
+                getProjectComponentDataByType('testplan')
+            }            
+            $("#current_page_tag").html("Test Plans Component");
+        }
+        else if (page === "component-test-cycles") {          
+
+            if(!componentTestCyclesReloadCheck) {
+                getProjectComponentDataByType('testcycle')
+            }           
+            $("#current_page_tag").html("Test Cycles Component");
+        }
+        else if (page === "component-test-executions") {         
+
+            if(!componentTestExecutionsReloadCheck) {
+                getProjectComponentDataByType('testexecution')
+            }            
+            $("#current_page_tag").html("Test Executions Component");
+        }
+
+        $("#"+page).addClass("active");
+        $("#"+page+"-div").css("display", "block");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function getTokendata() {
+        console.log("Token")
+        console.log("{{token}}")
+        console.log("User Id")
+        console.log("{{userAccountId}}")
+    }
+
+
+
+</script>

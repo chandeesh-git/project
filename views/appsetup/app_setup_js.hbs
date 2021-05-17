@@ -1,0 +1,2110 @@
+<script>
+
+
+    var manageRolesReloadCheck = false;
+    var manageGroupsReloadCheck = false;
+
+
+    var finalWarning = true;
+
+
+    var projectData = null;
+    var projectRole = [];
+    var projectRoleUsers = [];
+    var projectRoleGroups = [];
+    var projectGroup = [];
+    var projectGroupUsers = [];
+    var userList = [];
+
+
+
+
+
+    AP.request('/rest/api/2/user/search?query=', {
+        success: function (responceUserList) {
+            userList = JSON.parse(responceUserList).filter(ru => ru.accountType === "atlassian")
+        }
+    });
+
+
+
+
+
+    AP.request('/rest/api/2/user/groups?accountId={{userAccountId}}', {
+        success: function (response) {
+            let site_admin_check = response.includes("site-admins");
+            if (site_admin_check) {
+                changeInitialPage('initial-setting');
+                getProjectData();
+            } else {
+                $('#appSetupFunctionality').remove();
+                $('#action-loader-wrapper').css('display', 'none');
+                $('#project-loader-wrapper').css('display', 'none');
+            }
+        }
+    });
+
+
+
+
+
+    /** -------------------- Project Data Section ----------------- **/
+
+    /**
+    * Function for get project details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @return Project data
+    */
+    function getProjectData() {
+        $.ajax({
+            "type": "GET",
+            "url": "/project/id?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#project-loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    projectOldHistory = true;
+
+                    $('#projectRegionSelector').css('pointer-events', 'none');
+                    selectedRegion = data.res.data.region_id;
+
+                    if (data.res.data.inquestPro_enabled === 1) {
+                        enableInquestPermissionToggle = true;
+                        document.getElementById('enableInquestPermissionToggle').checked = true;
+                        $("#select-issue-type-enabled").css("display", "block");
+                    }
+
+                    if (data.res.data.permission_status === 1) {
+                        document.getElementById('enableInquestSubPermissionToggle').checked = true;
+                        $("#select-role-permission-issue-type-enabled").css("display", "block");
+                    }
+
+                    if (data.res.data.story_enabled === 1) {
+                        document.getElementById('enableInquestStoryToggle').checked = true;
+                    }
+
+                    if (data.res.data.task_enabled === 1) {
+                        document.getElementById('enableInquestTaskToggle').checked = true;
+                    }
+
+                    if (data.res.data.bug_enabled === 1) {
+                        document.getElementById('enableInquestBugToggle').checked = true;
+                    }
+
+                    if (data.res.data.epic_enabled === 1) {
+                        document.getElementById('enableInquestEpicToggle').checked = true;
+                    }
+
+                    if (data.res.data.subtask_enabled === 1) {
+                        document.getElementById('enableInquestSubTaskToggle').checked = true;
+                    }
+                }
+                $('#project-loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+    function disableRegionWarning() {       
+        $('#projectRegionSelectorWarning').css('display', 'block') 
+    }
+
+
+
+
+    function closeRegionDialog() {
+        finalWarning = true;
+        $("#region-warning-text").text('');
+        AJS.dialog2("#action-regino-selection-confirm-dialog").hide();
+        document.getElementById('enableInquestPermissionToggle').checked = false;
+    }
+
+
+
+
+
+    function enableInquertProWithSelectedRegion() {
+        $("#region-warning-text").text('');
+        AJS.dialog2("#action-regino-selection-confirm-dialog").hide();
+        finalWarning = false;
+        enabledInquestPro();
+    }
+
+
+
+    /** -------------------- Project Permission Section ----------------- **/
+
+    /**
+    * Function for enable/disable inquestPRO for project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{project_id}}
+    * @param {{inquestPro_enabled}}
+    * @return success error message
+    */
+    function enabledInquestPro() 
+    {
+        var inquestPro_enabled = 0;
+        var toggle = document.getElementById('enableInquestPermissionToggle');
+
+        if (toggle.checked && !projectOldHistory) {
+
+            var story_enabled = 0;
+            var task_enabled = 0;
+            var bug_enabled = 0;
+            var epic_enabled = 0;
+            var subTask_enabled = 0;
+            var permission_enabled = 0;
+
+            var region_select = $('#app_region_select').val();
+
+            if(region_select != "")
+            {
+                if(finalWarning) 
+                {
+                    let regions_name = regionList.filter(r => r.id == region_select)[0].regions_name;
+                    $("#region-warning-text").text("Are you sure to enable Inquest PRO extension with "+regions_name+" region? You'll NOT be able to change the region once you enable the plugin.");
+                    AJS.dialog2("#action-regino-selection-confirm-dialog").show();
+                } 
+                else
+                {
+                    $('#action-loader-wrapper').css('display', 'flex');
+                    $.ajax({
+                        "type": "GET",
+                        "url": "/globalIssueType/id?user={{userAccountId}}&domain_id=" + domain_id,
+                        "headers": {
+                            'Authorization': "JWT "+user_token,
+                        },
+                        "dataType": "json",
+                        "error": function (xhr, textStatus, errorThrown) {
+                            toaster('Error while fetching domain details', 'error');
+                        },
+                        "success": function (data) {
+                            if (data.res.status === 200) {
+
+                                $('#projectRegionSelector').css('pointer-events', 'none');
+
+                                if (data.res.data.permission_status === 1) {
+                                    document.getElementById('enableInquestSubPermissionToggle').checked = true;
+                                    $("#select-role-permission-issue-type-enabled").css("display", "block");
+                                    permission_enabled = 1
+                                }
+
+                                if (data.res.data.story_enabled === 1) {
+                                    document.getElementById('enableInquestStoryToggle').checked = true;
+                                    story_enabled = 1
+                                }
+
+                                if (data.res.data.task_enabled === 1) {
+                                    document.getElementById('enableInquestTaskToggle').checked = true;
+                                    task_enabled = 1
+                                }
+
+                                if (data.res.data.bug_enabled === 1) {
+                                    document.getElementById('enableInquestBugToggle').checked = true;
+                                    bug_enabled = 1
+                                }
+
+                                if (data.res.data.epic_enabled === 1) {
+                                    document.getElementById('enableInquestEpicToggle').checked = true;
+                                    epic_enabled = 1
+                                }
+
+                                if (data.res.data.subtask_enabled === 1) {
+                                    document.getElementById('enableInquestSubTaskToggle').checked = true;
+                                    subTask_enabled = 1
+                                }
+                            }
+                                
+                            $.ajax({
+                                "type": "POST",
+                                "url": "/project?user={{userAccountId}}",
+                                "headers": {
+                                    'Authorization': "JWT "+user_token,
+                                },
+                                "data": {
+                                    'project_id': "{{projectId}}",
+                                    'acct_id': "{{userAccountId}}",
+                                    'inquestPro_enabled': 1,
+                                    'domain_id': domain_id,
+                                    'story_enabled': story_enabled,
+                                    'bug_enabled': bug_enabled,
+                                    'task_enabled': task_enabled,
+                                    'epic_enabled': epic_enabled,
+                                    'subtask_enabled': subTask_enabled,
+                                    'permission_status': permission_enabled,
+                                    'region_id': region_select
+                                },
+                                "dataType": "json",
+                                "error": function (xhr, textStatus, errorThrown) {
+                                    toaster('Error while fetching project details', 'error');
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                },
+                                "success": function (data) {
+                                    if (data.res.status === 200) {
+                                        toaster('InquestPRO enabled successfully');
+                                        $("#select-issue-type-enabled").css("display", "block");
+                                        enableInquestPermissionToggle = true;
+                                        $('#app_region_select').addClass('select-side-icon');
+                                        $('#projectRegionSelector').css('pointer-events', 'none');
+                                        $('#projectRegionSelectorWarning').css('display', 'none');
+                                    } else {
+                                        toggle.checked = false;
+                                    }
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                }
+                            });
+                        }
+                    });  
+                }
+            }
+            else
+            {
+                $('#projectRegionSelectorWarning').css('display', 'block')
+                document.getElementById('enableInquestPermissionToggle').checked = false;
+            }
+        }
+        else 
+        {
+            $('#projectRegionSelector').css('pointer-events', 'none');
+
+            let temp_inquestPro_enabled = 0
+
+            if (toggle.checked) {
+                temp_inquestPro_enabled = 1
+            } else {
+                temp_inquestPro_enabled = 0
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+
+            $.ajax({
+                "type": "PUT",
+                "url": "/project?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'project_id': "{{projectId}}",
+                    'acct_id': "{{userAccountId}}",
+                    'inquestPro_enabled': temp_inquestPro_enabled,
+                    'domain_id': domain_id
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        if (toggle.checked) {
+                            toaster('InquestPRO enabled successfully');
+                            $("#select-issue-type-enabled").css("display", "block");
+                            enableInquestPermissionToggle = true;
+                        } else {
+                            toaster('InquestPRO disabled successfully');
+                            $("#select-issue-type-enabled").css("display", "none");
+                            enableInquestPermissionToggle = false;
+                        }
+                    } else {
+                        toggle.checked = false;
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+    }
+
+    /**
+    * Function for enable/disable inquestPRO permission for project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{project_id}}
+    * @param {{storyToggle}}
+    * @param {{taskToggle}}
+    * @param {{bugToggle}}
+    * @param {{epicToggle}}
+    * @param {{subTaskToggle}}
+    * @return success error message
+    */
+    function setInquestProPermission() {
+        var storyToggle = document.getElementById('enableInquestStoryToggle');
+        var taskToggle = document.getElementById('enableInquestTaskToggle');
+        var bugToggle = document.getElementById('enableInquestBugToggle');
+        var epicToggle = document.getElementById('enableInquestEpicToggle');
+        var subTaskToggle = document.getElementById('enableInquestSubTaskToggle');
+
+        var story_enabled = 0;
+        var task_enabled = 0;
+        var bug_enabled = 0;
+        var epic_enabled = 0;
+        var subTask_enabled = 0;
+
+        if (storyToggle.checked) {
+            story_enabled = 1
+        } else {
+            story_enabled = 0
+        }
+
+        if (taskToggle.checked) {
+            task_enabled = 1
+        } else {
+            task_enabled = 0
+        }
+
+        if (bugToggle.checked) {
+            bug_enabled = 1
+        } else {
+            bug_enabled = 0
+        }
+
+        if (epicToggle.checked) {
+            epic_enabled = 1
+        } else {
+            epic_enabled = 0
+        }
+
+        if (subTaskToggle.checked) {
+            subTask_enabled = 1
+        } else {
+            subTask_enabled = 0
+        }
+
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        $.ajax({
+            "type": "PUT",
+            "url": "/project?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": {
+                'project_id': "{{projectId}}",
+                'acct_id': "{{userAccountId}}",
+                'story_enabled': story_enabled,
+                'bug_enabled': bug_enabled,
+                'task_enabled': task_enabled,
+                'epic_enabled': epic_enabled,
+                'subtask_enabled': subTask_enabled,
+                'domain_id': domain_id
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                toaster('Permission updated successfully');
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+    /**
+    * Function for enable/disable inquestPRO sub permission for project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{project_id}}
+    * @param {{permissionStatusToggle}}
+    * @return success error message
+    */
+    function enabledSubPermission() {
+        var permissionStatusToggle = document.getElementById('enableInquestSubPermissionToggle');
+        var permission_status_enabled = 0;
+
+        if (permissionStatusToggle.checked) {
+            permission_status_enabled = 1
+        } else {
+            permission_status_enabled = 0
+        }
+
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        $.ajax({
+            "type": "PUT",
+            "url": "/project?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": {
+                'project_id': "{{projectId}}",
+                'acct_id': "{{userAccountId}}",
+                'permission_status': permission_status_enabled,
+                'domain_id': domain_id
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+                if (permissionStatusToggle.checked) {
+                    permissionStatusToggle.checked = false;
+                } else {
+                    permissionStatusToggle.checked = true;
+                }
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    toaster('Permission updated successfully');
+                    if (permissionStatusToggle.checked) {
+                        $("#select-role-permission-issue-type-enabled").css("display", "block");
+                    } else {
+                        $("#select-role-permission-issue-type-enabled").css("display", "none");
+                    }
+                } else {
+                    if (permissionStatusToggle.checked) {
+                        permissionStatusToggle.checked = false;
+                    } else {
+                        permissionStatusToggle.checked = true;
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+    /** -------------------- Sub Menu clicking functionality Section ----------------- **/
+
+    /**
+    * Function for changing submenu tabs
+    *
+    * @param {{page}}
+    * @return Active Page
+    */
+
+    function changeInitialPage(page) {
+        if (page === "initial-setting") {
+            $("#current_page_tag").html("Initial Settings");
+
+            $("#initial-setting").addClass("active");
+            $("#rbac-setting").removeClass("active");
+            $("#manage-roles").removeClass("active");
+            $("#manage-groups").removeClass("active");
+
+            $("#initial-setting-div").css("display", "block");
+            $("#rbac-setting-div").css("display", "none");
+            $("#manage-roles-div").css("display", "none");
+            $("#manage-groups-div").css("display", "none");
+        }
+        else if (page === "manage-roles" && enableInquestPermissionToggle) {
+            getManageRolesData();
+            $("#current_page_tag").html("Manage Roles");
+
+            $("#initial-setting").removeClass("active");
+            $("#rbac-setting").removeClass("active");
+            $("#manage-roles").addClass("active");
+            $("#manage-groups").removeClass("active");
+
+            $("#initial-setting-div").css("display", "none");
+            $("#rbac-setting-div").css("display", "none");
+            $("#manage-roles-div").css("display", "block");
+            $("#manage-groups-div").css("display", "none");
+        }
+        else if (page === "manage-groups" && enableInquestPermissionToggle) {
+            getManageRolesData();
+            getManageGroupsData()
+            $("#current_page_tag").html("Manage Groups");
+
+            $("#initial-setting").removeClass("active");
+            $("#rbac-setting").removeClass("active");
+            $("#manage-roles").removeClass("active");
+            $("#manage-groups").addClass("active");
+
+            $("#initial-setting-div").css("display", "none");
+            $("#rbac-setting-div").css("display", "none");
+            $("#manage-roles-div").css("display", "none");
+            $("#manage-groups-div").css("display", "block");
+        }
+        else if (page === "rbac-setting" && enableInquestPermissionToggle) {
+            getManageRolesData();
+            $("#current_page_tag").html("Permission settings");
+
+            $("#initial-setting").removeClass("active");
+            $("#rbac-setting").addClass("active");
+            $("#manage-roles").removeClass("active");
+            $("#manage-groups").removeClass("active");
+
+            $("#initial-setting-div").css("display", "none");
+            $("#rbac-setting-div").css("display", "block");
+            $("#manage-roles-div").css("display", "none");
+            $("#manage-groups-div").css("display", "none");
+        }
+        else {
+            toaster('<b>Application not initialized</b><br>Please enable app to customize roles, groups and Permission settings.', 'info');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    function getGroupUserSelectOption(group_id) {
+        let groupUser = projectGroupUsers.filter(u => u.group_id == group_id)
+
+        for (let i = 0; i < userList.length; i++) {
+            const check = groupUser.findIndex(u => {
+                return u.jira_acct_id == userList[i].accountId;
+            });
+
+            if (check == -1) {
+                $('#select2-group-' + group_id).append('<option value="' + userList[i].accountId + '====' + userList[i].displayName + '">' + userList[i].displayName + '</option>');
+            } else {
+                $('#select2-group-' + group_id).append('<option value="' + userList[i].accountId + '====' + userList[i].displayName + '" selected>' + userList[i].displayName + '</option>');
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    function updateGroupInRoleUserSelectOption() {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/group/activeList?user={{userAccountId}}&project_id={{projectId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching groups details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    projectGroup = data.res.data;
+
+                    $.ajax({
+                        "type": "GET",
+                        "url": "/userRole/listAll?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+                        "headers": {
+                            'Authorization': "JWT "+user_token,
+                        },
+                        "error": function (xhr, textStatus, errorThrown) {
+                            toaster('Error while fetching role details', 'error');
+                            $('#action-loader-wrapper').css('display', 'none');
+                        },
+                        "success": function (response) {
+                            if (response.res.status === 200) {
+                                projectRoleUsers = response.res.data.userData;
+                                projectRoleGroups = response.res.data.groupData;
+
+                                for (let i = 0; i < projectRole.length; i++) {
+                                    $('#select2-role-' + projectRole[i].id).html('');
+                                    let roleUser = response.res.data.userData.filter(u => u.role_id == projectRole[i].id)
+
+                                    // loop for role user
+                                    for (let j = 0; j < userList.length; j++) {
+                                        const check = roleUser.findIndex(u => {
+                                            return u.jira_acct_id == userList[j].accountId;
+                                        });
+                                        if (check == -1) {
+                                            $('#select2-role-' + projectRole[i].id).append('<option value="' + userList[j].accountId + '====' + userList[j].displayName + '====user">' + userList[j].displayName + '</option>');
+                                        } else {
+                                            $('#select2-role-' + projectRole[i].id).append('<option value="' + userList[j].accountId + '====' + userList[j].displayName + '====user" selected>' + userList[j].displayName + '</option>');
+                                        }
+                                    }
+
+                                    // loop for role group
+                                    for (let k = 0; k < projectGroup.length; k++) {
+                                        if (projectGroup[k].role_id == null || projectGroup[k].role_id == 0) {
+                                            $('#select2-role-' + projectRole[i].id).append('<option class="group-icon" value="' + projectGroup[k].id + '====' + projectGroup[k].group_name + '====group">' + projectGroup[k].group_name + '</option>');
+                                        } else if (projectGroup[k].role_id == projectRole[i].id) {
+                                            $('#select2-role-' + projectRole[i].id).append('<option value="' + projectGroup[k].id + '====' + projectGroup[k].group_name + '====group" selected>' + projectGroup[k].group_name + '</option>');
+                                        }
+                                    }
+
+                                    AJS.$('#select2-role-' + projectRole[i].id).auiSelect2();
+                                }
+                                $('#action-loader-wrapper').css('display', 'none');
+                            }
+                            else {
+                                toaster('Error while fetching data', 'error');
+                                $('#action-loader-wrapper').css('display', 'none');
+                            }
+                        }
+                    });
+                }
+                else {
+                    toaster('Error while fetching data', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+    /** -------------------- Manage Role Section ----------------- **/
+
+    /**
+    * Function for getting role of project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @return success error message
+    */
+    function getManageRolesData() {
+        if (enableInquestPermissionToggle) {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/role/list?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching role details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        manageRolesReloadCheck = true;
+                        $('#manage-roles-list').html('');
+
+                        projectRole = data.res.data;
+                        for (let i = 0; i < projectRole.length; i++) 
+                        {                            
+                            let manage_roles_html = '<div id="role-id-' + projectRole[i].id + '" class="row padding-row">' +
+                                '<div class="col-2 title">' +
+                                '<label>' + projectRole[i].role_name + '</label>' +
+                                '</div>' +
+                                '<div class="col-10 display-flex-custom">' +
+                                '<div class="input-bg">' +
+                                '<select id="select2-role-' + projectRole[i].id + '" class="multi-selector-dropdown" multiple="multiple" onchange=getRoleUserData("select2-role-' + projectRole[i].id + '")>' +
+                                '</select>' +
+                                '</div>';
+                                
+                                if(projectRole[i].delete_flag === 0) {
+                                    manage_roles_html += '<div class="manage-role-delete-btn" onclick="deleteManageRole(' + projectRole[i].id + ')">' + redDeleteIcon + '</div>';
+                                }
+
+                                manage_roles_html += '</div>' +
+                                '</div>';
+
+                            $('#manage-roles-list').append(manage_roles_html)
+                            AJS.$('#select2-role-' + projectRole[i].id).auiSelect2();
+                        }
+                        updateGroupInRoleUserSelectOption();
+                        updateRBACRoleDropdownWithTableRow();
+                    }
+                    else {
+                        toaster('Error while fetching data', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+    * Function for adding role in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}} 
+    * @param {{projectId}} 
+    * @param {{roleName}} 
+    * @return success error message
+    */
+    function addManageRoles() {
+        var roleName = $('#manageRoleInput').val();
+        if (roleName !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "POST",
+                "url": "/role?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'acct_id': "{{userAccountId}}",
+                    'role_name': roleName,
+                    'project_id': "{{projectId}}",
+                    'domain_id': domain_id
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        projectRole.push(data.res.data);
+                        toaster('New role <b>' + roleName + '</b> created successfully');
+
+                        $('#manage-roles-list').append(
+                            '<div id="role-id-' + data.res.data.id + '" class="row padding-row">' +
+                            '<div class="col-2 title">' +
+                            '<label>' + roleName + '</label>' +
+                            '</div>' +
+                            '<div class="col-10 display-flex-custom">' +
+                            '<div class="input-bg">' +
+                            '<select id="select2-role-' + data.res.data.id + '" class="multi-selector-dropdown" multiple="multiple" onchange=getRoleUserData("select2-role-' + data.res.data.id + '")>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="manage-role-delete-btn" onclick="deleteManageRole(' + data.res.data.id + ')">' + redDeleteIcon + '</div>' +
+                            '</div>' +
+                            '</div>'
+                        )
+
+                        AJS.$('#select2-role-' + data.res.data.id).auiSelect2();
+                        updateGroupInRoleUserSelectOption()
+
+                        $('#manageRoleInput').val('');
+                        $('#rbac_testcase_select').append('<option value="' + data.res.data.id + '">' + roleName + '</option>');
+                        $('#rbac_testcycle_select').append('<option value="' + data.res.data.id + '">' + roleName + '</option>');
+                        $('#rbac_testplan_select').append('<option value="' + data.res.data.id + '">' + roleName + '</option>');
+                        $('#rbac_reports_select').append('<option value="' + data.res.data.id + '">' + roleName + '</option>');
+                        $('#rbac_configurations_select').append('<option value="' + data.res.data.id + '">' + roleName + '</option>');
+                    }
+                    else if (data.res.status === 401)
+                    {
+                        toaster(data.res.message, 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+            });
+        }
+        else {
+            toaster('Please enter role name', 'warning');
+        }
+    }
+
+    /**
+    * Function for deleteing role in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{role_id}}
+    * @return success error message
+    */
+    function deleteManageRole(role_id) {
+        if (role_id !== "") {
+            
+            $('#action-loader-wrapper').css('display', 'flex');
+
+            $.ajax({
+                "type": "GET",
+                "url": "/userRole/listActive?user={{userAccountId}}&project_id={{projectId}}&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching groups details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        let groupData = data.res.data.groupData.filter(g => g.role_id == role_id);
+                        let userData = data.res.data.userData.filter(u => u.role_id == role_id);
+
+                        if (role_id !== "" && groupData.length === 0 && userData.length === 0) 
+                        {
+                            $.ajax({
+                                "type": "DELETE",
+                                "url": "/role?user={{userAccountId}}&acct_id={{userAccountId}}&role_id=" + role_id,
+                                "headers": {
+                                    'Authorization': "JWT "+user_token,
+                                },
+                                "dataType": "json",
+                                "error": function (xhr, textStatus, errorThrown) {
+                                    toaster('Error while fetching project details', 'error');
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                },
+                                "success": function (data) {
+                                    if (data.res.status === 200) {
+                                        projectRole = projectRole.filter(p => p.id != role_id);
+                                        updateGroupInRoleUserSelectOption();
+                                        toaster('Role deleted successfully');
+                                        $('#role-id-' + role_id).remove();
+                                        $('#rbac_testcase_select option[value="' + role_id + '"]').remove();
+                                        $('#rbac_testcycle_select option[value="' + role_id + '"]').remove();
+                                        $('#rbac_testplan_select option[value="' + role_id + '"]').remove();
+                                        $('#rbac_reports_select option[value="' + role_id + '"]').remove();
+                                        $('#rbac_configurations_select option[value="' + role_id + '"]').remove();
+                                        $('#action-loader-wrapper').css('display', 'none');
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            $('#action-loader-wrapper').css('display', 'none');
+                            toaster('The users/group are associated with the role. Please remove users/group from the role to delete.', 'warning');
+                        }
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+
+
+
+
+
+
+
+
+
+
+
+            
+        }
+    }
+
+
+
+    /** -------------------- Manage Group Section ----------------- **/
+
+    /**
+    * Function for getting Group of project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @return success error message
+    */
+    function getManageGroupsData() {
+        if (enableInquestPermissionToggle) {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/group/activeList?user={{userAccountId}}&project_id={{projectId}}&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching groups details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        manageGroupsReloadCheck = true;
+                        projectGroup = data.res.data;
+
+                        $.ajax({
+                            "type": "GET",
+                            "url": "/userGroup/listActive?user={{userAccountId}}&project_id={{projectId}}&domain_id=" + domain_id,
+                            "headers": {
+                                'Authorization': "JWT "+user_token,
+                            },
+                            "error": function (xhr, textStatus, errorThrown) {
+                                toaster('Error while fetching groups details', 'error');
+                                $('#action-loader-wrapper').css('display', 'none');
+                            },
+                            "success": function (data) {
+                                if (data.res.status === 200) {
+                                    projectGroupUsers = data.res.data;
+
+                                    $('#manage-groups-list').html('');
+
+                                    for (let i = 0; i < projectGroup.length; i++) 
+                                    {                                        
+                                        let manageGroupHtml = '<div id="groups-id-' + projectGroup[i].id + '" class="row padding-row">' +
+                                            '<div class="col-2 title">' +
+                                            '<label>' + projectGroup[i].group_name + '</label>' +
+                                            '</div>' +
+                                            '<div class="col-10 display-flex-custom">' +
+                                            '<div class="input-bg">' +
+                                            '<select id="select2-group-' + projectGroup[i].id + '" class="multi-selector-dropdown" multiple="multiple" onchange=getGroupUserData("select2-group-' + projectGroup[i].id + '")>' +
+                                            '</select>' +
+                                            '</div>';
+                                            
+                                            if(projectGroup[i].delete_flag === 0) {
+                                                manageGroupHtml += '<div class="manage-role-delete-btn" onclick="deleteManageGroup(' + projectGroup[i].id + ')">' + redDeleteIcon + '</div>';
+                                            }
+
+                                            manageGroupHtml += '</div>' +
+                                            '</div>';
+
+                                        $('#manage-groups-list').append(manageGroupHtml)
+
+                                        getGroupUserSelectOption(projectGroup[i].id)
+                                        AJS.$('#select2-group-' + projectGroup[i].id).auiSelect2();
+                                    }
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                }
+                                else {
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+    * Function for adding group in project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param {{groupName}}
+    * @return success error message
+    */
+    function addManageGroups() {
+        var groupName = $('#manageGroupInput').val();
+        if (groupName !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "POST",
+                "url": "/group?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'project_id': "{{projectId}}",
+                    'acct_id': "{{userAccountId}}",
+                    'group_name': groupName,
+                    'domain_id': domain_id
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        toaster('New group <b>' + groupName + '</b> created successfully');
+
+                        $('#manage-groups-list').append(
+                            '<div id="groups-id-' + data.res.data.id + '" class="row padding-row">' +
+                            '<div class="col-2 title">' +
+                            '<label>' + groupName + '</label>' +
+                            '</div>' +
+                            '<div class="col-10 display-flex-custom">' +
+                            '<div class="input-bg">' +
+                            '<select id="select2-group-' + data.res.data.id + '" class="multi-selector-dropdown" multiple="multiple" onchange=getGroupUserData("select2-group-' + data.res.data.id + '")>' +
+                            '</select>' +
+                            '</div>' +
+                            '<div class="manage-role-delete-btn" onclick="deleteManageGroup(' + data.res.data.id + ')">' + redDeleteIcon + '</div>' +
+                            '</div>' +
+                            '</div>'
+                        )
+
+                        getGroupUserSelectOption(data.res.data.id)
+                        AJS.$('#select2-group-' + data.res.data.id).auiSelect2();
+
+                        $('#manageGroupInput').val('');
+                        updateGroupInRoleUserSelectOption()
+                    }
+                    else if (data.res.status === 401)
+                    {
+                        toaster(data.res.message, 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+            });
+        }
+        else {
+            toaster('Please enter group name', 'warning');
+        }
+    }
+
+    /**
+    * Function for deleteing group in specific project
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{group_id}}
+    * @return success error message
+    */
+    function deleteManageGroup(group_id) {
+        
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/userGroup/listActive?user={{userAccountId}}&project_id={{projectId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching groups details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let groupUser = data.res.data.filter(u => u.group_id == group_id);
+
+                    if (group_id !== "" && groupUser.length === 0) {
+                        $('#action-loader-wrapper').css('display', 'flex');
+                        $.ajax({
+                            "type": "DELETE",
+                            "url": "/group?user={{userAccountId}}&acct_id={{userAccountId}}&group_id=" + group_id,
+                            "headers": {
+                                'Authorization': "JWT "+user_token,
+                            },
+                            "dataType": "json",
+                            "error": function (xhr, textStatus, errorThrown) {
+                                toaster('Error while fetching project details', 'error');
+                                $('#action-loader-wrapper').css('display', 'none');
+                            },
+                            "success": function (data) {
+                                if (data.res.status === 200) {
+                                    toaster('Group deleted successfully');
+                                    $('#groups-id-' + group_id).remove();
+                                    updateGroupInRoleUserSelectOption()
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        $('#action-loader-wrapper').css('display', 'none');
+                        toaster('The users are associated with this group. Please remove the users from the group to delete.', 'warning');
+                    }
+                }            
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+    function getCheckInputField(tab_id, role_id, check) {
+        if (check === 0) {
+            return '<input class="checkbox" type="checkbox" name="checkBoxOne" id="' + tab_id + '" value="' + role_id + '" onchange="updateRBACSettingData(this)"/>';
+        }
+        else {
+            return '<input class="checkbox" type="checkbox" name="checkBoxOne" id="' + tab_id + '" value="' + role_id + '" onchange="updateRBACSettingData(this)" checked/>';
+        }
+    }
+
+
+
+
+
+
+
+
+
+    function getRBACTestCasesRow(role) {
+        let check_for_all = 0;
+        if (
+            role.allow_testcase_create === 1 &&
+            role.allow_testcase_read === 1 &&
+            role.allow_testcase_edit === 1 &&
+            role.allow_testcase_delete === 1 &&
+            role.allow_testcase_execute === 1 &&
+            role.testcase_lock === 1 &&
+            role.allow_testcase_folders === 1
+        ) {
+            check_for_all = 1;
+        }
+
+        $('#rbac_testcase_tbody').append('<tr>' +
+            '<td>' + role.role_name + '</td>' +
+            '<td>' + getCheckInputField('allow_testcase_all', role.id, check_for_all) + '</td>' +
+            '<td>' + getCheckInputField("allow_testcase_create", role.id, role.allow_testcase_create) + '</td>' +
+            '<td>' + getCheckInputField("allow_testcase_read", role.id, role.allow_testcase_read) + '</td>' +
+            '<td>' + getCheckInputField("allow_testcase_edit", role.id, role.allow_testcase_edit) + '</td>' +
+            '<td>' + getCheckInputField("allow_testcase_delete", role.id, role.allow_testcase_delete) + '</td>' +
+            '<td>' + getCheckInputField("allow_testcase_execute", role.id, role.allow_testcase_execute) + '</td>' +
+            '<td>' + getCheckInputField("testcase_lock", role.id, role.testcase_lock) + '</td>' +
+            '<td>' + getCheckInputField("allow_testcase_folders", role.id, role.allow_testcase_folders) + '</td>' +
+            '<td class="trash"><a href="javascript:void(0)" id="delete_test_cases--' + role.id + '" onclick="deleteRBACSettingRole(this)">' + deleteIcon + '</a></td>' +
+            '</tr>');
+    }
+
+
+
+
+
+
+
+
+
+    function getRBACTestCyclesRow(role) {
+        let check_for_all = 0;
+        if (
+            role.allow_testcycle_create === 1 &&
+            role.allow_testcycle_view === 1 &&
+            role.allow_testcycle_edit === 1 &&
+            role.allow_testcycle_delete === 1 &&
+            role.allow_testcycle_execute === 1 &&
+            role.allow_testcycle_folders === 1
+        ) {
+            check_for_all = 1;
+        }
+
+        $('#rbac_testcycle_tbody').append('<tr>' +
+            '<td>' + role.role_name + '</td>' +
+            '<td>' + getCheckInputField('allow_testcycle_all', role.id, check_for_all) + '</td>' +
+            '<td>' + getCheckInputField('allow_testcycle_create', role.id, role.allow_testcycle_create) + '</td>' +
+            '<td>' + getCheckInputField('allow_testcycle_view', role.id, role.allow_testcycle_view) + '</td>' +
+            '<td>' + getCheckInputField('allow_testcycle_edit', role.id, role.allow_testcycle_edit) + '</td>' +
+            '<td>' + getCheckInputField('allow_testcycle_delete', role.id, role.allow_testcycle_delete) + '</td>' +
+            '<td>' + getCheckInputField('allow_testcycle_execute', role.id, role.allow_testcycle_execute) + '</td>' +
+            '<td>' + getCheckInputField('allow_testcycle_folders', role.id, role.allow_testcycle_folders) + '</td>' +
+            '<td class="trash"><a href="javascript:void(0)" id="delete_test_cycles--' + role.id + '" onclick="deleteRBACSettingRole(this)">' + deleteIcon + '</a></td>' +
+            '</tr>');
+    }
+
+
+
+
+
+
+
+
+
+    function getRBACTestPlansRow(role) {
+        let check_for_all = 0;
+        if (
+            role.allow_testplan_create === 1 &&
+            role.allow_testplan_delete === 1 &&
+            role.allow_testplan_edit === 1 &&
+            role.allow_testplan_folders === 1 &&
+            role.allow_testplan_view === 1
+        ) {
+            check_for_all = 1;
+        }
+
+        $('#rbac_testplan_tbody').append('<tr>' +
+            '<td>' + role.role_name + '</td>' +
+            '<td>' + getCheckInputField('allow_testplan_all', role.id, check_for_all) + '</td>' +
+            '<td>' + getCheckInputField('allow_testplan_create', role.id, role.allow_testplan_create) + '</td>' +
+            '<td>' + getCheckInputField('allow_testplan_view', role.id, role.allow_testplan_view) + '</td>' +
+            '<td>' + getCheckInputField('allow_testplan_edit', role.id, role.allow_testplan_edit) + '</td>' +
+            '<td>' + getCheckInputField('allow_testplan_delete', role.id, role.allow_testplan_delete) + '</td>' +
+            '<td>' + getCheckInputField('allow_testplan_folders', role.id, role.allow_testplan_folders) + '</td>' +
+            '<td class="trash"><a href="javascript:void(0)" id="delete_test_plans--' + role.id + '" onclick="deleteRBACSettingRole(this)">' + deleteIcon + '</a></td>' +
+            '</tr>');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function updateRBACRoleDropdownWithTableRow() {
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        $.ajax({
+            "type": "GET",
+            "url": "/role/list?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching role details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    projectRole = data.res.data;
+
+                    $('#rbac_testcase_select').html('<option value="">Select Role</option>');
+                    $('#rbac_testcycle_select').html('<option value="">Select Role</option>');
+                    $('#rbac_testplan_select').html('<option value="">Select Role</option>');
+                    $('#rbac_reports_select').html('<option value="">Select Role</option>');
+                    $('#rbac_configurations_select').html('<option value="">Select Role</option>');
+
+                    $('#rbac_testcase_tbody').html('');
+                    $('#rbac_testcycle_tbody').html('');
+                    $('#rbac_testplan_tbody').html('');
+                    $('#rbac_reports_tbody').html('');
+                    $('#rbac_configurations_tbody').html('');
+
+                    for (let i = 0; i < projectRole.length; i++) {
+                        if (
+                            projectRole[i].allow_testcase_create === null &&
+                            projectRole[i].allow_testcase_read === null &&
+                            projectRole[i].allow_testcase_edit === null &&
+                            projectRole[i].allow_testcase_execute === null &&
+                            projectRole[i].allow_testcase_delete === null &&
+                            projectRole[i].testcase_lock === null &&
+                            projectRole[i].allow_testcase_folders === null
+                        ) {
+                            $('#rbac_testcase_select').append('<option value="' + projectRole[i].id + '">' + projectRole[i].role_name + '</option>');
+                        } else {
+                            getRBACTestCasesRow(projectRole[i]);
+                        }
+
+                        if (
+                            projectRole[i].allow_testcycle_create === null &&
+                            projectRole[i].allow_testcycle_view === null &&
+                            projectRole[i].allow_testcycle_edit === null &&
+                            projectRole[i].allow_testcycle_delete === null &&
+                            projectRole[i].allow_testcycle_execute === null &&
+                            projectRole[i].allow_testcycle_folders === null
+                        ) {
+                            $('#rbac_testcycle_select').append('<option value="' + projectRole[i].id + '">' + projectRole[i].role_name + '</option>');
+                        } else {
+                            getRBACTestCyclesRow(projectRole[i]);
+                        }
+
+                        if (
+                            projectRole[i].allow_testplan_create === null &&
+                            projectRole[i].allow_testplan_delete === null &&
+                            projectRole[i].allow_testplan_edit === null &&
+                            projectRole[i].allow_testplan_folders === null &&
+                            projectRole[i].allow_testplan_view === null
+                        ) {
+                            $('#rbac_testplan_select').append('<option value="' + projectRole[i].id + '">' + projectRole[i].role_name + '</option>');
+                        } else {
+                            getRBACTestPlansRow(projectRole[i]);
+                        }
+
+                        if (projectRole[i].allow_reports_create === null) {
+                            $('#rbac_reports_select').append('<option value="' + projectRole[i].id + '">' + projectRole[i].role_name + '</option>');
+                        } else {
+                            $('#rbac_reports_tbody').append('<tr>' +
+                                '<td>' + projectRole[i].role_name + '</td>' +
+                                '<td>' + getCheckInputField('allow_reports_create', projectRole[i].id, projectRole[i].allow_reports_create) + '</td>' +
+                                '<td class="trash"><a href="javascript:void(0)" id="delete_reports--' + projectRole[i].id + '" onclick="deleteRBACSettingRole(this)">' + deleteIcon + '</a></td>' +
+                                '</tr>');
+                        }
+
+                        if (projectRole[i].allow_configuration === null) {
+                            $('#rbac_configurations_select').append('<option value="' + projectRole[i].id + '">' + projectRole[i].role_name + '</option>');
+                        } else {
+                            $('#rbac_configurations_tbody').append('<tr>' +
+                                '<td>' + projectRole[i].role_name + '</td>' +
+                                '<td>' + getCheckInputField('allow_configuration', projectRole[i].id, projectRole[i].allow_configuration) + '</td>' +
+                                '<td class="trash"><a href="javascript:void(0)" id="delete_configurations--' + projectRole[i].id + '" onclick="deleteRBACSettingRole(this)">' + deleteIcon + '</a></td>' +
+                                '</tr>');
+                        }
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+                else {
+                    toaster('Error while fetching data', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function addRoleInRbacTestCases() {
+        var role_id = $('#rbac_testcase_select').val();
+        if (role_id !== '') {
+            var roleUpdateData = {
+                'role_id': role_id,
+                "allow_testcase_create": 0,
+                "allow_testcase_edit": 0,
+                "allow_testcase_read": 0,
+                "allow_testcase_delete": 0,
+                "allow_testcase_execute": 0,
+                "testcase_lock": 0,
+                "allow_testcase_folders": 0,
+            }
+
+            var ajax_data = {
+                'acct_id': "{{userAccountId}}",
+                'roleUpdate': JSON.stringify([roleUpdateData])
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "PUT",
+                "url": "/role?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": ajax_data,
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching group details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        toaster('Role added in <b>Test Case</b> successfully');
+                        const i = projectRole.findIndex(p => {
+                            return p.id == role_id;
+                        });
+                        projectRole[i] = { ...projectRole[i], ...roleUpdateData };
+                        getRBACTestCasesRow(projectRole[i]);
+                        $('#rbac_testcase_select option[value="' + role_id + '"]').remove();
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                    else {
+                        toaster('Error while fetching group details', 'error');
+                    }
+                }
+            });
+        }
+        else {
+            toaster('Please select role first', 'warning');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    function addRoleInRbacTestCycles() {
+        var role_id = $('#rbac_testcycle_select').val();
+        if (role_id !== '') {
+            var roleUpdateData = {
+                'role_id': role_id,
+                "allow_testcycle_create": 0,
+                "allow_testcycle_view": 0,
+                "allow_testcycle_edit": 0,
+                "allow_testcycle_delete": 0,
+                "allow_testcycle_execute": 0,
+                "allow_testcycle_folders": 0,
+            }
+
+            var ajax_data = {
+                'acct_id': "{{userAccountId}}",
+                'roleUpdate': JSON.stringify([roleUpdateData])
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "PUT",
+                "url": "/role?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": ajax_data,
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching group details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    toaster('Role added in <b>Test Cycles</b> successfully');
+                    const i = projectRole.findIndex(p => {
+                        return p.id == role_id;
+                    });
+                    projectRole[i] = { ...projectRole[i], ...roleUpdateData };
+                    getRBACTestCyclesRow(projectRole[i]);
+                    $('#rbac_testcycle_select option[value="' + role_id + '"]').remove();
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+        else {
+            toaster('Please select role first', 'warning');
+        }
+    }
+
+
+
+
+
+
+
+
+
+    function addRoleInRbacTestPlans() {
+        var role_id = $('#rbac_testplan_select').val();
+        if (role_id !== '') {
+            var roleUpdateData = {
+                'role_id': role_id,
+                "allow_testplan_create": 0,
+                "allow_testplan_view": 0,
+                "allow_testplan_edit": 0,
+                "allow_testplan_delete": 0,
+                "allow_testplan_folders": 0,
+            }
+
+            var ajax_data = {
+                'acct_id': "{{userAccountId}}",
+                'roleUpdate': JSON.stringify([roleUpdateData])
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "PUT",
+                "url": "/role?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": ajax_data,
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching group details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    toaster('Role added in <b>Test Cycles</b> successfully');
+                    const i = projectRole.findIndex(p => {
+                        return p.id == role_id;
+                    });
+                    projectRole[i] = { ...projectRole[i], ...roleUpdateData };
+                    getRBACTestPlansRow(projectRole[i]);
+                    $('#rbac_testplan_select option[value="' + role_id + '"]').remove();
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+        else {
+            toaster('Please select role first', 'warning');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    function addRoleInRbacReports() {
+        var role_id = $('#rbac_reports_select').val();
+        if (role_id !== '') {
+            var roleUpdateData = {
+                'role_id': role_id,
+                "allow_reports_create": 0
+            }
+
+            var ajax_data = {
+                'acct_id': "{{userAccountId}}",
+                'roleUpdate': JSON.stringify([roleUpdateData])
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "PUT",
+                "url": "/role?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": ajax_data,
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching group details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    toaster('Role added in <b>Test Case</b> successfully');
+                    const i = projectRole.findIndex(p => {
+                        return p.id == role_id;
+                    });
+                    projectRole[i] = { ...projectRole[i], ...roleUpdateData };
+                    $('#rbac_reports_tbody').append('<tr>' +
+                        '<td>' + projectRole[i].role_name + '</td>' +
+                        '<td>' + getCheckInputField('allow_reports_create', projectRole[i].id, projectRole[i].allow_reports_create) + '</td>' +
+                        '<td class="trash"><a href="javascript:void(0)" id="delete_reports--' + projectRole[i].id + '" onclick="deleteRBACSettingRole(this)">' + deleteIcon + '</a></td>' +
+                        '</tr>');
+                    $('#rbac_reports_select option[value="' + role_id + '"]').remove();
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+        else {
+            toaster('Please select role first', 'warning');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    function addRoleInRbacConfiguration() {
+        var role_id = $('#rbac_configurations_select').val();
+        if (role_id !== '') {
+            var roleUpdateData = {
+                'role_id': role_id,
+                "allow_configuration": 0
+            }
+
+            var ajax_data = {
+                'acct_id': "{{userAccountId}}",
+                'roleUpdate': JSON.stringify([roleUpdateData])
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "PUT",
+                "url": "/role?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": ajax_data,
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching group details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    toaster('Role added in <b>Test Case</b> successfully');
+                    const i = projectRole.findIndex(p => {
+                        return p.id == role_id;
+                    });
+                    projectRole[i] = { ...projectRole[i], ...roleUpdateData };
+                    $('#rbac_configurations_tbody').append('<tr>' +
+                        '<td>' + projectRole[i].role_name + '</td>' +
+                        '<td>' + getCheckInputField('allow_configuration', projectRole[i].id, projectRole[i].allow_configuration) + '</td>' +
+                        '<td class="trash"><a href="javascript:void(0)" id="delete_configurations--' + projectRole[i].id + '" onclick="deleteRBACSettingRole(this)">' + deleteIcon + '</a></td>' +
+                        '</tr>');
+                    $('#rbac_configurations_select option[value="' + role_id + '"]').remove();
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+        else {
+            toaster('Please select role first', 'warning');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    function updateRBACSettingData(input_data) {
+        var status = 0
+        var roleUpdateData = null
+        var update_field = input_data.id
+
+        if (input_data.checked) {
+            status = 1
+        } else {
+            status = 0
+        }
+
+        if (input_data.id === "allow_testcase_all") {
+            roleUpdateData = {
+                'role_id': input_data.value,
+                "allow_testcase_create": status,
+                "allow_testcase_edit": status,
+                "allow_testcase_read": status,
+                "allow_testcase_delete": status,
+                "allow_testcase_execute": status,
+                "testcase_lock": status,
+                "allow_testcase_folders": status,
+            }
+        } else if (input_data.id === "allow_testcycle_all") {
+            roleUpdateData = {
+                'role_id': input_data.value,
+                "allow_testcycle_create": status,
+                "allow_testcycle_view": status,
+                "allow_testcycle_edit": status,
+                "allow_testcycle_delete": status,
+                "allow_testcycle_execute": status,
+                "allow_testcycle_folders": status,
+            }
+        } else if (input_data.id === "allow_testplan_all") {
+            roleUpdateData = {
+                'role_id': input_data.value,
+                "allow_testplan_create": status,
+                "allow_testplan_view": status,
+                "allow_testplan_edit": status,
+                "allow_testplan_delete": status,
+                "allow_testplan_folders": status,
+            }
+        } else {
+            roleUpdateData = {
+                'role_id': input_data.value
+            }
+            roleUpdateData[update_field] = status;
+        }
+
+        var ajax_data = {
+            'acct_id': "{{userAccountId}}",
+            'roleUpdate': JSON.stringify([roleUpdateData])
+        }
+
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "PUT",
+            "url": "/role?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": ajax_data,
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching group details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    updateRBACRoleDropdownWithTableRow()
+                    toaster('Permission settings updated successfully');
+                } else {
+                    toaster('Error while fetching group details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    function deleteRBACSettingRole(input_data) {
+        var roleUpdateData = null
+
+        var res = input_data.id.split("--");
+        var tab_id = res[0];
+        var role_id = res[1];
+
+        if (tab_id === "delete_test_cases") {
+            roleUpdateData = {
+                'role_id': role_id,
+                "allow_testcase_create": null,
+                "allow_testcase_edit": null,
+                "allow_testcase_read": null,
+                "allow_testcase_delete": null,
+                "allow_testcase_execute": null,
+                "testcase_lock": null,
+                "allow_testcase_folders": null,
+            }
+        } else if (tab_id === "delete_test_cycles") {
+            roleUpdateData = {
+                'role_id': role_id,
+                "allow_testcycle_create": null,
+                "allow_testcycle_view": null,
+                "allow_testcycle_edit": null,
+                "allow_testcycle_delete": null,
+                "allow_testcycle_execute": null,
+                "allow_testcycle_folders": null,
+            }
+        } else if (tab_id === "delete_test_plans") {
+            roleUpdateData = {
+                'role_id': role_id,
+                "allow_testplan_create": null,
+                "allow_testplan_view": null,
+                "allow_testplan_edit": null,
+                "allow_testplan_delete": null,
+                "allow_testplan_folders": null,
+            }
+        } else if (tab_id === "delete_reports") {
+            roleUpdateData = {
+                'role_id': role_id,
+                "allow_reports_create": null,
+            }
+        } else if (tab_id === "delete_configurations") {
+            roleUpdateData = {
+                'role_id': role_id,
+                "allow_configuration": null,
+            }
+        }
+
+        var ajax_data = {
+            'acct_id': "{{userAccountId}}",
+            'roleUpdate': JSON.stringify([roleUpdateData])
+        }
+
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "PUT",
+            "url": "/role?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": ajax_data,
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching group details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    updateRBACRoleDropdownWithTableRow()
+                    toaster('Permission settings deleted successfully');
+                } else {
+                    toaster('Error while fetching group details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+    function getRoleUserData(id) {
+        let role_id = id.replace("select2-role-", "");
+        let roleUserList = $('#' + id).val();
+        let roleUserObjectArray = [];
+        let roleGroupObjectArray = [];
+
+        if (roleUserList !== null) {
+            for (let i = 0; i < roleUserList.length; i++) {
+                let res = roleUserList[i].split("====");
+                if (res[2] === "user") {
+                    roleUserObjectArray.push({
+                        "acct_id": "{{userAccountId}}",
+                        "role_id": role_id,
+                        "user_name": res[1],
+                        "user_id": res[0],
+                        "jira_acct_id": res[0],
+                    });
+                }
+                else {
+                    roleGroupObjectArray.push({
+                        "acct_id": "{{userAccountId}}",
+                        "role_id": role_id,
+                        "group_id": res[0],
+                        "group_name": res[1],
+                        "id": parseInt(res[0]),
+                    });
+                }
+            }
+        }
+
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        let roleUserOldObjectArray = projectRoleUsers.filter(ru => ru.role_id == role_id);
+        let roleGroupOldObjectArray = projectRoleGroups.filter(ru => ru.role_id == role_id);
+
+        const getSetByKey = (arr, key) => new Set(arr.map(o => o[key]));
+        const filterBySet = (arr, set, key) => arr.filter(o => !set.has(o[key]));
+
+        const fn = (a, b, key) => {
+            const aMap = getSetByKey(a, key);
+            const bMap = getSetByKey(b, key);
+            return {
+                save: filterBySet(b, aMap, key),
+                remove: filterBySet(a, bMap, key),
+            };
+        };
+
+        const userResult = fn(roleUserOldObjectArray, roleUserObjectArray, 'jira_acct_id');
+
+        if (userResult['remove'].length > 0) {
+            for (let i = 0; i < userResult['remove'].length; i++) {
+                $.ajax({
+                    "type": "DELETE",
+                    "url": "/userRole?user={{userAccountId}}&id=" + userResult['remove'][i].id,
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while deleteing role user', 'error');
+                    },
+                    "success": function (data) {
+                        updateGroupInRoleUserSelectOption()
+                        toaster('Role user <b>' + userResult['remove'][i].user_name + '</b> deleted successfully');
+                    }
+                });
+            }
+        }
+
+        if (userResult['save'].length > 0) {
+            for (let i = 0; i < userResult['save'].length; i++) {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "POST",
+                    "url": "/userRole?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": userResult['save'][i],
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while update role user', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            updateGroupInRoleUserSelectOption()
+                            toaster('Role user <b>' + userResult['save'][i].user_name + '</b> added successfully');
+                        } else {
+                            toaster('Error while update role user', 'error');
+                        }
+                    }
+                });
+            }
+        }
+
+        const groupResult = fn(roleGroupOldObjectArray, roleGroupObjectArray, 'id');
+
+        if (groupResult['remove'].length > 0) {
+            for (let i = 0; i < groupResult['remove'].length; i++) {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "PUT",
+                    "url": "/group/updateRoleGroup?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": {
+                        "acct_id": "{{userAccountId}}",
+                        "role_id": 0,
+                        "group_id": groupResult['remove'][i].id,
+                    },
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while update role group', 'error');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            updateGroupInRoleUserSelectOption()
+                            toaster('Role group deleted successfully');
+                        } else {
+                            toaster('Error while update role group', 'error');
+                        }
+                    }
+                });
+            }
+        }
+
+        if (groupResult['save'].length > 0) {
+            for (let i = 0; i < groupResult['save'].length; i++) {
+                $('#action-loader-wrapper').css('display', 'flex');
+                $.ajax({
+                    "type": "PUT",
+                    "url": "/group/updateRoleGroup?user={{userAccountId}}",
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "data": groupResult['save'][i],
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while update role group', 'error');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+                            updateGroupInRoleUserSelectOption()
+                            toaster('Role group <b>' + groupResult['save'][i].group_name + '</b> added successfully');
+                        } else {
+                            toaster('Error while update role group', 'error');
+                        }
+                    }
+                });
+            }
+        }
+        
+        getManageRolesData();
+
+    }
+
+
+
+
+
+
+
+
+
+
+    function getGroupUserData(id) {
+        let group_id = id.replace("select2-group-", "");
+        let groupUserList = $('#' + id).val();
+        let groupUserObjectArray = [];
+
+        if (groupUserList !== null) {
+            for (let i = 0; i < groupUserList.length; i++) {
+                let res = groupUserList[i].split("====");
+                groupUserObjectArray.push({
+                    "acct_id": "{{userAccountId}}",
+                    "group_id": group_id,
+                    "user_name": res[1],
+                    "user_id": res[0],
+                    "jira_acct_id": res[0],
+                });
+            }
+        }
+
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/userGroup/listActive?user={{userAccountId}}&project_id={{projectId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while update group user', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let groupUserOldObjectArray = data.res.data.filter(ru => ru.group_id == group_id);
+
+                    const getSetByKey = (arr) => new Set(arr.map(o => o['jira_acct_id']));
+                    const filterBySet = (arr, set) => arr.filter(o => !set.has(o['jira_acct_id']));
+
+                    const fn = (a, b) => {
+                        const aMap = getSetByKey(a);
+                        const bMap = getSetByKey(b);
+                        return {
+                            save: filterBySet(b, aMap),
+                            remove: filterBySet(a, bMap),
+                        };
+                    };
+
+                    const result = fn(groupUserOldObjectArray, groupUserObjectArray);
+
+                    if (result['remove'].length > 0) {
+                        for (let i = 0; i < result['remove'].length; i++) {
+                            $.ajax({
+                                "type": "DELETE",
+                                "url": "/userGroup?user={{userAccountId}}&group_id=" + result['remove'][i].id,
+                                "headers": {
+                                    'Authorization': "JWT "+user_token,
+                                },
+                                "error": function (xhr, textStatus, errorThrown) {
+                                    toaster('Error while deleteing group user', 'error');
+                                },
+                                "success": function (data) {
+                                    toaster('Group user <b>' + result['remove'][i].user_name + '</b> deleted successfully');
+                                }
+                            });
+                        }
+                    }
+
+                    if (result['save'].length > 0) {
+                        for (let i = 0; i < result['save'].length; i++) {
+                            $('#action-loader-wrapper').css('display', 'flex');
+                            $.ajax({
+                                "type": "POST",
+                                "url": "/userGroup?user={{userAccountId}}",
+                                "headers": {
+                                    'Authorization': "JWT "+user_token,
+                                },
+                                "data": result['save'][i],
+                                "error": function (xhr, textStatus, errorThrown) {
+                                    toaster('Error while update group user', 'error');
+                                },
+                                "success": function (data) {
+                                    if (data.res.status === 200) {
+                                        toaster('Group user <b>' + result['save'][i].user_name + '</b> added successfully');
+                                    } else {
+                                        toaster('Error while update group user', 'error');
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    getManageGroupsData();
+                    
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+                else {
+                    toaster('Error while update group user', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+    function getTokendata() {
+
+        AP.context.getToken(function(token){
+            console.log("JWT token string", token);
+        });
+
+
+
+        {{!-- 
+        $.ajax({
+            "type": "GET",
+            "url": "http://example99.atlassian.net/plugins/servlet/ac/atlassian-connect-jira-addon/dropdown?classifier=json&project.id=10013&project.key=PTN",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching group details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                console.log(data)
+            }
+        }); --}}
+
+
+
+        {{!-- AP.request('/rest/api/2/search?jql=project=PTN&fields=id,key,summary,description,priority,status', {
+            success: function (responceUserList) {
+                console.log(responceUserList);               
+            }
+        }); --}}
+    }
+
+
+</script>

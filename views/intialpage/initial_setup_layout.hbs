@@ -1,0 +1,206 @@
+{{> common/head }}
+
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+
+<div id="loader-wrapper">
+  <aui-spinner size="large"></aui-spinner>
+</div>
+
+<script>
+
+  AP.request('/rest/api/2/user/groups?accountId={{userAccountId}}', {
+    success: function (response) {
+
+      let site_admin_check = response.includes("site-admins");
+
+      if (site_admin_check === "") {
+        site_admin_check = response.includes("administrators");
+      }
+
+      if (site_admin_check) {
+
+        $.ajax({
+          "type": "GET",
+          "url": "/project/id?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+          "headers": {
+            'Authorization': "JWT "+user_token,
+          },
+          "dataType": "json",
+          "error": function (xhr, textStatus, errorThrown) {
+            toaster('Error while fetching project details', 'error');
+          },
+          "success": function (data) {
+            if (data.res.status === 200) {
+              if (data.res.data.inquestPro_enabled === 1) {
+                redirectionForPage('testcase');
+              }
+              else {
+                window.location.href = "/project/projectView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}"
+              }
+            } 
+            else if (data.res.status === 401 && data.res.message === "Given ID not found") 
+            {              
+              window.location.href = "/project/projectView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}"
+            }
+          }
+        });
+
+      } else {
+
+        $.ajax({
+          "type": "GET",
+          "url": "/project/idOtherUser?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+          "headers": {
+            'Authorization': "JWT "+user_token,
+          },
+          "dataType": "json",
+          "error": function (xhr, textStatus, errorThrown) {
+            toaster('Error while fetching project details', 'error');
+          },
+          "success": function (data) {
+
+            if (data.res.status === 200) {
+
+              if (data.res.data.inquestPro_enabled != 1) {
+               $('#loader-wrapper').css('display', 'none');
+                AJS.flag({
+                  type: 'info',
+                  close: 'auto',
+                  body: "<b>Application not initialized</b><br>Please enable InquestPRO.",
+                });
+              } else {
+
+                let userRole = null;
+                let userRoleCheck = false;
+
+                if (data.res.data.userRole && data.res.data.userRole[0]) {
+                  userRole = data.res.data.userRole[0];
+                  userRoleCheck = true;
+                }
+
+                if (userRoleCheck) {
+
+                  if (
+                    userRole.allow_testcase_read === 1 ||
+                    userRole.allow_testcase_create === 1 ||
+                    userRole.allow_testcase_delete === 1 ||
+                    userRole.allow_testcase_execute === 1 ||
+                    userRole.testcase_lock === 1 ||
+                    userRole.allow_testcase_edit === 1 ||
+                    userRole.allow_testcase_folders === 1
+                  ) {
+                    redirectionForPage('testcase');
+                  }
+                  else if (
+                    userRole.allow_testcycle_view === 1 ||
+                    userRole.allow_testcycle_create === 1 ||
+                    userRole.allow_testcycle_execute === 1 ||
+                    userRole.allow_testcycle_delete === 1 ||
+                    userRole.allow_testcycle_edit === 1 ||
+                    userRole.allow_testcycle_folders === 1
+                  ) {
+                    redirectionForPage('testcycle');
+                  }
+                  else if (
+                    userRole.allow_testplan_view === 1 ||
+                    userRole.allow_testplan_create === 1 ||
+                    userRole.allow_testplan_delete === 1 ||
+                    userRole.allow_testplan_edit === 1 ||
+                    userRole.allow_testplan_folders === 1
+                  ) {
+                    redirectionForPage('testplan');
+                  }
+                  else if (userRole.allow_reports_create === 1) 
+                  {
+                    redirectionForPage('report');
+                  }
+                  else if (userRole.allow_configuration === 1) 
+                  {
+                    redirectionForPage('configuration');
+                  }
+                  else 
+                  {
+                    $('#loader-wrapper').css('display', 'none');
+                    AJS.flag({
+                      type: 'info',
+                      close: 'auto',
+                      body: "<b>Access not allowed</b><br>Please connect with admin.",
+                    });
+                  }
+                } 
+                else 
+                {
+                  $('#loader-wrapper').css('display', 'none');
+                  AJS.flag({
+                    type: 'info',
+                    close: 'auto',
+                    body: "<b>Access not allowed</b><br>Please connect with admin.",
+                  });
+                }
+              }
+
+            } else if (data.res.status === 401 && data.res.message === "Given ID not found") {
+              $('#loader-wrapper').css('display', 'none');
+              AJS.flag({
+                type: 'info',
+                close: 'auto',
+                body: "<b>Application not initialized</b><br>Please enable InquestPRO.",
+              });
+            }
+          }
+        });
+
+      }
+
+    }
+  });
+
+
+  function redirectionForPage(path = "testcase") {
+    if (path === 'testcase' || path === 'testcycle' || path === 'testplan') {
+      $.ajax({
+        "type": "GET",
+        "url": '/folder/testFlag?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&test_type=' + path + '&domain_id=' + domain_id,
+        "headers": {
+          'Authorization': "JWT "+user_token,
+        },
+        "dataType": "json",
+        "error": function (xhr, textStatus, errorThrown) {
+          toaster('Error while fetching project details', 'error');
+          $('#action-loader-wrapper').css('display', 'none');
+        },
+        "success": function (data) {
+          if (data.res.status === 200) {
+
+            let test_flag = data.res.data.test_flag;
+
+            let redirect_type = "initial"
+
+            if (test_flag === 1) {
+              redirect_type = "list";
+            }
+
+            if (path === 'testcase') {
+              window.location.href = "/project/testCasesView?projectId={{projectId}}&projectKey={{projectKey}}&selectedFolderId=&jwt="+user_token+"&user={{userAccountId}}&page=" + redirect_type
+            } else if (path === 'testcycle') {
+              window.location.href = "/project/testCycleView?projectId={{projectId}}&projectKey={{projectKey}}&selectedFolderId=&jwt="+user_token+"&user={{userAccountId}}&page=" + redirect_type
+            } else if (path === 'testplan') {
+              window.location.href = "/project/testPlanView?projectId={{projectId}}&projectKey={{projectKey}}&selectedFolderId=&jwt="+user_token+"&user={{userAccountId}}&page=" + redirect_type
+            }
+          }
+        }
+      });
+    } else if (path === 'report') {
+      window.location.href = "/project/reportView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}"
+    } else if (path === 'configuration') {
+      window.location.href = "/project/configurationView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}"
+    }
+  }
+
+
+</script>
+
+</body>
+
+</html>

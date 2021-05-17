@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.343" height="16.343" viewBox="0 0 16.343 16.343">
+  <defs>
+    <clipPath id="clip-path">
+      <path id="Combined_Shape" data-name="Combined Shape" d="M8.171,16.342a1.987,1.987,0,0,1-1.414-.586L.585,9.585a2,2,0,0,1,0-2.828L6.756.585a2,2,0,0,1,2.829,0l6.171,6.172a2,2,0,0,1,0,2.828L9.585,15.756A1.987,1.987,0,0,1,8.171,16.342Zm0-5.171a1,1,0,1,0,1,1A1,1,0,0,0,8.171,11.171Zm0-8a1,1,0,0,0-1,1v5a1,1,0,1,0,2,0v-5A1,1,0,0,0,8.171,3.171Z" transform="translate(3.829 3.829)" fill="red"/>
+    </clipPath>
+  </defs>
+  <g id="Group_235" data-name="Group 235" transform="translate(-3.828 -3.829)">
+    <path id="Combined_Shape-2" data-name="Combined Shape" d="M8.171,16.342a1.987,1.987,0,0,1-1.414-.586L.585,9.585a2,2,0,0,1,0-2.828L6.756.585a2,2,0,0,1,2.829,0l6.171,6.172a2,2,0,0,1,0,2.828L9.585,15.756A1.987,1.987,0,0,1,8.171,16.342Zm0-5.171a1,1,0,1,0,1,1A1,1,0,0,0,8.171,11.171Zm0-8a1,1,0,0,0-1,1v5a1,1,0,1,0,2,0v-5A1,1,0,0,0,8.171,3.171Z" transform="translate(3.829 3.829)" fill="red"/>
+    <g id="Mask_Group_235" data-name="Mask Group 235" clip-path="url(#clip-path)">
+      <g id="_Color" data-name="↳ 🎨Color">
+        <path id="N500" d="M0,24H24V0H0Z" fill="red"/>
+      </g>
+    </g>
+  </g>
+</svg>

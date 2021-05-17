@@ -1,0 +1,277 @@
+{{!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+{{!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script> --}}
+
+<script>
+
+    $(".menu-toggle").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+
+    AP.request('/rest/api/2/user/groups?accountId={{userAccountId}}', {
+        success: function (response) {
+
+            let site_admin_check = response.includes("site-admins");
+
+            if (site_admin_check === "") {
+                site_admin_check = response.includes("administrators");
+            }
+
+            if("{{projectId}}" == "") {
+
+                let site_admin_check_without_project = response.includes("site-admins");
+
+                if (site_admin_check_without_project == "") {
+                    site_admin_check_without_project = response.includes("jira-admins");
+                }
+
+                if (site_admin_check_without_project == "") {
+                    site_admin_check_without_project = response.includes("administrators");
+                }
+
+                if(site_admin_check_without_project != "") {
+                    $('#wrapper').css('display', 'block');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                    $('#project-loader-wrapper').css('display', 'none');
+                } else {
+                    $('#wrapper').remove();
+                    $('#notHaveProjectAccessCheck').css('display', 'block');
+                }
+
+            } else {
+            
+                if (site_admin_check) {
+                    $.ajax({
+                        "type": "GET",
+                        "url": "/project/id?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+                        "headers": {
+                            'Authorization': "JWT "+user_token,
+                        },
+                        "dataType": "json",
+                        "error": function (xhr, textStatus, errorThrown) {
+                            toaster('Error while fetching project details', 'error');
+                            $('#loader-wrapper').css('display', 'none');
+                        },
+                        "success": function (data) {
+                            if (data.res.status === 200) 
+                            {
+                                projectOldHistory = true;                  
+                                $('#projectRegionSelector').css('pointer-events', 'none');
+                                selectedRegion = data.res.data.region_id;
+
+                                if (data.res.data.inquestPro_enabled === 1) {
+                                    enableInquestPermissionToggle = true;
+                                }
+                            }
+                            else
+                            {    
+                                $('#projectRegionSelector').css('pointer-events', 'auto');
+                            }
+
+                            getAllRegion()
+
+                            $('#wrapper').css('display', 'block');
+                            $('#notHaveProjectAccessCheck').css('display', 'none');
+                            $('#loader-wrapper').css('display', 'none');
+                        }
+                    });
+
+                } else {
+
+                    $("#li-testcases").css("display", "none");
+                    $("#li-testcycle").css("display", "none");
+                    $("#li-testplan").css("display", "none");
+                    $("#li-report").css("display", "none");
+                    $("#li-appsetup").css("display", "none");
+                    $("#li-configuration").css("display", "none");
+                    $("#li-globalappsetup").css("display", "none");
+                    $("#li-globalsetting").css("display", "none");
+
+                    $(".create-testcase-button").css("display", "none");
+                    $(".create-testcycle-button").css("display", "none");
+                    $(".create-testplan-button").css("display", "none");
+                    $("#addFolderButton").css("display", "none");
+                    $(".folder_action").css("display", "none");
+                    $("#addFolderButtonImg").css("display", "none");
+
+
+                    $.ajax({
+                        "type": "GET",
+                        "url": "/project/idOtherUser?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+                        "headers": {
+                            'Authorization': "JWT "+user_token,
+                        },
+                        "dataType": "json",
+                        "error": function (xhr, textStatus, errorThrown) {
+                            toaster('Error while fetching project details', 'error');
+                            $('#loader-wrapper').css('display', 'none');
+                            $('#wrapper').remove();
+                        },
+                        "success": function (data) {
+
+                            if (data.res.status === 200) {
+                                $('#wrapper').css('display', 'block');
+
+                                projectOldHistory = true;
+
+                                $('#projectRegionSelector').css('pointer-events', 'none');
+
+                                getAllRegion();
+
+                                otherUserApiCallCheck = 1;
+
+                                if (data.res.data.inquestPro_enabled === 1) {
+                                    enableInquestPermissionToggle = true;
+                                }
+
+                                let userRole = null;
+                                let userRoleCheck = false;
+
+                                if (data.res.data.userRole && data.res.data.userRole[0]) {
+                                    userRole = data.res.data.userRole[0];
+                                    userRoleCheck = true;
+                                }
+
+                                if (userRoleCheck) {
+
+                                    // test case permission
+                                    allow_testcase_create = userRole.allow_testcase_create;
+                                    allow_testcase_delete = userRole.allow_testcase_delete;
+                                    allow_testcase_execute = userRole.allow_testcase_execute;
+                                    testcase_lock = userRole.testcase_lock;
+                                    allow_testcase_edit = userRole.allow_testcase_edit;
+
+                                    if (
+                                        userRole.allow_testcase_read === 1 || 
+                                        userRole.allow_testcase_create === 1 || 
+                                        userRole.allow_testcase_delete === 1 || 
+                                        userRole.allow_testcase_execute === 1 ||
+                                        userRole.testcase_lock === 1 ||
+                                        userRole.allow_testcase_edit === 1 || 
+                                        userRole.allow_testcase_folders === 1                                
+                                    ) {
+                                        $("#li-testcases").css("display", "block");
+                                    }
+                                    if (userRole.allow_testcase_create === 1) {
+                                        $(".create-testcase-button").css("display", "inline");
+                                    }
+                                    if (userRole.allow_testcase_folders === 1) {
+                                        $("#addFolderButton").css("display", "block");
+                                        $(".folder_action").css("display", "block");
+                                        $("#addFolderButtonImg").css("display", "block");
+                                    }
+
+                                    // test cycle permission
+                                    allow_testcycle_create = userRole.allow_testcycle_create;
+                                    allow_testcycle_execute = userRole.allow_testcycle_execute;
+                                    allow_testcycle_delete = userRole.allow_testcycle_delete;
+                                    allow_testcycle_edit = userRole.allow_testcycle_edit;
+
+                                    if (
+                                        userRole.allow_testcycle_view === 1 || 
+                                        userRole.allow_testcycle_create === 1 || 
+                                        userRole.allow_testcycle_execute === 1 ||
+                                        userRole.allow_testcycle_delete === 1 || 
+                                        userRole.allow_testcycle_edit === 1 || 
+                                        userRole.allow_testcycle_folders === 1                                
+                                    ) {
+                                        $("#li-testcycle").css("display", "block");
+                                    }
+                                    if (userRole.allow_testcycle_create === 1) {
+                                        $(".create-testcycle-button").css("display", "inline");
+                                    }
+                                    if (userRole.allow_testcycle_folders === 1) {
+                                        $("#addFolderButton").css("display", "block");
+                                        $(".folder_action").css("display", "block");
+                                        $("#addFolderButtonImg").css("display", "block");
+                                    }
+
+                                    // test plan permission
+                                    allow_testplan_create = userRole.allow_testplan_create;
+                                    allow_testplan_delete = userRole.allow_testplan_delete;
+                                    allow_testplan_edit = userRole.allow_testplan_edit;
+
+                                    if (
+                                        userRole.allow_testplan_view === 1 || 
+                                        userRole.allow_testplan_create === 1 || 
+                                        userRole.allow_testplan_delete === 1 || 
+                                        userRole.allow_testplan_edit === 1 || 
+                                        userRole.allow_testplan_folders === 1                                
+                                    ) {
+                                        $("#li-testplan").css("display", "block");
+                                    }
+                                    if (userRole.allow_testplan_create === 1) {
+                                        $(".create-testplan-button").css("display", "inline");
+                                    }
+                                    if (userRole.allow_testplan_folders === 1) {
+                                        $("#addFolderButton").css("display", "block");
+                                        $(".folder_action").css("display", "block");
+                                        $("#addFolderButtonImg").css("display", "block");
+                                    }
+
+                                    // report permission
+                                    if (userRole.allow_reports_create === 1) {
+                                        $("#li-report").css("display", "block");
+                                    }
+
+                                    // configuration permission
+                                    if (userRole.allow_configuration === 1) {
+                                        $("#li-configuration").css("display", "block");
+                                        {{!-- $("#li-globalsetting").css("display", "block"); --}}
+                                    }
+
+
+                                }
+
+                            } else if (data.res.status === 401 && data.res.message === "Given ID not found") {
+                                $('#wrapper').remove();
+                                $('#notHaveProjectAccessCheck').css('display', 'block');
+                            }
+                            $('#loader-wrapper').css('display', 'none');
+                        }
+                    });
+
+                }
+            }
+        }
+    });
+
+
+    function getAllRegion() 
+    {
+        $.ajax({
+            "type": "GET",
+            "url": "/project/regionList?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching region details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) 
+                {
+                    regionList = data.res.data;
+                    for (let j = 0; j < regionList.length; j++) {
+                        $('#app_region_select').append('<option value="' + regionList[j].id + '">' + regionList[j].regions_name + '</option>');
+                    }
+
+                    if(selectedRegion != null)
+                    {
+                        $('#app_region_select option[value="' + selectedRegion + '"]').attr('selected', 'selected');
+                        $('#app_region_select').addClass('select-side-icon');
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
+</body>
+
+</html>

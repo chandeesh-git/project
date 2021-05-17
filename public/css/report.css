@@ -1,0 +1,94 @@
+/* 
+  live statics 
+*/
+
+/* Table ------- */
+.report_live_statistics_chart{
+    height: 375px;
+}
+
+.report-common-chart-table{
+    max-width: 487.5px;
+}
+
+.report_table{
+    margin: 15px 0;
+}
+
+
+.report_table thead th{
+    background-color: #42526E;
+    color: #ffffff;
+    border: none;
+}
+
+.report_table tbody th{
+    background-color: #EBECF0;
+    color: #42526E;
+}
+
+/*=========pagination========*/
+.report_table_paginate{
+    max-width: 487.5px;
+}
+
+.report_table_paginate .pagination-sm .page-link{
+    padding: .1875rem .5625rem;
+    line-height: 1.8;
+    font-weight: 700;
+    border-color: transparent;
+    color: #42526E;
+    border-radius: 3px;
+}
+
+.report_table_paginate .page-item.disabled .page-link{
+    border-color:transparent;
+    opacity: 0.5;
+}
+
+.report_table_paginate .page-item.active .page-link{
+    border-color: #42526E;
+    background-color: #42526E;
+    border-radius: 3px;
+    color: #ffffff;
+}
+
+.report_table .chip_status{
+    padding: 0.2625rem .75rem;
+    color: #ffffff;
+    border-radius: 1.125rem;
+}
+
+.report_table .table td:first-child, .report_table .table th:first-child{
+    padding-left: .5625rem;
+}
+
+.report_table .table td:last-child, .report_table .table th:last-child{
+    padding-right: .5625rem;
+}
+
+.col_header_mul{
+    min-width: 108px;
+}
+
+.col_header_mul .col_header_mul-first, .col_header_mul .col_header_mul-second{
+    display: block;
+    font-size: 10.5px;
+}
+
+.col_header_mul .col_header_mul-first{
+    text-align: right;   
+}
+
+.col_header_mul .col_header_mul-seperator{
+    width: 100%;
+    border-top: 0.5px solid #ffffff;
+    transform: rotate(19deg);
+    height: 100%;
+    display: block;
+}
+
+
+.col_header_mul .col_header_mul-second{
+    text-align: left;
+}

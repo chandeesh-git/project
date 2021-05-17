@@ -1,0 +1,506 @@
+<div style="display: block;">
+    <div id="parent_step_by_step_type_selection_top" style="float: left;">
+        <button class="aui-button add-step-btn" id="smallspinnerbutton" onclick="addQuickIssuePopup()">
+            + Add Issues
+        </button>
+        <button class="aui-button add-step-btn" id="smallspinnerbutton" onclick="addWebLinks()">
+            + Add Weblinks
+        </button>
+    </div>
+</div>
+
+
+
+<section class="aui-page-panel-content" style="display: flow-root;width: 100%;padding: 0;">
+    <div class="container-section">
+        <span class="main-heading">
+            <h4 class="add-issue">Issues</h4>
+            <hr class="issue-head-line">
+        </span>
+        <div id="issue-list-data-table-seaction" style="display: none;">
+            <table class="aui test-data-table" style="margin: 0 0 11.25px; width: 100%;">
+                <tbody id="issue_list_table_tbody"></tbody>
+            </table>
+        </div>
+        <p id="issue-list-data-add-link" class="inline-section" style="display: none;">Search Issues. <a href="javascript:void(0);" onclick="addQuickIssuePopup()"> + Add Issues</a></p>
+    </div>
+    <div class="container-section">
+        <span class="main-heading">
+            <h4 class="add-weblinks">Weblinks</h4>
+            <hr class="weblinks-head-line">
+        </span>
+        <div id="weblink-list-data-table-seaction" style="display: none;">
+            <table class="aui test-data-table" style="margin: 0 0 11.25px; width: 100%;">
+                <tbody id="weblink_list_table_tbody"></tbody>
+            </table>
+        </div>
+        <p id="weblink-list-data-add-link" class="inline-section" style="display: none;">No Weblink. <a href="javascript:void(0);" onclick="addWebLinks()"> + Add Weblinks</a></p>
+    </div>
+
+
+    <button type="btn" class="aui-button btn1 skip-disabled-class" id="spinnerbutton" onclick="changeAddSubPages('test-scripts')" style="margin-left: 0;">Prev: Test Scripts</button>
+    <button type="btn" class="aui-button btn1 skip-disabled-class" id="spinnerbutton" onclick="changeAddSubPages('attachments')">Next: Attachments</button>
+
+</section>
+
+
+
+
+<section id="action-weblinks-dialog" style="width: 600px; height: auto;" class="aui-dialog2 aui-dialog2-large-history aui-layer" role="dialog" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h3 class="aui-dialog2-header-main">Web links</h3>
+        <button class="aui-close-button" type="button" aria-label="close" onclick="closeWebLinks()"></button>
+    </header>
+    <form class="aui" name="myForm" method="post" onsubmit="submitWebLinkCreation()" action="javascript:void(0);" style="margin-top: 0;">
+        <div class="aui-dialog2-content">
+            <div class="form-group">
+                <label class="label required-field">Url</label>
+                <input id="weblink_url" type="url" class="form-control text medium-field" placeholder="Please enter url - http or https is nescessary" name="weblink_url" required="required">
+            </div>
+            <div class="form-group">
+                <label class="label required-field">Description</label>
+                <textarea id="weblink_description" class="form-control textarea" rows="3" placeholder="Please enter description" name="weblink_description" style="padding: .28125rem .5625rem !important;" required="required"></textarea>
+            </div>
+        </div>
+        <footer class="aui-dialog2-footer">
+            <div class="aui-dialog2-footer-actions">
+                <button type="submit" id="warning-dialog-confirm" class="aui-button">Add</button>
+                <button id="warning-dialog-cancel" class="aui-button" onclick="closeWebLinks()">Close</button>
+            </div>
+        </footer>
+    </form>
+</section>  
+
+
+
+
+{{!-- Add Issues dialog --}}
+<section id="action-cyclelinks-dialog" style="max-width: 900px; top: 45px;" class="aui-dialog2 aui-dialog2-large-history aui-layer" role="dialog" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h3 class="aui-dialog2-header-main">Add Existing Issues</h3>
+        <button class="aui-close-button" type="button" aria-label="close" onclick="closeIssuePopup()"></button>
+    </header>
+    <form class="aui" onsubmit="submitIssueSearch()" action="javascript:void(0);" style="margin-top: 0;" autocomplete="off">
+        <div class="aui-dialog2-content" style="min-height: 371.25px;">
+
+            <div class="row" style="margin: 0;">
+                <div style="width: calc(100% - 38.25px);">
+                    <div class="form-group">
+                        <input id="issue_search_keyword" data-aui-validation-field type="text" class="form-control text medium-field" placeholder="Search by name" required="required">
+                        <p style="font-size: 10.5px;margin: 5px 0;">Note: Please user single word to search issue</p>
+                    </div>
+                </div>
+                <div style="width: 36px;">
+                    <button type="submit" class="aui-button" id="button-spin-1" style="margin-left: 7.5px; height: 25.5px">
+                       <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.005 512.005" fill:"#3c3a3a" xml:space="preserve" width="15px" height="15px">
+                            <g>
+                                <g>
+                                    <path d="M505.749,475.587l-145.6-145.6c28.203-34.837,45.184-79.104,45.184-127.317c0-111.744-90.923-202.667-202.667-202.667
+                                        S0,90.925,0,202.669s90.923,202.667,202.667,202.667c48.213,0,92.48-16.981,127.317-45.184l145.6,145.6
+                                        c4.16,4.16,9.621,6.251,15.083,6.251s10.923-2.091,15.083-6.251C514.091,497.411,514.091,483.928,505.749,475.587z
+                                        M202.667,362.669c-88.235,0-160-71.765-160-160s71.765-160,160-160s160,71.765,160,160S290.901,362.669,202.667,362.669z"></path>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        
+            <div id="already_used_issue_warning" class="aui-message aui-message-warning" style="margin-top: 7.5px;margin-bottom: 7.5px; display: none;">
+                <p style="margin-bottom: 0;">Some issues have already been added and cannot be added again</p>
+            </div>
+
+            <div style="height: 296.25px; overflow: auto; margin-top: 7.5px;">
+                <table class="aui">
+                    <tbody id="Issue_testcase_table_body">
+                        <tr class="border-top-none middle-align">
+                            <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                                <div class="no_data_test_cycle" >
+                                    <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                                        <h3>Search Issues</h3>
+                                        <h5>Search by name, and select some issues</h5>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+    <footer class="aui-dialog2-footer">
+        <a href="javascript:void(0);" onclick="addQuickIssue()" style="position: relative;top: 3px;font-size: 10.25px"> + Create New Issues</a>
+        <div class="aui-dialog2-footer-actions">
+            <button type="button" id="add-issue-dialog-confirm" class="aui-button aui-button-primary" disabled onclick="addSelectedIssueArray()">Add</button>
+            <button type="button" id="warning-dialog-cancel" class="aui-button" onclick="closeIssuePopup()">Close</button>
+        </div>
+    </footer>
+</section> 
+
+
+
+<script>
+
+
+    let searchIssueList=[];
+    let searchSelectedList=[];
+
+
+    function addWebLinks() {
+        AJS.dialog2("#action-weblinks-dialog").show();
+    }
+
+
+    function closeWebLinks() {
+        $('#weblink_url').val('');
+        $('#weblink_description').val('');
+        AJS.dialog2("#action-weblinks-dialog").hide();
+    }    
+
+
+    function addQuickIssuePopup() {
+        $('#Issue_testcase_table_body').html
+        (
+            `<tr class="border-top-none middle-align">
+                <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                        <div class="no_data_test_cycle" >
+                        <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                        <h3>Search Issues</h3>
+                            <h5>Search by name, and select some issues</h5>
+                        </div>
+                    </div>
+                </td>
+            </tr>`
+        );
+  
+        $('#already_used_issue_warning').css('display', 'none'); 
+        $("#issue_search_keyword").val("");
+        AJS.dialog2('#action-cyclelinks-dialog').show();
+        $("#add-issue-dialog-confirm").attr("disabled", true);
+    }  
+
+
+    function closeIssuePopup() 
+    {
+        searchSelectedList = [];
+        $('#Issue_testcase_table_body').html
+        (
+            `<tr class="border-top-none middle-align">
+                <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                        <div class="no_data_test_cycle" >
+                        <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                        <h3>Search Issues</h3>
+                            <h5>Search by name, and select some issues</h5>
+                        </div>
+                    </div>
+                </td>
+            </tr>`
+        );    
+        AJS.dialog2('#action-cyclelinks-dialog').hide();
+        $("#add-issue-dialog-confirm").attr("disabled", true);
+    }
+
+
+    function addQuickIssue() {
+        AJS.dialog2('#action-cyclelinks-dialog').hide();
+        AP.jira.openCreateIssueDialog(function(issues){
+            traceabilityIssues.push({
+                'issue_name': issues[0].fields.summary,
+                'issue_status': issues[0].fields.status.name,
+                'project_id': '{{projectId}}',
+                'domain_id': domain_id,
+                'test_type': 'testcase',
+                'issue_id': issues[0].id,
+                'issue_key': issues[0].key,
+                'issue_icon': issues[0].fields.issuetype.iconUrl,
+                'issue_type': issues[0].fields.issuetype.name,
+                'issue_priority': issues[0].fields.priority.name,
+                'issue_to_link': issues[0].self
+            });
+
+            testcaseHistoryDataForIssues.push({
+                field: "Traceability - (Issue Added)",
+                original_value: '-',
+                new_value: issues[0].key
+            });
+
+            appendIssueRow();
+        }, {
+            pid: "{{projectId}}",
+            issueType: 1,
+            callback: "testcasr/sadfasdasdadds"
+        });
+        $("#add-issue-dialog-confirm").attr("disabled", true);
+    }
+
+
+    function deleteIssueRowData(index)
+    {
+        let historyIndex = testcaseHistoryDataForIssues.findIndex(x => x.new_value === traceabilityIssues[index].issue_key);
+
+        if(historyIndex !== -1)
+        {
+            testcaseHistoryDataForIssues.splice(historyIndex, 1);
+        }
+        else
+        {
+            testcaseHistoryDataForIssues.push({
+                field: "Traceability - (Issue Deleted)",
+                original_value: traceabilityIssues[index].issue_key,
+                new_value: '-'
+            })
+        }
+    
+        traceabilityIssues.splice(index, 1);
+
+        appendIssueRow();
+    }
+
+
+    function appendIssueRow() 
+    {
+        if(traceabilityIssues.length > 0 ) 
+        {
+            $('#issue-list-data-table-seaction').css('display', 'block')
+            $('#issue-list-data-add-link').css('display', 'none')
+
+            $('#issue_list_table_tbody').html("");
+
+            for (let j = 0; j < traceabilityIssues.length; j++) 
+            {   
+                $('#issue_list_table_tbody').append('<tr>'+
+                            '<td class="issue-td"><img src="'+traceabilityIssues[j].issue_icon+'"/> <a href="javascript:void(0)" onclick="navigateToLink(`/browse/'+traceabilityIssues[j].issue_key+'`)" >'+traceabilityIssues[j].issue_key+'</a> '+ traceabilityIssues[j].issue_name+'</td>'+
+                            '<td class="issue-td-action"><span class="issue-span-status">'+traceabilityIssues[j].issue_status+'</span> <img class="operation-icon" onclick="deleteIssueRowData('+j+')" src={{furl "/images/trash.svg"}} /></td>'+
+                        '</tr>');
+            }
+        } 
+        else 
+        {
+            $('#issue-list-data-table-seaction').css('display', 'none')
+            $('#issue-list-data-add-link').css('display', 'block')
+        }
+    }
+
+
+    function actionOnIssue(id) 
+    {
+        let index = searchSelectedList.findIndex(x => x.id == id);
+
+        if(index !== -1) {
+            searchSelectedList.splice(index, 1);
+        } else {
+            let index_2 = searchIssueList.findIndex(x => x.id == id);
+            searchSelectedList.push(searchIssueList[index_2]);
+        }
+
+        if(searchSelectedList.length > 0) {
+            $("#add-issue-dialog-confirm").attr("disabled", false);
+        } else {
+            $("#add-issue-dialog-confirm").attr("disabled", true);
+        }
+    }
+
+
+    function addSelectedIssueArray()
+    {
+        if(searchSelectedList.length > 0)
+        {
+            for (let j = 0; j < searchSelectedList.length; j++) 
+            {
+                traceabilityIssues.push({
+                    'issue_name': searchSelectedList[j].fields.summary,
+                    'issue_status': searchSelectedList[j].fields.status.name,
+                    'project_id': '{{projectId}}',
+                    'domain_id': domain_id,
+                    'test_type': 'testcase',
+                    'issue_id': searchSelectedList[j].id,
+                    'issue_key': searchSelectedList[j].key,
+                    'issue_icon': searchSelectedList[j].fields.issuetype.iconUrl,
+                    'issue_type': searchSelectedList[j].fields.issuetype.name,
+                    'issue_priority': searchSelectedList[j].fields.priority.name,
+                    'issue_to_link': searchSelectedList[j].self
+                });
+
+                testcaseHistoryDataForIssues.push({
+                    field: "Traceability - (Issue Added)",
+                    original_value: '-',
+                    new_value: searchSelectedList[j].key
+                });
+            }
+
+            appendIssueRow();
+            AJS.dialog2('#action-cyclelinks-dialog').hide();
+            $("#add-issue-dialog-confirm").attr("disabled", true);
+        }
+    }
+
+
+    function submitIssueSearch() 
+    {     
+        let searchkeyword = $('#issue_search_keyword').val();
+
+        if(searchkeyword !== "")
+        {
+            if(searchkeyword.indexOf(' ') >= 0)
+            {            
+                toaster('Please use single word to search issue', 'info');
+            }
+            else 
+            {
+                searchSelectedList = [];
+
+                $('#action-loader-wrapper').css('display', 'flex');
+                $('#already_used_issue_warning').css('display', 'none');  
+
+                AP.request('/rest/api/2/search?jql=summary~'+searchkeyword+'&project={{projectKey}}&maxResults=10000&fields=id,key,summary,priority,issuetype,status,created,self', {
+                success: function (responceUserList) {
+
+                    searchIssueList =  JSON.parse(responceUserList).issues;              
+
+                    $('#Issue_testcase_table_body').html('');
+		    
+                    if(searchIssueList.length > 0 ) 
+                    {
+                        for (let j = 0; j < searchIssueList.length; j++) 
+                        { 
+                            let index = traceabilityIssues.findIndex(x => x.issue_id == searchIssueList[j].id);
+
+                            let searchIssueListListHtml = "";
+
+                            if(index !== -1) {
+                                $('#already_used_issue_warning').css('display', 'block');  
+                                searchIssueListListHtml += '<tr class="border-top-none middle-align already_used_tr">';
+                            } else {
+                                searchIssueListListHtml += '<tr class="border-top-none middle-align">';
+                            }
+
+                            searchIssueListListHtml += '<td style="width: 1px;">'+
+                                        '<input class="checkbox" type="checkbox" style="width: 12px;height: 12px;position: relative;top: 2.25px;" onclick="actionOnIssue(`'+searchIssueList[j].id+'`)">'+
+                                    '</td>'+
+                                    '<td class="issue-td"><img src="'+searchIssueList[j].fields.issuetype.iconUrl+'"/> <a href="javascript:void(0)" onclick="navigateToLink(`/browse/'+searchIssueList[j].key+'`)" >'+searchIssueList[j].key+'</a> '+ searchIssueList[j].fields.summary+'</td>'+
+                                    '<td style="text-align: right;">'+
+                                        '<span class="issue-span-status testcycle_status">'+searchIssueList[j].fields.status.name+'</span>'+
+                                        '<span class="issue-span-status testcycle_date">'+getFormateDateForHistory(searchIssueList[j].fields.created)+'</span>'+
+                                    '</td>'+
+                                '</tr>';
+
+                            $('#Issue_testcase_table_body').append(searchIssueListListHtml);
+                        }
+                    } 
+                    else 
+                    {
+                        $('#Issue_testcase_table_body').html(
+                            `<tr class="border-top-none middle-align">
+                                <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                                        <div class="no_data_test_cycle" >
+                                        <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                                        <h3>Search Issues</h3>
+                                            <h5>Search by name, and select some issues</h5>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>`
+                        );                        
+                    }
+
+                    $('#action-loader-wrapper').css('display', 'none');  
+
+                }
+            });
+            }
+        }
+    }
+
+
+
+
+
+    function submitWebLinkCreation() 
+    {
+        const weblinks_url = $('#weblink_url').val();
+        const weblink_description = $('#weblink_description').val();
+
+        $('#weblink_url').val('');
+        $('#weblink_description').val('');
+        AJS.dialog2("#action-weblinks-dialog").hide();
+
+        traceabilityWeblinks.push({
+            'url': weblinks_url,
+            'description': weblink_description
+        });
+
+        testHistoryDataForWeblinks.push({
+            url: weblinks_url,
+            field: "Traceability - (Web Link Added)",
+            original_value: '-',
+            new_value: weblink_description+' : '+weblinks_url
+        });
+
+        appendWeblinksRow();
+    }
+
+
+    function deleteIssueWeblinkRowData(index)
+    {
+        let historyIndex = testHistoryDataForWeblinks.findIndex(x => x.url === traceabilityWeblinks[index].url);
+
+        if(historyIndex !== -1)
+        {
+            testHistoryDataForWeblinks.splice(historyIndex, 1);
+        }
+        else
+        {
+            testHistoryDataForWeblinks.push({
+                field: "Traceability - (Web Link Deleted)",
+                original_value: traceabilityWeblinks[index].description+' : '+traceabilityWeblinks[index].url,
+                new_value: '-'
+            })
+        }
+
+        traceabilityWeblinks.splice(index, 1);
+        appendWeblinksRow();
+    }
+
+
+    function appendWeblinksRow() 
+    {
+        if(traceabilityWeblinks.length > 0 ) 
+        {
+            $('#weblink-list-data-table-seaction').css('display', 'block')
+            $('#weblink-list-data-add-link').css('display', 'none')
+
+            $('#weblink_list_table_tbody').html("");
+
+            for (let j = 0; j < traceabilityWeblinks.length; j++) 
+            {   
+                $('#weblink_list_table_tbody').append('<tr>'+
+                            '<td class="issue-td"><a target="_blank" href="'+traceabilityWeblinks[j].url+'"><img style="margin-right: 4.5px;" class="operation-icon" src={{furl "/images/link.svg"}} />'+ traceabilityWeblinks[j].description+'</a></td>'+
+                            '<td class="issue-td-action"><img class="operation-icon" onclick="deleteIssueWeblinkRowData('+j+')" src={{furl "/images/trash.svg"}} /></td>'+
+                        '</tr>');
+            }
+        } 
+        else 
+        {
+            $('#weblink-list-data-table-seaction').css('display', 'none')
+            $('#weblink-list-data-add-link').css('display', 'block')    
+        }
+    }
+
+
+
+    appendIssueRow();
+    appendWeblinksRow();
+
+    
+
+
+
+    function navigateToLink(link)
+    {
+        AP.navigator.go('site', {relativeUrl: link});
+    }
+
+
+
+
+</script>

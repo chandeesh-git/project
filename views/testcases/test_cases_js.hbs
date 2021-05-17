@@ -1,0 +1,56 @@
+<script>
+    
+    function lockTestCaseEvent () 
+    {
+        let btnLockValue = document.getElementById('lockTestCases');
+        let btnImgLockValue = document.getElementById('lockImageId');
+
+        if (btnLockValue.value === "lock") 
+        {
+            btnLockValue.value = "unlock";
+            btnImgLockValue.src  = "/images/unlock_grey.svg";
+            document.getElementById("saveTestBtn").disabled = false;
+            if(!editTestCaseVersionLockStatus) 
+            {
+                document.getElementById("testcase_version_select").disabled = false;
+                document.getElementById("testcase_version_add_button").disabled = false;
+            }
+        } 
+        else 
+        {
+            btnLockValue.value = "lock";
+            btnImgLockValue.src  = "/images/lock_blue.svg";
+            document.getElementById("testcase_version_select").disabled = true;
+            document.getElementById("testcase_version_add_button").disabled = true;
+                        
+            if(editTestCaseVersionLockStatus) {
+                document.getElementById("saveTestBtn").disabled = true;
+            }
+        }
+
+        submitFormDataTestCase('lock_update');
+    }
+
+
+    function appendTestCaseLockStatusInBasicDetails()
+    {
+        if(editTestCaseVersionLockStatus) 
+        {
+            $('#lockTestCaseStatusSpan').html('<button type="button" value="lock" id="lockTestCases" onClick="lockTestCaseEvent()"><img id="lockImageId" src="/images/lock_blue.svg" style="width: 9px;"></button>');
+            document.getElementById("saveTestBtn").disabled = true;
+            document.getElementById("testcase_version_select").disabled = true;
+        } 
+        else 
+        {
+            $('#lockTestCaseStatusSpan').html('<button type="button" value="unlock" id="lockTestCases" onClick="lockTestCaseEvent()"><img id="lockImageId" src="/images/unlock_grey.svg" style="width: 9px;"></button>');
+            document.getElementById("saveTestBtn").disabled = false;
+        }
+     
+        if(testcase_lock == 0) {
+            $('#lockTestCases').css('display', 'none');
+        }
+    }
+    
+
+    
+</script>

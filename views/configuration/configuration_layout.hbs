@@ -1,0 +1,29 @@
+{{> common/head }}
+
+<div id="loader-wrapper">
+  <aui-spinner size="large"></aui-spinner>
+  {{!-- <div id="loader"></div> --}}
+</div>
+
+<div id="action-loader-wrapper">
+  {{!-- <div id="action-loader"></div> --}}
+  <aui-spinner size="large"></aui-spinner>
+</div>
+
+<div class="d-flex" id="wrapper" class="checkForAdminPermission"  style="display: none !important;">
+  
+  {{> common/sidebar currentPage='configuration' }}
+  
+  <section id="content" role="main">
+
+    <div id='configurationFunctionality'>
+      {{> configuration/configuration_view }}
+    </div>
+
+    {{> configuration/configuration_js }}
+
+  </section>
+
+</div>
+
+{{> common/footer }}

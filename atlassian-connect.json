@@ -1,0 +1,129 @@
+{
+    "baseUrl": "{{localBaseUrl}}",
+    "key": "atlassian-connect-jira-addon",
+    "description": "Test Management Tool for the Enterprise... Simplified",
+    "name": "InquestPro",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com/"
+    },
+    "enableLicensing": true,
+    "authentication": {
+        "type": "jwt"
+    },
+    "scopes": ["READ"],
+    "lifecycle": {
+        "installed": "/installed"
+    },
+    "links": {
+        "postInstallUrl": "/inquestPro",
+        "postUpdateUrl": "/inquestPro"
+    },
+    "modules": {
+        "webItems": [
+            // {
+            //     "name": {
+            //         "value": "inquestPro"
+            //     },
+            //     "location": "system.top.navigation.bar",
+            //     "url": "/project/initialView?projectId=${project.id}&projectKey=${project.key}",
+            //     "key": "dropdown",
+            //     "tooltip": {
+            //         "value": "JIRA Connect Add-on",
+            //         "i18n": "foo.bar"
+            //     }
+            // }
+            // {
+            //     "name": {
+            //         "value": "inquestPro"
+            //     },
+            //     "location": "jira.project.sidebar.navigation",
+            //     "url": "/project/initialView?projectId=${project.id}&projectKey=${project.key}",
+            //     "key": "web-item-example",
+            //     "context": "addon",
+            //     "tooltip": {
+            //         "value": "JIRA Connect Add-on",
+            //         "i18n": "foo.bar"
+            //     }
+            // }
+        ],
+        "webPanels": [
+            {
+                "name": {
+                    "value": "inquestPro"
+                },
+                "location": "atl.jira.view.issue.right.context",
+                "key": "issue-panel-1",
+                "url": "/project/issueView?project_id=${project.id}&issue_id=${issue.id}"
+            }
+        ],
+        "generalPages": [
+            {
+                "location": "system.top.navigation.bar",
+                "name": {
+                    "value": "InquestPro"
+                },
+                "key": "dropdown",
+                "url": "/project/initialView?projectId=${project.id}&projectKey=${project.key}",
+                "conditions" : [
+                    {
+                        "condition": "user_is_logged_in"
+                    }
+                ]
+            }
+        ],
+        "jiraProjectPages": [
+            {
+                "key": "InquestPro",
+                "name": {
+                    "value": "InquestPro"
+                },
+                "url": "/project/initialView?projectId=${project.id}&projectKey=${project.key}"
+            }
+        ],
+        "webhooks": [
+            {
+                "event": "project_created",
+                "url": "/project"
+            },
+            {
+                "event": "project_deleted",
+                "url": "/project/deleted"
+            },{
+                "event":"user_created",
+                "url": "/user?acct_id=${modifiedUser.accountId}"
+            }
+        ]
+        // {
+        //     "event": "jira:issue_created",
+        //     "url": "/issues/created?type=bug",
+        //     "params": {
+        //         "filter": "type = Bug"
+        //     }
+        // },{
+        //     "event": "jira:issue_deleted",
+        //     "url": "/issues/deleted?type=story",
+        //     "params": {
+        //         "filter": "type = Story"
+        //     }
+        // },
+        //, {
+        //     "event": "connect_addon_enabled",
+        //     "url": "",
+        //     "params": {}
+        // }, {
+        //     "event": "jira: issue_deleted",
+        //     "url": "",
+        //     "params": {}
+        // }, {
+        //     "event": "project_app_disabled",
+        //     "url": "",
+        //     "params": {}
+        // }, {
+        //     "event": "user_deleted",
+        //     "url": "",
+        //     "params": {}
+        // }
+        
+    }
+}

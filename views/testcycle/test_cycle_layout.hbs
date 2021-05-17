@@ -1,0 +1,49 @@
+{{> common/head }}
+
+<div class="d-flex" id="wrapper" class="checkForAdminPermission" style="display: none !important;">
+
+  {{> common/sidebar currentPage='testcycle' }}
+
+  <section id="content" role="main">
+
+    <div id='testcycleFunctionality'>
+
+      {{> common/common_js }}
+
+      {{#ifCond viewPage "initial"}}
+          {{> testcycle/screens/initial }}
+      {{/ifCond}}
+
+      {{#ifCond viewPage "add"}}
+          {{> testcycle/screens/add }}
+      {{/ifCond}}
+
+      {{#ifCond viewPage "list"}}
+          {{> testcycle/screens/list }}
+      {{/ifCond}}
+
+      {{#ifCond viewPage "edit" }}
+        {{> testcycle/screens/add }}
+      {{/ifCond}}
+
+      {{#ifCond viewPage "execute" }}
+        {{> testcycle/screens/test-execution }}
+      {{/ifCond}}
+
+    </div>
+
+    {{#ifCond viewPage "edit" }}
+      <script>
+        editTest('testcycle');
+      </script>
+    {{/ifCond}}
+
+  </section>
+
+</div>
+
+<div id="notHaveProjectAccessCheck" style="display: none;">
+  Please connect to admin for access
+</div>
+
+{{> common/footer }}

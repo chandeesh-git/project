@@ -1,0 +1,29 @@
+{{> common/head }}
+
+<div id="action-loader-wrapper">
+  <div id="action-loader" class="custom-loader-position"></div>
+</div>
+
+<div id="issueTestAssignCheck" style="display: none;">
+
+  <div><b>Test Case:</b></div>
+  <br>
+  <div id="issue_testcase"></div>
+  <br>
+  <br>
+
+  <div><b>Test Cycle:</b></div>
+  <br>
+  <div id="issue_testcycle"></div>
+
+</div>
+
+<div id="noAttchedTestFound" style="display: none;">
+
+  <div><span id="issueNotFound"></span></div>
+
+</div>
+
+{{> issues/issues_js }}
+
+{{> common/footer }}

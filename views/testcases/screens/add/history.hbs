@@ -1,0 +1,827 @@
+<div style="display: block; margin-bottom: 27px;">
+    <button class="aui-button add-step-btn skip-disabled-class" id="smallspinnerbutton" onclick="getCompareDataInPopup()">
+        Compare
+    </button>
+</div>
+
+<section class="aui-page-panel-content history" style="display: flow-root;width: 100%;padding: 0;">
+    <div class="main-history">
+        <table class="aui">
+            <thead style="background-color: white;">
+                <tr>
+                    <th style="width: 41.25px;"></th>
+                    <th>Versions</th>
+                    <th>Description</th>
+                    <th>Created on</th>
+                    <th>Last updated on</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="testcaseHistoryTable"></tbody>
+        </table>
+    </div>
+</section>
+
+
+
+<section id="demo-dialog" style="width: 975px; height: auto;" class="aui-dialog2 aui-dialog2-large-history aui-layer compare-version-popup"
+    role="dialog" aria-hidden="true">
+
+    <header class="aui-dialog2-header header">
+        <h3 class="aui-dialog2-header-main title" id="static-dialog--heading">Compare Version</h3>
+        <button class="aui-close-button skip-disabled-class" type="button" aria-label="close"></button>
+    </header>
+
+    <div class="aui-dialog2-content history-content">
+        <table id="history_version_compare-table" class="aui">
+            <thead>
+                <tr id="header-version-tr-th"></tr>
+            </thead>
+
+            <tbody>
+                <tr id="testcase-top-heading-tr-basic-details" class="open">
+                    <td class="compare-heading" colspan="50">
+                        <h4 class="clickable-heading" onclick="openHistoryVersionData('basic-details')">
+                            <span id="top-heading-img-basic-details"><img src={{furl "/images/dark-arrow-1.svg"}} style="margin-left: -4.5px;"/></span> Basic Details 
+                        </h4>
+                    </td>
+                </tr>
+                <tr class="body-basic-details" id="body-basic-details-name-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-description-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-objective-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-precondition-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-owner-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-created-on-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-created-by-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-estimated-time-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-status-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-priority-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-components-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-label-tr-td"></tr>
+                <tr class="body-basic-details" id="body-basic-details-custom-fields-tr-td"></tr>
+
+
+                <tr id="testcase-top-heading-tr-test-scripts">
+                    <td class="compare-heading" colspan="50">
+                        <h4 class="clickable-heading" onclick="openHistoryVersionData('test-scripts')">
+                            <span id="top-heading-img-test-scripts"><img src={{furl "/images/dark-arrow-1.svg"}} style="margin-left: -4.5px; margin-top: -3px; transform: rotate(-90deg);"/></span> Test Scripts 
+                        </h4>
+                    </td>
+                </tr>
+                <tr class="body-test-scripts" id="body-test-scripts-type-tr-td" style="display: none;"></tr>
+                <tr class="body-test-scripts" id="body-test-scripts-test-data-tr-td" style="display: none;"></tr>
+                <tr class="body-test-scripts" id="body-test-scripts-parameter-tr-td" style="display: none;"></tr>
+                <tr class="body-test-scripts" id="body-test-scripts-testscript-tr-td" style="display: none;"></tr>
+
+
+                <tr id="testcase-top-heading-tr-traceability">
+                    <td class="compare-heading" colspan="50">
+                        <h4 class="clickable-heading" onclick="openHistoryVersionData('traceability')">
+                            <span id="top-heading-img-traceability"><img src={{furl "/images/dark-arrow-1.svg"}} style="margin-left: -4.5px; margin-top: -3px; transform: rotate(-90deg);"/></span> Traceability 
+                        </h4>
+                    </td>
+                </tr>
+                <tr class="body-traceability" id="body-traceability-issue-tr-td" style="display: none;"></tr>
+                <tr class="body-traceability" id="body-traceability-weblink-tr-td" style="display: none;"></tr>
+
+
+                <tr id="testcase-top-heading-tr-attachments">
+                    <td class="compare-heading" colspan="50">
+                        <h4 class="clickable-heading" onclick="openHistoryVersionData('attachments')">
+                            <span id="top-heading-img-attachments"><img src={{furl "/images/dark-arrow-1.svg"}} style="margin-left: -4.5px; margin-top: -3px; transform: rotate(-90deg);"/></span> Attachments 
+                        </h4>
+                    </td>
+                </tr>
+                <tr class="body-attachments" id="body-attachments-name-tr-td" style="display: none;"></tr>
+
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+
+
+
+    var selectedTestCaseVersion = [];
+
+
+
+
+    getTestCaseHistorydata();
+
+
+
+    // Hides the dialog
+    AJS.$("#dialog-submit-button").click(function (e) {
+        e.preventDefault();
+        AJS.dialog2("#demo-dialog").hide();
+    });
+
+
+
+
+    function getTestCaseHistorydata() 
+    {
+        $.ajax({
+            "type": "GET",
+            "url": "/testcase/history/?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id + "&testcase_id={{editId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let history = data.res.data
+
+                    $('#testcaseHistoryTable').append('');
+
+                    for (let i = 0; i < history.length; i++) 
+                    {
+                        let created_at = new Date(history[i].created_at);
+                        let updated_at = new Date(history[i].updated_at);
+
+                        let htmlData = '<tr id="historyExpanderParent' + history[i].doc_id + '"><td><input class="checkbox testcaseHistoryCheckbox skip-disabled-class" type="checkbox" name="checkBoxOne" onclick="getSelectedCheckboxValue(`'+history[i].doc_id+'`)"></td>';
+
+                        if (history[i].is_lock == 1) {
+                            htmlData += '<td><span>' + history[i].version + '</span><img class="lock-icon-class" src={{furl "/images/lock.svg"}} /></td>';
+                        }
+                        else {
+                            htmlData += '<td><span>' + history[i].version + '</span></td>';
+                        }
+
+                        htmlData += '<td><b>' + getJiraUserNameByJiraId(history[i].created_by) + '</b> created <b>v' + history[i].version + '</b></td>' +
+                            '<td class="history-date">' + getFormattedDate(created_at.getDate()) + ' ' + months[created_at.getMonth()] + ' ' + created_at.getFullYear() + ', ' + formatAMPM(created_at) + '</td>' +
+                            '<td class="history-date">' + getFormattedDate(updated_at.getDate()) + ' ' + months[updated_at.getMonth()] + ' ' + updated_at.getFullYear() + ', ' + formatAMPM(updated_at) + '</td>' +
+                            '<td class="text-right">' +
+                            '<a id="replace-text-trigger" data-replace-text="Hide Logs" class="aui-expander-trigger" onclick="getTestHisterLog(`' + history[i].doc_id + '`, `' + history[i].version + '`)" aria-controls="historyExpander' + history[i].doc_id + '">Show Logs</a>' +
+                            '</td>' +
+                            '</tr><tr id="historyExpander' + history[i].doc_id + '" style="display: none;">' +
+                            '<td id="historyExpanderTd' + history[i].doc_id + '" colspan="6"  style="padding: 11.25px 4.5px 30px;"></td>' +
+                            '</tr>';
+
+                        $('#testcaseHistoryTable').append(htmlData);
+                    }
+                }
+            }
+        });
+    }
+
+
+
+
+
+    function getSelectedCheckboxValue(doc_id)
+    {
+        let index = selectedTestCaseVersion.findIndex(x => x === doc_id);
+
+        if(index !== -1)
+        {
+            selectedTestCaseVersion.splice(index, 1);
+        }
+        else
+        {            
+            selectedTestCaseVersion.push(doc_id);
+        }
+    }
+
+
+
+
+    function getTestHisterLog(history_doc_id, version) 
+    {       
+        if ($('#historyExpander' + history_doc_id).hasClass("open")) {
+            $('#historyExpander' + history_doc_id).removeClass("open");
+            $('#historyExpanderParent' + history_doc_id).removeClass('td-border-none');
+            $('#historyExpander' + history_doc_id).fadeOut();
+        }
+        else {
+            $('#action-loader-wrapper').css('display', 'flex');
+
+            $.ajax({
+                "type": "GET",
+                "url": "/testcase/showLogs/?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id + "&testcase_id={{editId}}" + "&version=" + version,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        let logs = data.res.data
+
+                        $('#historyExpanderTd' + history_doc_id).html('');
+
+                        if (logs.length > 0) {
+                            for (let i = 0; i < logs.length; i++) {
+                                let updated_at = new Date(logs[i].updated_at);
+
+                                let log_html = '<div class="timeline">' +
+                                    '<div class="logs-container right">' +
+                                    '<div class="content">' +
+                                    '<span class="log-ball"></span><p><b>' + getJiraUserNameByJiraId(logs[i].created_by) + '</b> ' + logs[i].description + ' <u>' + months[updated_at.getMonth()] + ' ' + getFormattedDate(updated_at.getDate()) + ', ' + updated_at.getFullYear() + ', ' + formatAMPM(updated_at) + '</u>.</p>' +
+                                    '</div>' +
+                                    '</div>';
+
+
+                                let log_table_data = JSON.parse(logs[i].field_data);
+
+                                if (log_table_data && log_table_data.length > 0) {
+                                    log_html += '<div class="expander-table">' +
+                                        '<table class="aui">' +
+                                        '<thead style="background: #F0F1F2;">' +
+                                        '<tr>' +
+                                        '<th>Field</th>' +
+                                        '<th>Old Value</th>' +
+                                        '<th>New Value</th>' +
+                                        '</tr>' +
+                                        '</thead>' +
+                                        '<tbody>';
+
+                                    for (let j = 0; j < log_table_data.length; j++) {
+
+                                        if(log_table_data[j].field === "Basic Detail - (Owner)" || log_table_data[j].field === "Basic Detail - (owner)")
+                                        {
+                                            log_html += '<tr>' +
+                                                '<td style="text-transform: capitalize;">' + log_table_data[j].field + '</td>' +
+                                                '<td>' + getJiraUserNameByJiraId(log_table_data[j].original_value) + '</td>' +
+                                                '<td>' + getJiraUserNameByJiraId(log_table_data[j].new_value) + '</td>' +
+                                                '</tr>';
+                                        }
+                                        else if(log_table_data[j].field === "Basic Detail - (lock)" || log_table_data[j].field === "Basic Detail - (Lock)")
+                                        {
+                                            log_html += '<tr>' +
+                                                '<td style="text-transform: capitalize;">' + log_table_data[j].field + '</td>' +
+                                                '<td>' + `${log_table_data[j].original_value ? "Lock" : "Unlock"}` + '</td>' +
+                                                '<td>' + `${log_table_data[j].new_value ? "Lock" : "Unlock"}` + '</td>' +
+                                                '</tr>';
+                                        }
+                                        else if(log_table_data[j].field === "Basic Detail - (label)" || log_table_data[j].field === "Basic Detail - (Label)")
+                                        {
+                                            let original_value_html = '';
+                                            let new_value_html = '';
+
+                                            let original_value_json = JSON.parse(log_table_data[j].original_value);
+                                            let new_value_json = JSON.parse(log_table_data[j].new_value);
+                                            
+                                            for (let j = 0; j < original_value_json.length; j++) 
+                                            {
+                                                original_value_html += original_value_json[j]+', '
+                                            }
+                                            
+                                            for (let k = 0; k < new_value_json.length; k++) 
+                                            {
+                                                new_value_html += new_value_json[k]+', '
+                                            }
+
+                                            original_value_html = original_value_html.replace(/,\s*$/, "");
+                                            new_value_html = new_value_html.replace(/,\s*$/, "");
+
+                                            log_html += '<tr>' +
+                                                '<td style="text-transform: capitalize;">' + log_table_data[j].field + '</td>' +
+                                                '<td>' + original_value_html + '</td>' +
+                                                '<td>' + new_value_html + '</td>' +
+                                                '</tr>';
+                                        }
+                                        else
+                                        {
+                                            log_html += '<tr>' +
+                                                '<td style="text-transform: capitalize;">' + log_table_data[j].field + '</td>' +
+                                                '<td>' + log_table_data[j].original_value + '</td>' +
+                                                '<td>' + log_table_data[j].new_value + '</td>' +
+                                                '</tr>';
+                                        }
+                                    }
+
+                                    log_html += '</tbody>' +
+                                        '</table>' +
+                                        '</div>';
+                                }
+
+                                log_html += '</div>';
+
+                                $('#historyExpanderTd' + history_doc_id).append(log_html);
+                            }
+                        }
+                        else {
+                            $('#historyExpanderTd' + history_doc_id).html('<div class="aui-message aui-message-info"><p class="title"><strong>Info !</strong></p><p>No logs are available</p></div>');
+                        }
+
+                        $('#historyExpanderParent' + history_doc_id).addClass('td-border-none');
+                        $('#historyExpander' + history_doc_id).addClass("open");
+                        $('#historyExpander' + history_doc_id).fadeIn();
+
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+
+    function openHistoryVersionData(type)
+    {
+        console.log(type);
+
+        if ($('#testcase-top-heading-tr-' + type).hasClass("open")) 
+        {
+            $('#testcase-top-heading-tr-' + type).removeClass("open");
+            $('#top-heading-img-' + type).html('<img src={{furl "/images/dark-arrow-1.svg"}} style="margin-left: -4.5px; margin-top: -3px; transform: rotate(-90deg);"/>');
+            $('.body-' + type).fadeOut();
+        }
+        else 
+        {
+            $('#testcase-top-heading-tr-' + type).addClass("open");
+            $('#top-heading-img-' + type).html('<img src={{furl "/images/dark-arrow-1.svg"}} style="margin-left: -4.5px; margin-top: -3px;"/>');
+            $('.body-' + type).fadeIn();
+        }
+    }
+
+
+
+
+
+    function getCompareDataInPopup()
+    {
+        $('#header-version-tr-th').html('<th style="width: 202.5px;">Versions</th>');
+        
+        $('#body-basic-details-name-tr-td').html('<td class="compare-title">Test Case Name</td>');
+        $('#body-basic-details-description-tr-td').html('<td class="compare-title">Description</td>');
+        $('#body-basic-details-objective-tr-td').html('<td class="compare-title">Objective</td>');
+        $('#body-basic-details-precondition-tr-td').html('<td class="compare-title">Precondition</td>');
+        $('#body-basic-details-owner-tr-td').html('<td class="compare-title">Owner</td>');
+        $('#body-basic-details-created-on-tr-td').html('<td class="compare-title">Created On</td>');
+        $('#body-basic-details-created-by-tr-td').html('<td class="compare-title">Created By</td>');
+        $('#body-basic-details-estimated-time-tr-td').html('<td class="compare-title">Estimated Time</td>');
+        $('#body-basic-details-status-tr-td').html('<td class="compare-title">Status</td>');
+        $('#body-basic-details-priority-tr-td').html('<td class="compare-title">Priority</td>');
+        $('#body-basic-details-components-tr-td').html('<td class="compare-title">Components</td>');
+        $('#body-basic-details-label-tr-td').html('<td class="compare-title">Labels</td>');
+        $('#body-basic-details-custom-fields-tr-td').html('<td class="compare-title">Custom Fields</td>');
+
+        $('#body-traceability-issue-tr-td').html('<td class="compare-title">Issues</td>');
+        $('#body-traceability-weblink-tr-td').html('<td class="compare-title">Weblinks</td>');
+
+        $('#body-attachments-name-tr-td').html('<td class="compare-title">Attachments</td>');
+
+        $('#body-test-scripts-type-tr-td').html('<td class="compare-title">Test Script Type</td>');
+        $('#body-test-scripts-test-data-tr-td').html('<td class="compare-title">Test Data</td>');
+        $('#body-test-scripts-parameter-tr-td').html('<td class="compare-title">Parameter</td>');
+        $('#body-test-scripts-testscript-tr-td').html('<td class="compare-title">Description</td>');
+
+        if(selectedTestCaseVersion.length >= 2)
+        {
+            if(selectedTestCaseVersion.length === 2) {
+                $('#history_version_compare-table').css('table-layout', 'auto')
+            } else {
+                $('#history_version_compare-table').css('table-layout', 'fixed')
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "POST",
+                "url": "/testcase/compareVersion/?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'project_id': "{{projectId}}",
+                    'domain_id': domain_id,
+                    "testcase_id": JSON.stringify(selectedTestCaseVersion),
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        let all_version_data = data.res.data;
+
+                        for (let i = 0; i < all_version_data.length; i++) 
+                        { 
+                            let green_class = "";
+
+                            //version
+                            if(all_version_data.length-1 === i) {                     
+                                $('#header-version-tr-th').append('<th style="width: 322.5px;">'+all_version_data[i].version+' &nbsp;&nbsp;&nbsp;&nbsp;'+
+                                                                '<button class="aui-button" id="button-spin-1">Currently in use</button>'+
+                                                            '</th>');
+                            } else {                    
+                                $('#header-version-tr-th').append('<th style="width: 262.5px;">'+all_version_data[i].version+' &nbsp;&nbsp;&nbsp;&nbsp;'+
+                                                                '<a href="javascript:void(0)">Use this version</a>'+
+                                                            '</th>');
+                            }
+
+
+                            //Basic Details Section Name
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].name !== all_version_data[i].name) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-name-tr-td').append('<td class="'+green_class+'">'+all_version_data[i].name+'</td>');
+
+
+                            //Basic Details Section Description
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].description !== all_version_data[i].description) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-description-tr-td').append('<td class="'+green_class+'">'+all_version_data[i].description+'</td>');
+
+
+                            //Basic Details Section Objective
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].objective !== all_version_data[i].objective) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-objective-tr-td').append('<td class="'+green_class+'">'+all_version_data[i].objective+'</td>');
+
+
+                            //Basic Details Section Precondition
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].precondition !== all_version_data[i].precondition) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-precondition-tr-td').append('<td class="'+green_class+'">'+all_version_data[i].precondition+'</td>');
+
+
+                            //Basic Details Section Owner
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].owner !== all_version_data[i].owner) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-owner-tr-td').append('<td class="'+green_class+'">'+getJiraUserNameByJiraId(all_version_data[i].owner)+'</td>');
+
+
+                            //Basic Details Section Created On
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].createdAt !== all_version_data[i].createdAt) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-created-on-tr-td').append('<td class="'+green_class+'">'+getFormateDateForHistory(all_version_data[i].createdAt)+'</td>');
+
+
+                            //Basic Details Section Created By
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].acct_id !== all_version_data[i].acct_id) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-created-by-tr-td').append('<td class="'+green_class+'">'+getJiraUserNameByJiraId(all_version_data[i].acct_id)+'</td>');
+
+
+                            //Basic Details Section Estimated Time
+                            green_class = "";
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].estimated_time !== all_version_data[i].estimated_time) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-estimated-time-tr-td').append('<td class="'+green_class+'">'+all_version_data[i].estimated_time+'</td>');
+
+
+                            //Basic Details Section Status
+                            green_class = "";
+                            let color_code = "#DEDEDE";
+                            let status_index = jiraTestCaseStatusListArray.findIndex(x => x.sc_name === all_version_data[i].status);
+                            if(status_index !== -1) {
+                                color_code = jiraTestCaseStatusListArray[status_index].sc_color;
+                            }
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].status !== all_version_data[i].status) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            $('#body-basic-details-status-tr-td').append('<td class="'+green_class+'"><span class="status-color-ball" style="background: '+color_code+'"></span>'+all_version_data[i].status+'</td>');
+
+
+                            //Basic Details Section Priority
+                            green_class = "";
+                            let priority_flag = '<img class="compare-icon" src={{furl "/images/red_flag.svg"}} />';
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].priority !== all_version_data[i].priority) {                     
+                                    green_class = "update-green-bg";
+                                }
+                            }
+                            if(all_version_data[i].priority === "Normal") {
+                                priority_flag = '<img class="compare-icon" src={{furl "/images/yellow_flag.svg"}} />';
+                            } else if(all_version_data[i].priority === "Low") {
+                                priority_flag = '<img class="compare-icon" src={{furl "/images/green_flag.svg"}} />';
+                            }
+                            $('#body-basic-details-priority-tr-td').append('<td class="'+green_class+'">'+priority_flag+'&nbsp; '+all_version_data[i].priority+'</td>');
+
+
+                            //Basic Details Section Component
+                            green_class = "";
+                            $('#body-basic-details-components-tr-td').append('<td class="'+green_class+'">-</td>');
+
+
+                            //Basic Details Section label
+                            green_class = "";
+                            let new_label = JSON.parse(all_version_data[i].label);  
+                            let label_html = "";
+                            if(all_version_data[i-1]) {
+                                let old_label = JSON.parse(all_version_data[i-1].label);
+                                if(old_label.length !== new_label.length) {                     
+                                    green_class = "update-green-bg";
+                                }
+                                if(green_class === "") {
+                                    for (let j = 0; j < old_label.length; j++) 
+                                    {
+                                        if(old_label[j] !== new_label[j]) {                     
+                                            green_class = "update-green-bg";
+                                        }
+                                    }    
+                                }
+                            }                     
+                            for (let k = 0; k < new_label.length; k++) 
+                            {
+                                label_html += '<button class="aui-button label-box" id="button-spin-1">'+new_label[k]+'<span class="aui-icon aui-icon-medium aui-iconfont-cross"></span>'+
+                                            '</button>';
+                            }                         
+                            $('#body-basic-details-label-tr-td').append('<td class="'+green_class+'">'+label_html+'</td>');
+
+
+
+                            //Basic Details Section Custom Fields
+                            green_class = "";
+                            let new_customFields = JSON.parse(all_version_data[i].customFields);  
+                            let customFields_html = "";
+                            if(all_version_data[i-1]) {
+                                let old_customFields = JSON.parse(all_version_data[i-1].customFields);
+                                if(old_customFields.length !== new_customFields.length) {                     
+                                    green_class = "update-green-bg";
+                                }
+                                if(green_class === "") {
+                                    for (let j = 0; j < old_customFields.length; j++) 
+                                    {
+                                        if(old_customFields[j].value !== new_customFields[j].value) {                     
+                                            green_class = "update-green-bg";
+                                        }
+                                    }    
+                                }
+                            }                     
+                            for (let k = 0; k < new_customFields.length; k++) 
+                            {
+                                if(new_customFields[k].cfc_field_type === "checkbox")
+                                {
+                                    if(new_customFields[k].value == 1)
+                                    {
+                                        customFields_html += '<div style="margin-bottom: 3.75px"><b>'+new_customFields[k].cfc_name+'</b>: Checked</div>';
+                                    }
+                                    else
+                                    {
+                                        customFields_html += '<div style="margin-bottom: 3.75px"><b>'+new_customFields[k].cfc_name+'</b>: Unchecked</div>';
+                                    }
+                                }
+                                else
+                                {
+                                    customFields_html += '<div style="margin-bottom: 3.75px"><b>'+new_customFields[k].cfc_name+'</b>: '+new_customFields[k].value+'</div>';
+                                }
+                            }                         
+                            $('#body-basic-details-custom-fields-tr-td').append('<td class="'+green_class+'">'+customFields_html+'</td>');
+
+
+
+                            //Tracebility issue
+                            green_class = "";
+                            let new_issues = all_version_data[i].issues;  
+                            let issues_html = "";
+                            if(all_version_data[i-1]) {
+                                let old_issues = all_version_data[i-1].issues;
+                                if(old_issues.length !== new_issues.length) {                     
+                                    green_class = "update-green-bg";
+                                }
+                                if(green_class === "") {
+                                    for (let j = 0; j < old_issues.length; j++) 
+                                    {
+                                        if(old_issues[j].issue_key !== new_issues[j].issue_key) {                     
+                                            green_class = "update-green-bg";
+                                        }
+                                    }    
+                                }
+                            }                     
+                            for (let k = 0; k < new_issues.length; k++) 
+                            {
+                                issues_html += new_issues[k].issue_key+',&nbsp;';                            
+                            }                         
+                            $('#body-traceability-issue-tr-td').append('<td class="'+green_class+'">'+issues_html+'</td>');
+
+
+
+                            //Tracebility weblink
+                            green_class = "";
+                            let new_weblinks = JSON.parse(all_version_data[i].weblinks);  
+                            let weblinks_html = "";
+                            if(all_version_data[i-1]) {
+                                let old_weblinks = JSON.parse(all_version_data[i-1].weblinks);
+                                if(old_weblinks.length !== new_weblinks.length) {                     
+                                    green_class = "update-green-bg";
+                                }
+                                if(green_class === "") {
+                                    for (let j = 0; j < old_weblinks.length; j++) 
+                                    {
+                                        if(old_weblinks[j].url !== new_weblinks[j].url || old_weblinks[j].description !== new_weblinks[j].description) {                     
+                                            green_class = "update-green-bg";
+                                        }
+                                    }    
+                                }
+                            }                     
+                            for (let k = 0; k < new_weblinks.length; k++) 
+                            {
+                                weblinks_html += (k+1)+'.&nbsp;<span style="margin-bottom: 3.75px">'+new_weblinks[k].description+'</span>,<br>';
+                            }                         
+                            $('#body-traceability-weblink-tr-td').append('<td class="'+green_class+'">'+weblinks_html+'</td>');
+
+
+
+                            //Tracebility attachments
+                            green_class = "";
+                            let new_attachments = all_version_data[i].attachments;  
+                            let attachments_html = "";
+                            if(all_version_data[i-1]) {
+                                let old_attachments = all_version_data[i-1].attachments;
+                                if(old_attachments.length !== new_attachments.length) {                     
+                                    green_class = "update-green-bg";
+                                }
+                                if(green_class === "") {
+                                    for (let j = 0; j < old_attachments.length; j++) 
+                                    {
+                                        if(old_attachments[j].file_name !== new_attachments[j].file_name || old_attachments[j].uploaded_on !== new_attachments[j].uploaded_on) {                     
+                                            green_class = "update-green-bg";
+                                        }
+                                    }    
+                                }
+                            }                     
+                            for (let k = 0; k < new_attachments.length; k++) 
+                            {
+                                attachments_html += (k+1)+'.&nbsp;<span style="margin-bottom: 3.75px">'+new_attachments[k].file_name+'</span>,<br>';
+                            }                         
+                            $('#body-attachments-name-tr-td').append('<td class="'+green_class+'">'+attachments_html+'</td>');
+
+
+
+                            //Basic Details Section testscript_type
+                            green_class = "";
+                            let green_class_2 = "";
+                            let green_class_3 = "";
+                            let green_class_4 = "";
+
+                            if(all_version_data[i-1]) {
+                                if(all_version_data[i-1].testscript_type !== all_version_data[i].testscript_type) {                     
+                                    green_class = "update-green-bg";
+                                }
+                                if(all_version_data[i-1].testscript !== all_version_data[i].testscript) {                     
+                                    green_class_2 = "update-green-bg";
+                                }
+                                if(all_version_data[i-1].test_data !== all_version_data[i].test_data) {                     
+                                    green_class_3 = "update-green-bg";
+                                }
+                                if(all_version_data[i-1].parameters !== all_version_data[i].parameters) {                     
+                                    green_class_4 = "update-green-bg";
+                                }
+                            }
+                            if(all_version_data[i].testscript_type === "bdd_gherkin_script") 
+                            {
+                                $('#body-test-scripts-type-tr-td').append('<td class="'+green_class+'">BDD-Gherkin Script</td>');
+                                $('#body-test-scripts-testscript-tr-td').append('<td class="'+green_class_2+'">'+all_version_data[i].testscript+'</td>');
+                                $('#body-test-scripts-test-data-tr-td').append('<td>-</td>');
+                                $('#body-test-scripts-parameter-tr-td').append('<td>-</td>');
+                            }
+                            else if(all_version_data[i].testscript_type === "plain_test") 
+                            {
+                                $('#body-test-scripts-type-tr-td').append('<td class="'+green_class+'">Plain Text</td>');
+                                $('#body-test-scripts-testscript-tr-td').append('<td class="'+green_class_2+'">'+all_version_data[i].testscript+'</td>');
+                                $('#body-test-scripts-test-data-tr-td').append('<td>-</td>');
+                                $('#body-test-scripts-parameter-tr-td').append('<td>-</td>');
+                            }
+                            else
+                            {
+                                $('#body-test-scripts-type-tr-td').append('<td class="'+green_class+'">Step by Step</td>');
+                                
+
+                                // testdata
+                                let new_test_data = JSON.parse(all_version_data[i].test_data);  
+                                let test_data_html = "";
+                                for (let k = 0; k < new_test_data.length; k++) 
+                                {
+                                    test_data_html += '<span style="margin-bottom: 3.75px;">'+(k+1)+'.';
+                                    let check = true
+                                    for (const [key, value] of Object.entries(new_test_data[k])) 
+                                    {
+                                        if(check) {
+                                            test_data_html += '<span style="margin-left: 7.5px;"><b>'+key+'</b>: '+value+'</span><br>';
+                                        } else {
+                                            test_data_html += '<span style="margin-left: 16.5px;"><b>'+key+'</b>: '+value+'</span><br>';
+                                        }
+                                        check = false;
+                                    }
+                                    test_data_html += '</span>';
+                                }
+                                $('#body-test-scripts-test-data-tr-td').append('<td class="'+green_class_3+'">'+test_data_html+'</td>');
+
+
+
+                                // testscript
+                                let new_testscript = JSON.parse(all_version_data[i].testscript);  
+                                let testscript_html = "";  
+                                let green_class_4 = "";
+
+                                if(all_version_data[i-1] && green_class_2 === "") {
+                                    let old_testscript = JSON.parse(all_version_data[i-1].testscript);
+                                    if(old_testscript.length !== new_testscript.length) {                     
+                                        green_class_4 = "update-green-bg";
+                                    }
+                                    if(green_class_4 === "") {
+                                        for (let j = 0; j < old_testscript.length; j++) 
+                                        {
+                                            if(old_testscript[j].description !== new_testscript[j].description || old_testscript[j].test_data !== new_testscript[j].test_data || old_testscript[j].expected_output !== new_testscript[j].expected_output) {                     
+                                                green_class_4 = "update-green-bg";
+                                            }
+                                        }    
+                                    }
+                                }
+                                for (let k = 0; k < new_testscript.length; k++) 
+                                {
+                                    testscript_html += '<b style="font-size: 13px;">Step-'+(k+1)+'</b><br>';
+                                    testscript_html += '<b style="color: #777777;">Step Description : </b>'+new_testscript[k].description+'<br>';
+                                    testscript_html += '<b style="color: #777777;">Test Data : </b>'+new_testscript[k].test_data+'<br>';
+                                    testscript_html += '<b style="color: #777777;">Expected Output : </b>'+new_testscript[k].expected_output+'<br><br>';
+                                } 
+                                $('#body-test-scripts-testscript-tr-td').append('<td class="'+green_class_2+' '+green_class_4+'">'+testscript_html+'</td>');
+
+
+
+                                // parameter
+                                let new_parameters = JSON.parse(all_version_data[i].parameters);  
+                                let parameters_html = "";
+                                for (let k = 0; k < new_parameters.length; k++) 
+                                {
+                                    parameters_html += (k+1)+'.&nbsp;<span style="margin-bottom: 3.75px"><b>'+new_parameters[k].name+'</b>: '+new_parameters[k].value+'</span>,<br>';
+                                } 
+                                $('#body-test-scripts-parameter-tr-td').append('<td class="'+green_class_4+'">'+parameters_html+'</td>');
+                            }                   
+                        }
+
+                        AJS.dialog2("#demo-dialog").show();
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+        });
+        }
+        else
+        {
+            toaster('Select two or more than two version', 'warning');
+        }
+    }
+
+
+
+
+</script>

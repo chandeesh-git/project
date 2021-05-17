@@ -1,0 +1,783 @@
+<!-- Page Content -->
+<div id="page-content-wrapper">
+
+  <style>
+  #testexecution_testcase_report_pie_chart_by_issue_type {
+    width: 100%;
+    height: 217.5px;
+  }
+  #testexecution_testcase_report_pie_chart_by_issue_priority {
+    width: 100%;
+    height: 217.5px;
+  }
+  #tracebility_report_graph_by_testcycle_component {
+    width: 100%;
+    height: 450px;
+  }
+
+  </style>
+
+    <nav class="navbar navbar-expand-lg navbar-light border-bottom" style="background-color: #FAFAFA;">
+        <button class="btn btn-default menu-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#344563" style="position: relative; top: -1.5px;">
+                <g transform="translate(12)">
+                    <path class="a"
+                        d="M256.5,0a.5.5,0,0,0-.5.5v11a.5.5,0,0,0,.5.5h11a.5.5,0,0,0,.5-.5A11.513,11.513,0,0,0,256.5,0Z"
+                        transform="translate(-256)" />
+                </g>
+                <g transform="translate(0 1)">
+                    <path class="a"
+                        d="M17.895,41.526,11,32.662V21.833a.5.5,0,0,0-.5-.5c-5.79,0-10.5,5.159-10.5,11.5a11.513,11.513,0,0,0,11.5,11.5,8.542,8.542,0,0,0,6.317-2.114A.5.5,0,0,0,17.895,41.526Z"
+                        transform="translate(0 -21.333)" />
+                </g>
+                <g transform="translate(13 13)">
+                    <path class="a"
+                        d="M287.837,277.333h-10a.5.5,0,0,0-.388.814l6.5,8.047a.5.5,0,0,0,.354.185h.035a.5.5,0,0,0,.341-.134,11.548,11.548,0,0,0,3.658-8.413A.5.5,0,0,0,287.837,277.333Z"
+                        transform="translate(-277.338 -277.333)" />
+                </g>
+            </svg>
+            <label class="main-title" id="current_page_tag">Test Execution Reports</label>
+        </button>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                <li class="nav-item active" style="display: inline-block;">
+                    <a id="report-go-back-btn" onclick="getReportInitailPage()" class="aui-button aui-button-primary" href="#" style="display: none;">
+                        Go Back
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!---sub-sidebar-section--->
+
+    <div id="sub-sidebar-div">
+        <div class="aui-page-panel">
+            <aside class="aui-page-panel-sidebar sub-sidebar" style="width: 226.5px; ">
+                <ul>
+                    <li class="active report-common-class" id="report-test-executions" onclick="changeReportPage('report-test-executions')">
+                        <a href="#">Test Executions</a>
+                    </li>
+                    <li class="report-common-class" id="report-traceability" onclick="changeReportPage('report-traceability')">
+                        <a href="#">Traceability</a>
+                    </li>
+                    <li class="report-common-class" id="report-live-statistics" onclick="changeReportPage('report-live-statistics')">
+                        <a href="#">Live Statistics</a>
+                    </li>
+                    {{!-- <li class="report-common-class" id="report-test-case-report" onclick="changeReportPage('report-test-case-report')">
+                        <a href="#">Test Case Report</a>
+                    </li> --}}
+                </ul>
+            </aside>
+
+
+
+
+
+
+
+
+            <section class="aui-page-panel-content content-section">
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="report-common-class-div" id="report-test-case-report-div" style="display: none;">
+                  <form class="aui" name="myForm" method="post" action="javascript:void(0);" style="margin-top: 0;width: 487.5px;">
+                    <div class="aui-dialog2-content" style="border: 1px solid #d3e3ff;max-height: unset;">
+                      <div class="row">
+                        <div class="col">
+                            <div class="form-group select-field-type">
+                                <label class="label required-field">Project</label>
+                                <select id="test_case_project_select" name="project" data-aui-validation-field
+                                    class="form-control select customFieldTypeSelect"
+                                    onchange="getTestCaseProjectChange()"
+                                    required="required"
+                                    style="max-width: 487.5px;">
+                                </select>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="form-group select-field-type">
+                        <label class="label required-field">Report</label>
+                        <div class="radio">
+                          <input class="radio" type="radio" value="executed" checked="checked" name="type" id="typeOne">
+                          <label for="typeOne">Most Executed Test case</label>
+                        </div>
+                        <div class="radio">
+                          <input class="radio" type="radio" value="Fail" name="type" id="typeTwo">
+                          <label for="typeTwo">Most Failed Test case</label>
+                        </div>
+                      </div>
+                    </div>
+                    <footer class="aui-dialog2-footer" style="background: #F4F5F7 0% 0% no-repeat padding-box;border: 1px solid #DFE1E5;height: 45px;display: flex;align-items: center;justify-content: flex-end;">
+                        <div class="aui-dialog2-footer-actions">
+                            <button type="submit" id="submit-testcase-dialog-confirm-btn" class="aui-button aui-button-primary" disabled onclick="generateTestExecutionReport5()">Generate Report</button>
+                        </div>
+                    </footer>
+                  </form>
+                </div>
+
+
+
+
+
+
+
+
+
+
+                <div class="report-common-class-div" id="report-test-executions-div" style="display: none;">
+                  <div class="report-div">
+                    <a href="javascript:void(0)" onclick="showTestExecutionFilter(1)">Test Execution Reports Per Test Cycle (List)</a>
+                  </div>
+
+                  <div class="report-div">  
+                    <a href="javascript:void(0)" onclick="showTestExecutionFilter(2)">Test Execution Reports Per Test Cycle (Detail)</a>
+                  </div>
+
+                  <div class="report-div">  
+                    <a href="javascript:void(0)" onclick="changeReportPage('report-test-case-report')">Test Case Report</a>
+                  </div>
+                  
+                  {{!-- <div class="report-div">   
+                    <a href="javascript:void(0)" onclick="showTestExecutionFilter(3)">Tracebility : - Defect distribution per Components</a>
+                  </div>
+                  <div class="report-div">   
+                    <a href="javascript:void(0)" onclick="showTestExecutionFilter(4)">Live Statistics : for a particular project</a>
+                  </div>
+                  <div class="report-div" style="border-bottom: none;">   
+                    <a href="javascript:void(0)" onclick="showTestExecutionFilter(5)">Test Case Report : Most Executed Test Case/ Most Failed </a>
+                  </div> --}}
+                </div>
+
+
+
+
+
+
+
+
+
+                <div class="report-common-class-div" id="report-traceability-div-3" style="display: none;">
+                  
+                  <h4 class="report_title">Project Name: <span id="selected_report_project_name_2"></span></h4>
+                  <br>
+                  <br>
+                  <div class="d-flex">
+                    <h4 class="report_title">Test Execution Status by Cycle</h4>
+                    {{!-- export button report 3 --}}
+                    <button type="button" class="aui-button btn_spinner ml-auto mt-1" onclick="generatePdfTestExecutionReport3()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as PDF
+                      </button>
+                  </div>
+                  <br>
+                  <br>
+                  <div id="tracebility_report_graph_by_testcycle_component"></div>
+                  <br>
+                  
+                  <div id="traceability_report_table_heading">
+                    <div class="d-flex">
+                      <h4 class="report_title">Detailed Component Distribution Report</h4>
+                      {{!-- export button report 3 --}}
+                      <button type="button" class="aui-button btn_spinner ml-auto mt-1" onclick="exportCsvReport3()">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                      style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                      <g transform="translate(0 0.883)">
+                                          <path class="a"
+                                              d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                              transform="translate(0 -10.958)"></path>
+                                          <path class="a"
+                                              d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                              transform="translate(-12.449 -1)"></path>
+                                      </g>
+                                  </svg>
+                                  Export as CSV
+                        </button>
+                    </div>
+                  </div>
+                  <div id="traceability_report_table_div">
+                    <table id="traceability_report_table" class="aui report_tbl report_tbl_2 report_tbl_3" style="margin-top: 11.25px;max-width: 487.5px;">
+                      <thead style="background: #344563">
+                        <tr style="height: 32.25px;">
+                            <th class="col_header_mul">
+                                <span class="col_header_mul-first">Priority</span>
+                                <span class="col_header_mul-seperator"></span>
+                                <span class="col_header_mul-second">Component</span>
+                            </th>
+                            <th><b>Highest</b></th>
+                            <th><b>High</b></th>
+                            <th><b>Medium</b></th>
+                            <th><b>Low</b></th>
+                            <th><b>Lowest</b></th>
+                            <th><b>Total</b></th>
+                        </tr>
+                      </thead>
+                      <tbody id="traceability_report_table_body_data_2"></tbody>
+                    </table>	
+                  </div>
+                </div>
+
+
+
+
+
+
+
+
+
+                <div class="report-common-class-div" id="report-test-case-report-div-3" style="display: none;">
+                  <h4 class="report_title" style="display: flex; margin-right: 11.25px;">
+                    <span id="selected_report_Type_name"></span>
+                    <div class="d-flex ml-auto">
+                      <label class="label" style="margin-right: 7.5px; margin-bottom: 0; position: relative;top: 5px;">
+                        Select no of test case to be displayed
+                      </label>
+                      <select style="width:105px" class="form-control select" id="test_case_count_drop_down" onchange="submitTestExecutionReport5Data();">
+                          <option value="10" selected="selected">Top 10</option>
+                          <option value="15">Top 15</option>
+                          <option value="30">Top 30</option>
+                          <option value="50">Top 50</option>
+                      </select>
+                      {{!-- export pdf button report 5 --}}
+                      <button type="button" class="aui-button btn_spinner ml-3 mt-1" onclick="generatePdfTestExecutionReport5()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as PDF
+                      </button>
+
+                      {{!-- export pdf button report 5 --}}
+                      <button type="button" class="aui-button btn_spinner ml-3 mt-1" onclick="generateCsvReport5()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as CSV
+                      </button>
+                    </div>
+                  </h4>
+                  <br>
+                  <br>
+                  <div id="test_case_report_graph"></div>	
+                </div>
+
+
+
+
+
+
+
+
+
+                <div class="report-common-class-div" id="report-test-executions-div-1" style="display: none;">
+                  <form class="aui" name="myForm" method="post" action="javascript:void(0);" style="margin-top: 0;width: 487.5px;">
+                    <div class="row">
+                      <div class="col">
+                          <div class="form-group select-field-type">
+                              <label class="label required-field">Project</label>
+                              <select id="testexecution_project_select" name="project" data-aui-validation-field
+                                  class="form-control select customFieldTypeSelect"
+                                  onchange="getTestExecutionEnvironmentData()"
+                                  required="required"
+                                  style="max-width: 487.5px;">
+                                  <option value="">Select Project</option>
+                              </select>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="aui-dialog2-content" style="border: 1px solid #d3e3ff;max-height: unset;">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group select-field-type">
+                                    <label class="label required-field">Environment</label>
+                                    <select id="testexecution_environment_select" name="enviroment" disabled data-aui-validation-field
+                                        class="form-control select customFieldTypeSelect"
+                                        onchange="getTestExecutionCycleData()"
+                                        required="required">
+                                        <option value="">Select Environment</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="row">
+                            <div class="col">
+                              <div class="form-group select-field-type">
+                                <label class="label required-field">From Date</label>
+                                <input type="date" id="testexecution_start_date" name="testexecution_start_date" disabled data-aui-validation-field
+                                    class="form-control text medium-field" placeholder="Enter test execution start date"
+                                    onchange="getTestExecutionCycleData()"
+                                    required="required" style="width: 187.5px;">
+                              </div>
+                          </div>
+                          <div class="col">
+                              <div class="form-group select-field-type">
+                                <label class="label required-field">To Date</label>
+                                <input type="date" id="testexecution_end_date" name="testexecution_end_date" disabled data-aui-validation-field
+                                    class="form-control text medium-field" placeholder="Enter test execution end date"
+                                    onchange="getTestExecutionCycleData()"
+                                    required="required" style="width: 187.5px;">
+                              </div>
+                          </div>
+                        </div>
+                                    
+                        <div class="form-group select-field-type single_test_cycle_select" style="display: none;">
+                            <label class="label required-field">Test Cycle</label>
+                            <select id="testexecution_testcycle_select" name="cycle" disabled data-aui-validation-field
+                                class="form-control select customFieldTypeSelect"
+                                onchange="getTestExecutionCycleSelect()"
+                                required="required">
+                                <option value="">Select Test Cycle</option>
+                            </select>
+                        </div>
+                                    
+                        <div class="form-group select-field-type multi_test_cycle_select" style="display: none;">
+                            <label class="label required-field">Test Cycle</label>
+                            <span id="testCaseMultiSelectSpan">
+                            <select id="testexecution_testcycle_multi_select" class="multi-selector-dropdown" name="cycle" multiple disabled data-aui-validation-field
+                                style="width: 426px;"
+                                class="form-control select customFieldTypeSelect"
+                                onchange="getTestExecutionCycleSelect()"
+                                required="required">
+                            </select>
+                            </span>
+                        </div>
+                                                     
+                        <div class="form-group select-field-type multi_test_cycle_select" style="display: none;">
+                          <label class="label required-field">Report Type</label>
+                          <div class="radio">
+                            <input class="radio" type="radio" value="both" checked="checked" name="first_second_report_type" id="first_second_graphZero">
+                            <label for="first_second_graphZero">Both</label>
+                          </div>
+                          <div class="radio">
+                            <input class="radio" type="radio" value="graph" name="first_second_report_type" id="first_second_graphOne">
+                            <label for="first_second_graphOne">Graph</label>
+                          </div>
+                          <div class="radio">
+                            <input class="radio" type="radio" value="table" name="first_second_report_type" id="first_second_graphTwo">
+                            <label for="first_second_graphTwo">Table</label>
+                          </div>
+                        </div>
+
+                    </div>
+                    <footer class="aui-dialog2-footer" style="background: #F4F5F7 0% 0% no-repeat padding-box;border: 1px solid #DFE1E5;height: 45px;display: flex;align-items: center;justify-content: flex-end;">
+                        <div class="aui-dialog2-footer-actions">
+                            <button type="submit" id="submit-testexecution-dialog-confirm-btn" class="aui-button aui-button-primary" disabled="disabled" onclick="submitTestExecutionReportData()">Generate Report</button>
+                        </div>
+                    </footer>
+                  </form>
+                </div>
+
+
+
+
+
+
+                
+
+
+
+
+                <div class="report-common-class-div" id="report-test-executions-data-1" style="display: none;">
+                  <div class="d-flex">
+                    <h5 class="report_title">Project Name: <span id="selected_report_project_name_1"></span></h5>
+                    {{!-- export pdf button for report 1 --}}
+                    <button type="button" class="aui-button btn_spinner mt-1 ml-auto" onclick="generatePdfTestExecutionReport1()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as PDF
+                      </button>
+                  </div>
+                  <h6 class="report_title">Env: <span id="selected_report_evn_name"></span></h6>
+                  <h6 class="report_title">Date Range: <span id="selected_report_date_range"></span></h6>
+                  <h6 class="report_title">TC Name: <span id="selected_report_test_cycle_name"></span></h6>
+                  <h6 class="report_title">Total Number Test Case: <span id="selected_report_total_number_of_test_case"></span></h6>
+
+                  <div class="d-flex mt-4"> 
+                        <h4 class="mt-1">Test Case Execution count</h4>
+                          <div class="ml-auto">
+                            {{!-- export csv button report 1 count list--}}
+                            <button type="button" class="aui-button btn_spinner mr-3 mt-1" onclick="exportCsvReport1StatusCount()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as CSV
+                            </button>
+                            
+                          </div>
+                  </div>
+
+                  <table class="aui report_tbl" style="margin-top: 11.25px;">
+                    <thead id="testexecution_status_report_table_head_data_1"></thead>
+                    <tbody id="testexecution_status_report_table_body_data_1" style="border-left: 1px solid #dfe1e6;border-right: 1px solid #dfe1e6;"></tbody>
+                  </table>                
+
+                  <div class="d-flex mt-4"> 
+                        <h4 class="mt-1">Test Case Status</h4>
+                          <div class="ml-auto">
+                            {{!-- export csv button report 1 status--}}
+                            <button type="button" class="aui-button btn_spinner mr-3 mt-1" onclick="exportCsvReport1List()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as CSV
+                            </button>
+                            
+                          </div>
+                  </div>
+
+                  <table class="aui report_tbl" style="margin-top: 11.25px;">
+                    <thead style="background: #344563">
+                      <tr style="height: 32.25px;">
+                          <th><b>Name</b></th>
+                          <th><b>Version</b></th>
+                          <th><b>Status</b></th>
+                          <th><b>Priority</b></th>
+                      </tr>
+                    </thead>
+                    <tbody id="testexecution_testcase_report_table_body_data_1" style="border-left: 1px solid #dfe1e6;border-right: 1px solid #dfe1e6;"></tbody>
+                  </table>
+
+                </div>
+
+
+
+                
+
+
+
+
+                <div class="report-common-class-div" id="report-test-executions-data-2" style="display: none;">
+                  <div class="d-flex">
+                    <h4>Detailed Test Report</h4>
+                    {{!-- export pdf button for report 2 --}}
+                    <button type="button" class="aui-button btn_spinner ml-auto mt-1" onclick="generatePdfTestExecutionReport2()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as PDF
+                    </button>
+                  </div>
+
+                  <br>
+
+                  <div class="row" id="testexecution_testcase_report_pie_chart">
+                      <div class="col" style="text-align: center;">
+                        <h5>Detailed Test Report By Issue Type (Pie Chart)</h5>
+                        <br>
+                        <div id="testexecution_testcase_report_pie_chart_by_issue_type"></div>
+                      </div>
+                      <div class="col" style="text-align: center;">
+                        <h5>Detailed Test Report By Issue Priority (Pie Chart)</h5>
+                        <br>
+                        <div id="testexecution_testcase_report_pie_chart_by_issue_priority"></div>
+                      </div>
+                  </div>
+
+                  <div class="d-flex mt-4"> 
+                        <h4 class="mt-1">Detailed Test Report By Issue Type (table)</h4>
+                          <div class="ml-auto">
+                            {{!-- export csv button report 1 count list--}}
+                            <button type="button" class="aui-button btn_spinner mr-3 mt-1" onclick="exportCsvReport2()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as CSV
+                            </button>
+                            
+                          </div>
+                  </div>
+
+                  <table class="aui report_tbl report_tbl_2" id="testexecution_testcase_report_table">
+                    <thead style="background: #344563">
+                      <tr style="height: 32.25px;">
+                          <th style="text-align: left !important;"><b>Issue Type</b></th>
+                          <th><b>Highest</b></th>
+                          <th><b>High</b></th>
+                          <th><b>Medium</b></th>
+                          <th><b>Low</b></th>
+                          <th><b>Lowest</b></th>
+                          <th><b>Total</b></th>
+                      </tr>
+                    </thead>
+                    <tbody id="testexecution_testcase_report_table_body_data_2" style="border-left: 1px solid #dfe1e6;border-right: 1px solid #dfe1e6;"></tbody>
+                  </table>
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+              {{!-- ====================== --}}
+              {{!-- Start of Live Statistics Report --}}
+              {{!-- ====================== --}}
+              <div class="report-common-class-div" id="report-live-statistics-div" style="display: none;">
+                  <div class="d-flex">
+                    <h4 class="report_title mt-1">Project Name: </h4>
+                    <select id="testexecution_project_select_live" name="project" data-aui-validation-field
+                        class="form-control select customFieldTypeSelect ml-2"
+                        onchange="callLiveStaticsOnChange()"
+                        style="max-width: 165px;">
+                        <option value="">Select Project</option>
+                    </select>
+                  </div>
+                  
+                  <div id="report-live-statistics-chart-table" class="report-common-chart-table">
+                    <form class="aui">
+                      <div class="d-flex mt-4"> 
+                        <h5 class="mt-1">Test Execution Summary</h5>
+                          <div class="ml-auto">
+                            {{!-- export pdf button --}}
+                            <button type="button" class="aui-button btn_spinner ml-2 mt-1" onclick="generateActivityLogPdf()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                    style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                    <g transform="translate(0 0.883)">
+                                        <path class="a"
+                                            d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                            transform="translate(0 -10.958)"></path>
+                                        <path class="a"
+                                            d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                            transform="translate(-12.449 -1)"></path>
+                                    </g>
+                                </svg>
+                                Export as PDF
+                            </button>                            
+                          </div>
+                      </div>
+                      <div class="mt-2 mb-2" style="border: 1px solid #d3e3ff; padding:20px 20px 7.5px 20px;">                            
+                          <div class="row">
+                            <div class="col-12">
+                                <div class="form-group select-field-type">
+                                  <label class="label required-field">No. of Days</label>
+                                  <select name="select-live-filter" style="width:105px" class="form-control select" id="live_statistics_day_filter" onchange="callLiveStaticsOnChange();">
+                                      <option value="7">Last 7 Days</option>
+                                      <option value="15">Last 15 Days</option>
+                                      <option value="30">Last 30 Days</option>
+                                      <option value="custom">Custom Date</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group select-field-type">
+                                  <label class="label required-field">From Date</label>
+                                  <input type="date" id="live_statistics_start_date" name="live_statistics_start_date" disabled data-aui-validation-field
+                                      class="form-control text medium-field" placeholder="start date"
+                                      onchange="callLiveStaticsOnChange()"
+                                      required="required" style="width: 187.5px;">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group select-field-type">
+                                  <label class="label required-field">To Date</label>
+                                  <input type="date" id="live_statistics_end_date" name="live_statistics_end_date" disabled data-aui-validation-field
+                                      class="form-control text medium-field" placeholder="end date"
+                                      onchange="callLiveStaticsOnChange()"
+                                      required="required" style="width: 187.5px;">
+                                </div>
+                            </div>
+                          </div>
+                      </div>
+                      
+                    </form>
+
+                    <div id="liveStatisticsChartdiv" class="report_live_statistics_chart"></div>
+                    
+                    <div id="liveStatisticsTablediv_heading">
+                      <div class="d-flex mt-4" > 
+                          <h5 class="mt-1">Activity Logs</h5>
+                            <div class="ml-auto">
+                              {{!-- export csv button --}}
+                              <button type="button" class="aui-button btn_spinner ml-2 mt-1" onclick="exportCsvActivityLog()">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                      style="margin-right: 7.5px;" viewBox="0 0 20.077 21" fill="#344563">
+                                      <g transform="translate(0 0.883)">
+                                          <path class="a"
+                                              d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                              transform="translate(0 -10.958)"></path>
+                                          <path class="a"
+                                              d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                              transform="translate(-12.449 -1)"></path>
+                                      </g>
+                                  </svg>
+                                  Export as CSV
+                              </button>
+                              
+                            </div>
+                      </div>
+                    </div>
+
+                    <div id="liveStatisticsTablediv">
+                      <table class="table report_table" >
+                        <thead>
+                          <tr>
+                            <th>Action</th>
+                            <th>Test Case Name </th>
+                            <th>Action By</th>
+                          </tr>
+                        </thead>
+                        <tbody id="activity_logs_table_live_report"> </tbody>
+                      </table>
+
+                      <div class="report_table_paginate">                  
+                        <nav aria-label="...">
+                          <ul class="pagination pagination-sm justify-content-center" id="activity_logs_pagination">
+                            <li class="page-item disabled">
+                              <span class="page-link">
+                                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="7.5px"
+                                  height="7.5px" fill="#42526E" viewBox="0 0 444.531 444.531" style="enable-background:new 0 0 444.531 444.531;" xml:space="preserve">
+                                    <g>
+                                      <path d="M213.13,222.409L351.88,83.653c7.05-7.043,10.567-15.657,10.567-25.841c0-10.183-3.518-18.793-10.567-25.835
+                                        l-21.409-21.416C323.432,3.521,314.817,0,304.637,0s-18.791,3.521-25.841,10.561L92.649,196.425
+                                        c-7.044,7.043-10.566,15.656-10.566,25.841s3.521,18.791,10.566,25.837l186.146,185.864c7.05,7.043,15.66,10.564,25.841,10.564
+                                        s18.795-3.521,25.834-10.564l21.409-21.412c7.05-7.039,10.567-15.604,10.567-25.697c0-10.085-3.518-18.746-10.567-25.978
+                                        L213.13,222.409z"></path>
+                                    </g>
+                                </svg>
+                              </span>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="javascript:void()">1</a></li>
+                            <li class="page-item active">
+                              <span class="page-link">
+                                2
+                                <span class="sr-only">(current)</span>
+                              </span>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="javascript:void()">3</a></li>
+                            <li class="page-item">
+                              <a class="page-link" href="javascript:void()">
+                                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                    width="7.5px" height="7.5px" fill="#42526E" viewBox="0 0 444.819 444.819" style="enable-background:new 0 0 444.819 444.819;"
+                                    xml:space="preserve">
+                                  <g>
+                                    <path d="M352.025,196.712L165.884,10.848C159.029,3.615,150.469,0,140.187,0c-10.282,0-18.842,3.619-25.697,10.848L92.792,32.264
+                                      c-7.044,7.043-10.566,15.604-10.566,25.692c0,9.897,3.521,18.56,10.566,25.981l138.753,138.473L92.786,361.168
+                                      c-7.042,7.043-10.564,15.604-10.564,25.693c0,9.896,3.521,18.562,10.564,25.98l21.7,21.413
+                                      c7.043,7.043,15.612,10.564,25.697,10.564c10.089,0,18.656-3.521,25.697-10.564l186.145-185.864
+                                      c7.046-7.423,10.571-16.084,10.571-25.981C362.597,212.321,359.071,203.755,352.025,196.712z"/>
+                                  </g>
+                                  </svg>
+                              </a>
+                            </li>
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+
+              {{!-- ============================== --}}
+              {{!-- END of Live Statistics Report --}}
+              {{!-- ============================== --}}
+
+
+
+
+
+            </section>
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+</div>

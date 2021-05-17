@@ -1,0 +1,66 @@
+<script>
+
+
+    var domain_id = AP._hostOrigin.replace('https://', '');
+    domain_id = domain_id.replace('.atlassian.net', '');
+
+    getIssueDataById()
+
+    function getIssueDataById() {
+        $.ajax({
+            "type": "GET",
+            "url": "/testcase/issueDetails?project_id={{projectId}}&issue_id={{issueId}}&domain_id="+domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {  
+
+                if (data.res.status === 200) {
+
+                    $('#issueTestAssignCheck').css('display', 'block')
+
+                    let testcases = data.res.data.testcase;
+                    let testcycles = data.res.data.testcycle;
+
+                    let testcase_list = "<ul>";
+                    let testcycle_list = "<ul>";
+
+                    if (testcases.length > 0) 
+                    {
+                        for (let i = 0; i < testcases.length; i++) 
+                        {
+                            testcase_list += "<li>"+testcases[i].name+"</li>";
+                        }
+                    }
+
+                    if (testcycles.length > 0) 
+                    {
+                        for (let i = 0; i < testcycles.length; i++) 
+                        {
+                            testcycle_list += "<li>"+testcycles[i].name+"</li>";
+                        }
+                    }
+
+                    $('#issue_testcase').html(testcase_list+"</ul>");
+                    $('#issue_testcycle').html(testcycle_list+"</ul>");
+                    
+                }
+                if (data.res.status === 401) {
+
+                    $('#issueTestAssignCheck').css('display', 'none');
+                    $('#noAttchedTestFound').css('display', 'block');
+                    $('#issueNotFound').html("No Records found");
+                    
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+</script>

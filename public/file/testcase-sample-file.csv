@@ -1,0 +1,2 @@
+name,description,precondition,objective,status,priority,component,estimated_time,label
+SY-Import -Add-1,This a test case  is cretead for,hey just for  the test ,hello to test ,Draft,High,test,7,"TEST_CASE_1, TEST_CASE_2"

@@ -1,0 +1,18 @@
+<svg id="Group_325" class="icons" data-name="Group 325" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="15" height="15" viewBox="0 0 24 22">
+    <defs>
+        <clipPath id="clip-path">
+            <path id="Page_1" data-name="Page 1"
+                d="M2.389,22A2.413,2.413,0,0,1,0,19.566V2.452A2.426,2.426,0,0,1,2.4,0H8.4a3.814,3.814,0,0,1,3.291,2.276l.545,1.39h9.371A2.414,2.414,0,0,1,24,6.1V19.566A2.417,2.417,0,0,1,21.611,22Z"
+                transform="translate(0)" fill="#6b778c"></path>
+        </clipPath>
+    </defs>
+    <path id="Page_1-2" data-name="Page 1"
+        d="M2.389,22A2.413,2.413,0,0,1,0,19.566V2.452A2.426,2.426,0,0,1,2.4,0H8.4a3.814,3.814,0,0,1,3.291,2.276l.545,1.39h9.371A2.414,2.414,0,0,1,24,6.1V19.566A2.417,2.417,0,0,1,21.611,22Z"
+        transform="translate(0)" fill="#6b778c"></path>
+    <g id="Mask_Group_194" data-name="Mask Group 194" clip-path="url(#clip-path)">
+        <g id="_Color" data-name="↳ 🎨Color" transform="translate(-2.4 -3.667)">
+            <path id="N500" d="M0,29.333H28.8V0H0Z" fill="#6b778c"></path>
+        </g>
+    </g>
+</svg>

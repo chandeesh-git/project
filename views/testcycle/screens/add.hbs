@@ -1,0 +1,121 @@
+<!-- Page Content -->
+<div id="page-content-wrapper" class="section-add-div">
+
+    <nav class="navbar navbar-expand-lg navbar-light border-bottom" style="background-color: #FAFAFA;">
+        <button class="btn btn-default menu-toggle">
+            <label class="main-title" id="current_page_tag">Create New Test Cycle</label>
+        </button>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                <li class="nav-item active" style="display: inline-block;">
+                    <span class="btn-wrapper-span">
+                        <a id="spinnerbutton" class="aui-button" href="/project/testCycleView?projectId={{projectId}}&projectKey={{projectKey}}&jwt={{token}}&user={{userAccountId}}&selectedFolderId={{selectedFolderId}}&page=list">
+                        Cancel and Go Back
+                        </a>
+                    </span>
+
+                    {{#ifCond viewPage "add"}}
+                        <button type="button" id="saveDraftTestBtn" onclick="submitFormDataTestCycle('draft')" class="aui-button aui-button-primary"> Save as Draft </button>
+                    {{/ifCond}}                    
+                    <button type="button" id="saveTestBtn" onclick="submitFormDataTestCycle('save')" class="aui-button aui-button-primary"> Save </button>                   
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!---sub-sidebar-section-->
+    <div id="sub-sidebar-div">
+        <div class="aui-page-panel">
+            <aside class="aui-page-panel-sidebar sub-sidebar">
+                <ul>
+                    <li class="sub-div-li active" id="testcycle-basic-details" onclick="changeAddSubPages('basic-details')">
+                        <a href="#">Basic Details</a>
+                    </li>
+
+                    <li class="sub-div-li" id="testcycle-test-case" onclick="changeAddSubPages('test-case')">
+                        <a href="#">Test Case</a>
+                    </li>
+
+                    <li class="sub-div-li" id="testcycle-traceability" onclick="changeAddSubPages('traceability')">
+                        <a href="#">Traceability</a>
+                    </li>
+
+                    <li class="sub-div-li" id="testcycle-history" onclick="changeAddSubPages('history')">
+                        <a href="#">History</a>
+                    </li>
+
+                </ul>
+            </aside>
+
+
+            <section class="aui-page-panel-content content-section">
+                <div id="testcycle-basic-details-form" class="sub-div">
+                    {{> testcycle/screens/add/basic_details }}
+                </div>
+                
+                <div id="testcycle-test-case-form" class="sub-div" style="display: none;">
+                    {{> testcycle/screens/add/test_cases }}
+                </div>
+        
+                <div id="testcycle-traceability-form" class="sub-div" style="display: none;">
+                    {{> testcycle/screens/add/traceability }}
+                </div>
+                               
+
+                <div id="testcycle-history-form" class="sub-div" style="display: none;">
+                    {{#ifCond viewPage "add"}}
+
+                    <div class="aui-message aui-message-Info">
+                        <p class="title">
+                            <strong>No Change history</strong>
+                        </p>
+                    </div>
+
+                    {{/ifCond}}
+
+                    {{#ifCond viewPage "edit" }}
+
+                    {{> testcycle/screens/add/history }}
+
+                    {{/ifCond}}
+
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+  
+  function changeAddSubPages(section) 
+  {
+    $(".sub-div-li").removeClass("active");
+    $(".sub-div").css("display", "none");
+
+    $("#testcycle-"+section).addClass("active");
+    $("#testcycle-"+section+"-form").css("display", "block");
+  }
+
+  
+  
+  
+  commonOwnerSelectListing('testcycle');
+  getCommonStatusData('testcycle');
+  getCommonCustomFieldData('testcycle');
+  getCommonConfigurationEnvironmentData('testcycle');
+  getCommonFolderData('testcycle');
+
+</script>
+
+
+
+

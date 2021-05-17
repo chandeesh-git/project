@@ -1,0 +1,8 @@
+ <svg xmlns="http://www.w3.org/2000/svg" class="trash-icon" width="20" height="20" viewBox="0 0 9.333 12">
+                                                  <g transform="translate(-42.667)">
+                                                      <g transform="translate(42.667)">
+                                                          <path d="M64,93.333a1.333,1.333,0,0,0,1.333,1.333h5.333A1.333,1.333,0,0,0,72,93.333v-8H64Z" transform="translate(-63.333 -82.666)" fill="#DF4C4C"></path>
+                                                          <path d="M49.667.667,49,0H45.667L45,.667H42.667V2H52V.667Z" transform="translate(-42.667)" fill="#DF4C4C"></path>
+                                                      </g>
+                                                  </g>
+                                              </svg>

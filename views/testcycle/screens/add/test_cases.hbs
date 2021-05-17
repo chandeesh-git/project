@@ -1,0 +1,570 @@
+<div class="test_case_list">
+    <div class="listing-dev">
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+               
+             <button id="add-test-case-btn" class="aui-button" aria-controls="example-dropdown" aria-haspopup="true" aria-expanded="false">
+                + Add Test Case 
+            </button>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <li class="nav-item active" style="display: inline-block;">
+                        <button class="aui-button aui-dropdown2-trigger aui-dropdown2-trigger-arrowless table-column-sort-icon" aria-controls="testplan-table-checkbox-items" id="button-spin-1">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg" width="19" height="14" viewBox="0 0 19 14">
+                                <g transform="translate(0 -53.333)">
+                                    <g transform="translate(0 53.333)">
+                                        <path
+                                            d="M4,53.333H1a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1H4a1,1,0,0,0,1-1v-12A1,1,0,0,0,4,53.333Z"
+                                            transform="translate(0 -53.333)"></path>
+                                        <path
+                                            d="M153.334,53.333h-3a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1h3a1,1,0,0,0,1-1v-12A1,1,0,0,0,153.334,53.333Z"
+                                            transform="translate(-142.334 -53.333)"></path>
+                                        <path
+                                            d="M302.667,53.333h-3a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1h3a1,1,0,0,0,1-1v-12A1,1,0,0,0,302.667,53.333Z"
+                                            transform="translate(-284.667 -53.333)"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+
+                        <span id="testplanTableColumnCheckList"></span>
+
+
+                        {{!-- <button class="aui-button" id="button-spin-1" resolved="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13.309" height="14" viewBox="0 0 13.309 14">
+                                <g transform="translate(-10.118)">
+                                    <g transform="translate(10.118)">
+                                        <path
+                                            d="M23.186,0H10.359a.239.239,0,0,0-.192.384l4.7,6.588A1.716,1.716,0,0,1,15.2,7.986v5.749c.017.192.175.315.332.245l2.674-1.014a.211.211,0,0,0,.14-.21V7.986a1.757,1.757,0,0,1,.332-1.014l4.7-6.588A.239.239,0,0,0,23.186,0Z"
+                                            transform="translate(-10.118)" fill="#344563"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button> --}}
+
+                        <form class="aui" action="javascript:void(0);" onsubmit="searchFilterTcycleTcase()" style="display: inline-block; margin: 0;">
+                            <input id="tcycle-tplan-search" name="tcycle-tplan-search" type="text" placeholder="Search..." class="search-bar">  
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+
+        <!---sub-sidebar-section--->
+        <div id="sub-sidebar-div">
+            <div class="aui-page-panel">
+                <section class="aui-page-panel-content content-section">
+                    <table class="aui">
+                        <thead>
+                            <tr>
+                                <th id="basic-view-Priority">P</th>
+                                <th id="basic-view-Key" style="width: 60px;"><b>Key</b></th>
+                                <th id="basic-view-Name"><b>Name</b></th>
+                                <th id="basic-view-Version"><b>Version</b></th>
+                                <th id="basic-view-Tester"><b>Tester</b></th>
+                                <th id="basic-view-Create-On"><b>Created On</b></th>
+                                <th id="basic-view-Last-Execution"><b>Last-Execution</b></th>
+                                <th id="basic-view-Actions" style="text-align: right; padding-right: 18.75px;"><b>Actions</b></th>
+                            </tr>
+                        </thead>
+                        <tbody id="view_testcase_table_body" style="background-color: #F5F6F9;"></tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- add test case dialog --}}
+<section
+    id="add-test-case-dialog"
+    class="aui-dialog2 aui-layer add_test_case_dailog"
+    role="dialog"
+    tabindex="-1"
+    aria-labelledby="dialog-show-button--heading"
+>
+    <header class="aui-dialog2-header" style="background-color: white;">
+        <h3 class="aui-dialog2-header-main" id="dialog-show-button--heading">
+          Add Test Case</h3>
+        <button class="aui-close-button" type="button" aria-label="close"></button>
+    </header>
+    <div class="aui-dialog2-content" style="overflow: hidden;" >
+         <!---sub-sidebar-section--->
+        <div id="sub-sidebar-div">
+            <div class="aui-page-panel">
+                <aside class="aui-page-panel-sidebar sub-sidebar" style="width: 226.5px; background: background: #344563 ;">
+                    <ul>
+                        <li class="active">
+                            <a style="margin-right: auto;" href="javascript:void(0)" onclick="getFolderListByDataType()">
+                                <img src={{furl "/images/home.png"}} style="width: 21px;"/>
+                            </a>
+                        </li>
+                        <div id="testcase_folder_list" class="folder_list"></div>
+                    </ul>
+                </aside>
+                <section class="aui-page-panel-content content-section">
+                    <div style="max-height: calc(100vh - 238.5px); overflow: auto;">
+                        <table class="aui">
+                            <thead>
+                                <tr>
+                                    <th id="basic-Priority" style="width: 1px;">
+                                        <input id="add-all-testcase-checkbox" class="checkbox" onclick="selectAllTestCases()" type="checkbox" name="checkBoxOne" id="testcase-header-checkbox">
+                                    </th>
+                                    <th id="basic-Priority" style="width: 1px;"><b>P</b></th>
+                                    <th id="basic-Key" style="width: 60px;"><b>Key</b></th>
+                                    <th id="basic-Name"><b>Name</b></th>
+                                    <th id="basic-Version" style="width: 90px;"><b>Version</b></th>
+                                    <th id="basic-Create-On" style="width: 110px;"><b>Create-On</b></th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody id="testcase_table_body" style="background-color: #F5F6F9;"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            
+            <button id="dialog-submit-button-add-testcase" class="aui-button aui-button-primary">ADD</button>
+        </div>
+    </footer>
+</section>
+
+
+
+<script>
+
+    /*
+     Show/hide columns
+    */
+    const uniqueArrayFilter = (value, index, self) => {
+        return self.indexOf(value) === index
+    }
+
+
+    function updateTableColumnFilterValue() 
+    {
+        let all_column = ["Priority", "Key", "Name", "Version", "Tester", "Create-On", "Last-Execution"];;
+
+        let tableColumnSortHtml = '<aui-dropdown-menu id="testplan-table-checkbox-items"><aui-section label="Select Columns">';
+        for (let j = 0; j < all_column.length; j++) 
+        {
+            let temp_index = testcycleTestcaseTableColumn.indexOf(all_column[j]);
+
+            if(temp_index !== -1) {
+                tableColumnSortHtml += '<aui-item-checkbox interactive checked>'+all_column[j]+'</aui-item-checkbox>';
+            } else {
+                tableColumnSortHtml += '<aui-item-checkbox interactive>'+all_column[j]+'</aui-item-checkbox>';
+            }                
+        }
+        tableColumnSortHtml += '</aui-section></aui-dropdown-menu>';
+        
+        $('#testplanTableColumnCheckList').html(tableColumnSortHtml);
+
+
+
+        var dropdown = document.getElementById('testplan-table-checkbox-items');
+        dropdown.addEventListener('change', function (e) {        
+            var isChecked = e.target.hasAttribute('checked');
+            if (isChecked) {
+                testcycleTestcaseTableColumn.push(e.target.textContent);
+            } else {            
+                let index = testcycleTestcaseTableColumn.indexOf(e.target.textContent)
+                testcycleTestcaseTableColumn.splice(index, 1);
+            }
+
+            testcycleTestcaseTableColumn = testcycleTestcaseTableColumn.filter(uniqueArrayFilter);
+            AP.cookie.save('testcycleTestcaseTableColumn', JSON.stringify(testcycleTestcaseTableColumn));
+            updateTestTableColumBestOnSelection()
+        });
+    }  
+
+
+    function updateTestTableColumBestOnSelection()
+    {        
+        let all_column = ["Priority", "Key", "Name", "Version", "Tester", "Create-On", "Last-Execution"];
+            
+        for (let j = 0; j < all_column.length; j++) 
+        {
+            let temp_index = testcycleTestcaseTableColumn.indexOf(all_column[j]);
+
+            if(temp_index !== -1) {
+                $('#basic-view-'+all_column[j]).css('display', '');
+                $('.basic-view-'+all_column[j]).css('display', '');
+            } else {
+                $('#basic-view-'+all_column[j]).css('display', 'none');
+                $('.basic-view-'+all_column[j]).css('display', 'none');
+            }
+        }
+    }  
+
+    /*
+        Search view list filter of test case
+    */
+    function searchFilterTcycleTcase(){
+        var sVal = document.getElementById('tcycle-tplan-search').value;
+        sVal = sVal.trim();
+        testCycleCaseDetail.searchViewList = testCycleCaseDetail.viewList;
+        if(!(sVal==null || sVal=="" || sVal==undefined )){
+            testCycleCaseDetail.searchViewList = testCycleCaseDetail.searchViewList.filter(x=> x.name.match(sVal));
+        }
+        loadViewTestCaseList(testCycleCaseDetail.searchViewList);
+    }
+
+    //add test case dialog
+    AJS.$("#add-test-case-btn").on('click', function(e) {
+        e.preventDefault();
+        AJS.dialog2("#add-test-case-dialog").show();
+
+        loadList();
+    }); 
+
+   
+
+    testCycleCaseDetail={
+        selectedFolderId:"",
+        avilCasesList: [],
+        folderList: [],
+        viewList:[],
+        searchViewList:[],
+        addedTestCaseList:[]
+    }
+    
+
+    function loadList(folder_id="")
+    {
+        if(folder_id === "" || folder_id === "null" || folder_id === null)
+        {
+            getFolderListByDataType();
+        }
+        else
+        {
+            getFolderListByDataType(folder_id);
+        }
+        
+    } 
+    
+     function getFolderListByDataType(folder_id = "") {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $('#testcase_table_body').html('');
+        testCycleCaseDetail.selectedFolderId = folder_id;
+        testCycleCaseDetail.avilCasesList=[];
+        testCycleCaseDetail.addedTestCaseList=[];
+         $('#add-all-testcase-checkbox').prop('checked',false);
+
+        $.ajax({
+            "type": "GET",
+            "url": `/testcycle/listTestcase?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=${domain_id}${!folder_id?'':'&folder_id='+folder_id}`,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    const folderList = data.res.data.folderList;
+
+                    $('#testcase_folder_list').html('');
+                    if (folderList.length > 0) {
+                        for (let i = 0; i < folderList.length; i++) {
+                            $('#testcase_folder_list').append('<li id="sub_li_' + folderList[i].id + '" class="sub_section_class">' +
+                                '<span id="folderInfoBox' + folderList[i].id + '" style="display: flex;">'+
+                                '<span class="folder_info" onclick="getFolderListByDataType('+ folderList[i].id + ')">' +
+                                '<img class="folder-img" src={{furl "/images/folder.svg"}} />' +
+                                '<a href="javascript:void(0);" title="' + folderList[i].folder_name + '" class="folder_name">' + folderList[i].folder_name + '</a>' +
+                                '</span>'+                                
+                                '</span>'+
+                                '</li>');
+                        }
+                    }
+                    else{
+                        $('#testcase_folder_list').append(`
+                            <li class="testcase_no_folder">
+                                <div>No folder present</div>
+                            </li>
+                        `)
+                    }
+
+                    
+                    const testDetail = data.res.data.testDetail;
+                    testCycleCaseDetail.avilCasesList = testDetail;
+                    getTestCaseList(testDetail);                
+
+                    $('#action-loader-wrapper').css('display', 'none');
+
+                }
+            }
+        });
+    }
+
+
+    function getTestCaseList(testDetail, folder_id = null) {
+        $('#testcase_table_body').html('');
+        testCycleCaseDetail.selectedFolderId = folder_id;
+
+        if (testDetail.length > 0) {
+            for (let i = 0; i < testDetail.length; i++) {
+                let versionArray=testDetail[i].version_list.split(',');
+                let id = "'" + testDetail[i].id + "'";
+
+                let created_at = new Date(testDetail[i].created_at);
+
+                let htmlData = '<tr>' +
+                    '<td headers="basic-number">' +
+                    '<input class="checkbox checkbox-testcase" type="checkbox" onclick="checkboxAddAction('+testDetail[i].id+', '+i+')" name="checkBoxOne" id="indiv-testcase-checbox'+testDetail[i].id+'">' +
+                    '</td>' +
+                    '<td class="basic-Priority">';
+                    
+                    if (testDetail[i].priority == "High") {
+                        htmlData += '<img src={{furl "/images/red_flag.svg"}} />';
+                    } else if (testDetail[i].priority == "Normal") {
+                        htmlData += '<img src={{furl "/images/yellow_flag.svg"}} />';
+                    } else if (testDetail[i].priority == "Low") {
+                        htmlData += '<img src={{furl "/images/green_flag.svg"}} />';
+                    }
+                    htmlData += '</td>' +
+                    '<td class="basic-Key">' + testDetail[i].test_key + '</td>' +
+                    '<td class="basic-Name">' + testDetail[i].name + '</td>' +
+                    '<td class="basic-Version">' + 
+                      '<div class="field-group">'+
+                        '<select class="select_borderless" id="basic-version-dropdown-'+testDetail[i].id+'" style="width: 48px;" onchange="updateTestCaseIdByVersion('+testDetail[i].id+')">';
+
+                        for (let j = 0; j < versionArray.length; j++) {
+                            htmlData +='<option value="'+versionArray[j]+'">'+versionArray[j]+'</option>';
+                        }
+
+                    htmlData += '</div></select>'+             
+                     + '</td>' +
+                    '<td class="basic-Create-On">' + getFormattedDate(created_at.getDate()) + ' ' + months[created_at.getMonth()] + ' ' + created_at.getFullYear() + '</td>';
+                    
+
+                htmlData += '</td>' +
+                    '</tr>';
+                htmlData = htmlData.replace('NaN', '');
+
+                $('#testcase_table_body').append(htmlData);
+                document.getElementById('basic-version-dropdown-'+testDetail[i].id).value = testDetail[i].version;                
+            }
+        }
+    }
+
+
+    function updateTestCaseIdByVersion(id)
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        let version = $('#basic-version-dropdown-'+id).val();
+        let url = "/testcycle/versionDetail?project_id={{projectId}}&acct_id={{userAccountId}}&domain_id=" + domain_id + "&testcase_id=" + id + "&version=" + version;
+        
+        $.ajax({
+            "type": "GET",
+            "url": url,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    $('#action-loader-wrapper').css('display', 'none');
+
+                    let index = testCycleCaseDetail.avilCasesList.findIndex(x => x.id == id);
+                    testCycleCaseDetail.avilCasesList[index].doc_id = data.res.data.doc_id;
+                }
+            }
+        });
+    }
+
+
+    function checkboxAddAction(id, idx){
+        let index = testCycleCaseDetail.addedTestCaseList.findIndex(x => x.id == id);
+        if(index !== -1) {
+            testCycleCaseDetail.addedTestCaseList.splice(index, 1);
+        } else {
+            let versionVal = $('#basic-version-dropdown-'+id).val();
+            testCycleCaseDetail.avilCasesList[idx]['action']='added';
+            testCycleCaseDetail.avilCasesList[idx]['version']=versionVal;
+            testCycleCaseDetail.addedTestCaseList.push(testCycleCaseDetail.avilCasesList[idx]);
+        }
+        if(testCycleCaseDetail.avilCasesList.length == testCycleCaseDetail.addedTestCaseList.length){
+            $('#add-all-testcase-checkbox').prop("checked", true);
+        }
+        else{
+             $('#add-all-testcase-checkbox').prop("checked", false);
+        }
+    }
+
+    function selectAllTestCases(){
+        let setValue = $('#add-all-testcase-checkbox').prop('checked');
+        testCycleCaseDetail.addedTestCaseList=[];
+        testCycleCaseDetail.avilCasesList.forEach(elem => {
+           $('#indiv-testcase-checbox'+ elem.id).prop("checked", setValue);
+
+           if(setValue){
+                elem['action']='added';
+                elem['version']=$('#basic-version-dropdown-'+elem.id).val();
+                testCycleCaseDetail.addedTestCaseList.push(elem);
+           }
+        });
+    }
+
+    //trigger click for add test case
+    AJS.$(document).on('click', '#dialog-submit-button-add-testcase', function() {
+        triggerAddTestCase(this);
+    });
+
+    function triggerAddTestCase(btnRef){
+        if (btnRef.isBusy())
+            return false;
+
+        if(testCycleCaseDetail.addedTestCaseList.length <= 0 ){
+             toaster('Select atleast one test-case to add.', 'error');
+             return false;
+        }
+        btnRef.busy();
+        let eIdxArray=[];
+        testCycleCaseDetail.addedTestCaseList.forEach(elem => {
+           elem['version']=$('#basic-version-dropdown-'+elem.id).val();
+            elem['tester']='{{userAccountId}}';
+
+           let elIdx =  testCycleCaseDetail.viewList.findIndex(x => (x.id == elem.id && x.version == elem.version));
+           if(elIdx !== -1) {
+                eIdxArray.push(elIdx);
+           }
+        });
+        
+         
+        eIdxArray=eIdxArray.sort().reverse();
+        eIdxArray.forEach(removeIndex => {
+            if(testCycleCaseDetail.viewList[removeIndex]['action']!='remove'){
+                toaster(`${testCycleCaseDetail.viewList[removeIndex].name} is already added.`, 'info');
+            }
+            testCycleCaseDetail.viewList.splice(removeIndex, 1);
+        });
+        testCycleCaseDetail.viewList = [...testCycleCaseDetail.viewList, ...testCycleCaseDetail.addedTestCaseList];
+        testCycleCaseDetail.searchViewList = testCycleCaseDetail.viewList;
+        btnRef.idle();
+        AJS.dialog2("#add-test-case-dialog").hide();
+        document.getElementById('tcycle-tplan-search').value='';
+        loadViewTestCaseList(testCycleCaseDetail.searchViewList);
+    }
+
+    //add view test case list 
+    function loadViewTestCaseList(testDetail) {
+        $('#view_testcase_table_body').html('');
+
+        if (testDetail.length > 0) {
+            for (let i = 0; i < testDetail.length; i++) {
+                let id = "'" + testDetail[i].id + "'";
+
+                let created_at = new Date(testDetail[i].created_at);
+
+                let htmlData = '<tr id="view-testcase-row-'+testDetail[i].id+'">' +
+                    '<td class="basic-view-Priority">';
+                    
+                    if (testDetail[i].priority == "High") {
+                        htmlData += '<img src={{furl "/images/red_flag.svg"}} />';
+                    } else if (testDetail[i].priority == "Normal") {
+                        htmlData += '<img src={{furl "/images/yellow_flag.svg"}} />';
+                    } else if (testDetail[i].priority == "Low") {
+                        htmlData += '<img src={{furl "/images/green_flag.svg"}} />';
+                    }
+                    htmlData += '</td>' +
+                    '<td class="basic-view-Key">' + testDetail[i].test_key + '</td>' +
+                    '<td class="basic-view-Name">' + testDetail[i].name + '</td>' +
+                    '<td class="basic-view-Version">' + testDetail[i].version+ '</td>' +
+                    '<td class="basic-view-Tester">'+
+                      '<div class="field-group">'+
+                        '<select class="select_borderless" id="basic-view-tester-dropdown-'+testDetail[i].id+'" value="'+testDetail[i].owner+'" onclick="onChangeTesterValue('+testDetail[i].id+')">';
+                        testCycleCaseDetail.searchViewList[i].tester=testDetail[i].owner;
+                        for (let j = 0; j < jiraTesterUser.length; j++) {
+                            htmlData +='<option value="'+jiraTesterUser[j].id+'">'+jiraTesterUser[j].name+'</option>';
+                        }
+
+                    htmlData += '</div>'+
+                    '</select>'+                        
+                    '</td>' +
+                    '<td class="basic-view-Create-On">' + getFormattedDate(created_at.getDate()) + ' ' + months[created_at.getMonth()] + ' ' + created_at.getFullYear() + '</td>';
+                    if(!!testDetail[i]['last_execution'])
+                    {
+                        let last_execution_date = new Date(testDetail[i].last_execution);
+                        htmlData += '<td class="basic-view-Last-Execution" style="color: #008000;">'+ getFormattedDate(last_execution_date.getDate()) + ' ' + months[last_execution_date.getMonth()] + ' ' + last_execution_date.getFullYear() +'</td>';                   
+                    }
+                    else{
+                        htmlData += '<td class="basic-view-Last-Execution" style="color: #008000;">-</td>';                
+                    }
+                    htmlData +='<td class="basic-view-Action test-action" style="color: #008000;">'+
+                         '<button class="aui-button-action" onclick="deleteViewTestCase('+testDetail[i].id+')">' +
+                                '<img src={{furl "/images/red_trash.svg"}} />' +
+                          '</button>'+
+                     '</td>'+ 
+                    '</tr>';
+
+                $('#view_testcase_table_body').append(htmlData);
+                $(`#basic-view-tester-dropdown-${testDetail[i].id} option[value="${testDetail[i].owner}"]`).prop('selected', true);
+            }
+        }
+        updateTableColumnFilterValue();
+    }
+
+    function deleteViewTestCase(id){
+        let index = testCycleCaseDetail.viewList.findIndex(x => x.id == id);
+        if(index !== -1) {
+            document.getElementById('view-testcase-row-'+id).remove();
+            if(testCycleCaseDetail.viewList[index]['action']=='added')
+                testCycleCaseDetail.viewList.splice(index, 1);
+            else
+                testCycleCaseDetail.viewList[index]['action']='remove';                
+        }
+    }
+
+    let jiraTesterUser=[];
+    getJiraTesterUserList();
+    function getJiraTesterUserList(){
+        AP.request('/rest/api/2/user/search?query=', {
+            success: function (responseUserList) {
+
+                let userList = JSON.parse(responseUserList).filter(ru => ru.accountType === "atlassian")
+
+                jiraTesterUser = [];
+                for (let j = 0; j < userList.length; j++) 
+                {
+                    jiraTesterUser.push({
+                        name: userList[j].displayName,
+                        id: userList[j].accountId
+                    })
+                }
+            }
+        });
+    }
+
+    function onChangeTesterValue(id){
+        let index = testCycleCaseDetail.viewList.findIndex(x => x.id == id);
+        if(index !== -1) {
+            let tVal= $('#basic-view-tester-dropdown-'+id).val();
+            if(tVal != undefined){
+                testCycleCaseDetail.viewList[index]['tester'] = tVal;
+                if(!testCycleCaseDetail.viewList[index]['action']){
+                    testCycleCaseDetail.viewList[index]['action'] = 'change';
+                }
+            }
+        }
+    }
+
+</script>

@@ -1,0 +1,1448 @@
+<!-- Page Content -->
+<div id="page-content-wrapper">
+
+  <nav class="navbar navbar-expand-lg navbar-light border-bottom" style="background-color: #FAFAFA;">
+    <button class="btn btn-default" id="menu-toggle">
+      <label class="main-title" id="current_page_tag">Test Cycle Execution</label>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+        <li class="nav-item active" style="display: inline-block;">
+          <span class="btn-wrapper-span">
+              <a id="spinnerbutton" class="aui-button" href="/project/testCycleView?projectId={{projectId}}&projectKey={{projectKey}}&jwt={{token}}&user={{userAccountId}}&selectedFolderId={{selectedFolderId}}&page=list">
+              Cancel and Go Back
+              </a>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!---sub-sidebar-section--->
+  <div id="sub-sidebar-div">
+    <div class="aui-page-panel">
+      <aside class="aui-page-panel-sidebar sub-sidebar tcycle_execute_sidebar">
+        <ul style="height: auto;">
+          <li class="tcycle_excute_side_cases_top" >
+            <div>
+              <h4>Test Case</h4>
+            </div>
+            <div class="tcycle_excute_side_cases_top_assign">
+                <select class="select" id="assigned-dropdown" name="select-example" onchange="filterTestCase()";>
+                  <option value="all">All</option>
+                </select>
+              <svg id="Capa_1" enable-background="new 0 0 515.558 515.558" height="16" width="16" fill="#ffffff" viewBox="0 0 515.558 515.558" xmlns="http://www.w3.org/2000/svg"><path d="m378.344 332.78c25.37-34.645 40.545-77.2 40.545-123.333 0-115.484-93.961-209.445-209.445-209.445s-209.444 93.961-209.444 209.445 93.961 209.445 209.445 209.445c46.133 0 88.692-15.177 123.337-40.547l137.212 137.212 45.564-45.564c0-.001-137.214-137.213-137.214-137.213zm-168.899 21.667c-79.958 0-145-65.042-145-145s65.042-145 145-145 145 65.042 145 145-65.043 145-145 145z"/></svg>
+            </div>
+          </li>
+        </ul>
+        <ul id="tcycle-excute-side-cases">
+          <li class="tcycle_excute_side_cases active ">
+            <div class="tcycle_excute_side_cases-letter">
+              <h3>VS</h3>
+            </div>
+            <div class="tcycle_excute_side_cases-name">
+              <h5>0Auth Login using email id</h5>
+              <div class="tcycle_excute_side_cases-fc">
+                <span class="tcycle_excute_side_cases-flag">
+                    <img class="gear-icon" src={{furl "/images/red_flag.svg" }} /> 
+                     <a>VIS-T1</a>
+                 </span>
+                <span class="tcycle_excute_side_cases-counter">
+                    <svg version="1.1" width="14" height="14" fill="#777777" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                        viewBox="0 0 30.051 30.051" style="enable-background:new 0 0 30.051 30.051;" xml:space="preserve">
+                        <g>
+                            <path d="M19.982,14.438l-6.24-4.536c-0.229-0.166-0.533-0.191-0.784-0.062c-0.253,0.128-0.411,0.388-0.411,0.669v9.069
+                                c0,0.284,0.158,0.543,0.411,0.671c0.107,0.054,0.224,0.081,0.342,0.081c0.154,0,0.31-0.049,0.442-0.146l6.24-4.532
+                                c0.197-0.145,0.312-0.369,0.312-0.607C20.295,14.803,20.177,14.58,19.982,14.438z"/>
+                            <path d="M15.026,0.002C6.726,0.002,0,6.728,0,15.028c0,8.297,6.726,15.021,15.026,15.021c8.298,0,15.025-6.725,15.025-15.021
+                                C30.052,6.728,23.324,0.002,15.026,0.002z M15.026,27.542c-6.912,0-12.516-5.601-12.516-12.514c0-6.91,5.604-12.518,12.516-12.518
+                                c6.911,0,12.514,5.607,12.514,12.518C27.541,21.941,21.937,27.542,15.026,27.542z"/>
+                        </g>	
+                    </svg>
+                    <span class="tcycle_excute_side_cases-counter-val">00:00:00</span>
+                </span>
+              </div>
+          </li>
+        </ul>
+      </aside>
+
+      <!--testcycle-webpage-->
+      <section class="aui-page-panel-content content-section-testcycle-oauth tcycle_execute_section">
+        <div>
+          <button class="new-test-btn" id="button-spin-1" onclick="startNewExecution()">Start a new test execution</button>
+        </div>
+        {{!-- ============================= --}}
+        {{!-- text excution list goes here --}}
+        <div id="test-execute-list">
+        </div>        
+      </section>
+
+
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+
+  {{!-- Add Issues dialog --}}
+  <section id="action-issues-dialog" style="max-width: 900px; top: 45px;" class="aui-dialog2 aui-dialog2-large-history aui-layer" role="dialog" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h3 class="aui-dialog2-header-main">Add Existing Issues</h3>
+        <button class="aui-close-button" type="button" aria-label="close" onclick="closeIssuePopup()"></button>
+    </header>
+    <form class="aui" onsubmit="submitIssueSearch()" action="javascript:void(0);" style="margin-top: 0;" autocomplete="off">
+        <div class="aui-dialog2-content" style="min-height: 371.25px;">
+
+            <div class="row" style="margin: 0;">
+                <div style="width: calc(100% - 38.25px);">
+                    <div class="form-group">
+                        <input id="issue_search_keyword" data-aui-validation-field type="text" class="form-control text medium-field" placeholder="Search by name" required="required">
+                        <p style="font-size: 10.5px;margin: 3.75px 0;">Note: Please user single word to search issue</p>
+                    </div>
+                </div>
+                <div style="width: 36px;">
+                    <button type="submit" class="aui-button" id="button-spin-1" style="margin-left: 7.5px; height: 25.5px">
+                       <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.005 512.005" fill:"#3c3a3a" xml:space="preserve" width="15px" height="15px">
+                            <g>
+                                <g>
+                                    <path d="M505.749,475.587l-145.6-145.6c28.203-34.837,45.184-79.104,45.184-127.317c0-111.744-90.923-202.667-202.667-202.667
+                                        S0,90.925,0,202.669s90.923,202.667,202.667,202.667c48.213,0,92.48-16.981,127.317-45.184l145.6,145.6
+                                        c4.16,4.16,9.621,6.251,15.083,6.251s10.923-2.091,15.083-6.251C514.091,497.411,514.091,483.928,505.749,475.587z
+                                        M202.667,362.669c-88.235,0-160-71.765-160-160s71.765-160,160-160s160,71.765,160,160S290.901,362.669,202.667,362.669z"></path>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        
+            <div id="already_used_issue_warning" class="aui-message aui-message-warning" style="margin-top: 7.5px;margin-bottom: 7.5px; display: none;">
+                <p style="margin-bottom: 0;">Some issues have already been added and cannot be added again</p>
+            </div>
+
+            <div style="height: 296.25px; overflow: auto; margin-top: 7.5px;">
+                <table class="aui">
+                    <tbody id="Issue_testcase_table_body">
+                        <tr class="border-top-none middle-align">
+                            <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                                <div class="no_data_test_cycle" >
+                                    <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                                        <h3>Search Issues</h3>
+                                        <h5>Search by name, and select some issues</h5>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+    <footer class="aui-dialog2-footer">
+        <a href="javascript:void(0);" onclick="addQuickIssue()" style="position: relative;top: 3px;font-size: 10.25px"> + Create New Issues</a>
+        <div class="aui-dialog2-footer-actions">
+            <button type="button" id="add-issue-dialog-confirm" class="aui-button aui-button-primary" disabled onclick="addSelectedIssueArray()">Add</button>
+            <button type="button" id="warning-dialog-cancel" class="aui-button" onclick="closeIssuePopup()">Close</button>
+        </div>
+    </footer>
+  </section> 
+
+  <script>
+
+    let searchIssueList=[];
+    let searchSelectedList=[];
+
+    function collapsePanel(elemId){
+      if($(`#texecute-panel-${elemId}`).prop("style")["display"] == 'none'){
+       $(`#texecute-panel-${elemId}`).css({ 'opacity': 1, 'display': 'block'});
+       $(`#texecute-heading-${elemId} svg`).removeClass('rotate90');
+      }
+      else{
+        $(`#texecute-panel-${elemId}`).css({ 'opacity':0 , 'display': 'none'});
+        $(`#texecute-heading-${elemId} svg`).addClass('rotate90');
+      }
+    }
+
+    function collapseMainPanel(index){
+      $(`.testcycle-content-div`).css({ 'opacity':0 , 'display': 'none'});
+      $(`.testcycle-header-collapse-icon`).addClass('rotate90');
+      $(`.test-cycle-field`).removeClass('open');
+
+      if($(`#t-main-execute-${index} .testcycle-content-div`).prop("style")["display"] == 'none'){
+       $(`#t-main-execute-${index} .testcycle-content-div`).css({ 'opacity': 1, 'display': 'flex'});
+       $(`#t-main-execute-${index} .testcycle-header-collapse-icon`).removeClass('rotate90');
+       $(`#t-main-execute-${index}`).addClass('open');
+        tCycleExecute.testCaseId=!tCycleExecute.detailList[index]['testcase_id']?tCycleExecute.detailList[index]['id']:tCycleExecute.detailList[index]['testcase_id'];  
+        tCycleExecute.selectedIndex = index;
+        tCycleExecute.timer.value = 0;
+      }
+      else{
+        $(`#t-main-execute-${index} .testcycle-content-div`).css({ 'opacity':0 , 'display': 'none'});
+        $(`#t-main-execute-${index} .testcycle-header-collapse-icon`).addClass('rotate90');
+      }
+    }
+
+    const tCycleExecute={
+      filterdTestCaseList:[],
+      testCaseList:[],
+      detailList:[],
+      attach_file_list:[],
+      issues: [],
+      timer: {
+        status: 'not_started',
+        value:0,
+        display_time:'00:00:00'
+      },
+      selectedIndex:null,
+      testCaseId:null,
+      selectedTestCaseIndex: null,
+    }
+    
+    let executeId=null;
+    
+    var statusList=[];
+    
+    getCommonStatusData('testexecution');
+
+    getTestExecuteRunList()
+
+    function getTestExecuteRunList() {
+
+        $('#action-loader-wrapper').css('display', 'flex');
+        $('#tcycle-excute-side-cases').html('');
+        tCycleExecute.testCaseList=[];
+        tCycleExecute.detailList=[];
+        tCycleExecute.testCaseDetail={};
+  
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        executeId = urlParams.get('executeId');
+
+        $.ajax({
+            "type": "GET",
+            "url": `/testexecution/runTestList?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=${domain_id}&testcycle_id=${executeId}`,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    tCycleExecute.testCaseList = data.res.data;
+                    tCycleExecute.filterdTestCaseList = Object.assign([], data.res.data);
+
+                    $('#tcycle-excute-side-cases').html('');
+                    if (tCycleExecute.testCaseList.length > 0) {
+                                             
+                        appendTestCaseList(tCycleExecute.testCaseList);
+                        //call test case execution detail of first case by default 
+                        callTestExecuteDetail(executeId, tCycleExecute.testCaseList[0].id, tCycleExecute.testCaseList[0].version);
+                        
+                        jiraUserListArray.forEach(user=>{
+                          $(`#assigned-dropdown`).append(
+                            `<option value="${user.id}">${user.name}</option>`
+                          );                          
+                        });                        
+                    }
+                    else{
+                        $('#tcycle-excute-side-cases').append(`
+                            <li class="tcycle_excute_side_cases testcase_no_folder">
+                                <div>No testcase present</div>
+                            </li>
+                        `);
+                         $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+            }
+        });
+    }
+
+    //filter test case data
+    function filterTestCase(){
+      let name = $(`#assigned-dropdown`).val();
+      if(name == 'all'){
+        tCycleExecute.filterdTestCaseList=[];
+        tCycleExecute.filterdTestCaseList = Object.assign([], tCycleExecute.testCaseList);
+      }
+      else{
+        tCycleExecute.filterdTestCaseList=[];
+        tCycleExecute.filterdTestCaseList = tCycleExecute.testCaseList.filter(elem=>elem.owner == name);
+      }
+       $('#tcycle-excute-side-cases').html('');
+      appendTestCaseList(tCycleExecute.filterdTestCaseList)
+    }
+
+    //append test case 
+    function appendTestCaseList(testCaseList){
+      $('#tcycle-excute-side-cases').html('');
+      let i=0;
+      for (let tElem of testCaseList) {
+          let ownerName = '';
+          if(!!tElem['owner']){
+            let ownerDet = jiraUserListArray.find(user=> user.id == tElem['owner']);
+            var strMatches = ownerDet.name.match(/\b(\w)/g);                             
+            if(strMatches.length>=2){
+              ownerName=strMatches[0].toUpperCase()+strMatches[1].toUpperCase();
+            }
+            else if(strMatches.length==1){
+              ownerName=strMatches[0].toUpperCase();
+            }
+          }
+
+          $('#tcycle-excute-side-cases').append
+          (`
+            <li class="tcycle_excute_side_cases" id="tcycle-excute-side-elem-${tElem.id}" onclick="stopTimer(); callTestExecuteDetail('${executeId}', '${tElem.id}', '${tElem.version}');">
+              <div class="tcycle_excute_side_cases-letter">
+                <h3>${ownerName}</h3>
+              </div>
+              <div class="tcycle_excute_side_cases-name">
+                <h5>${tElem.name}</h5>
+                <div class="tcycle_excute_side_cases-fc">
+                  <span class="tcycle_excute_side_cases-flag">
+                      <img class="gear-icon" src={{furl "/images/red_flag.svg" }} /> 
+                      <a>${tElem.test_key}</a>
+                  </span>
+                  <span class="tcycle_excute_side_cases-counter">
+                      <svg version="1.1" width="14" height="14" fill="#777777" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 30.051 30.051" style="enable-background:new 0 0 30.051 30.051;" xml:space="preserve">
+                          <g>
+                              <path d="M19.982,14.438l-6.24-4.536c-0.229-0.166-0.533-0.191-0.784-0.062c-0.253,0.128-0.411,0.388-0.411,0.669v9.069
+                                  c0,0.284,0.158,0.543,0.411,0.671c0.107,0.054,0.224,0.081,0.342,0.081c0.154,0,0.31-0.049,0.442-0.146l6.24-4.532
+                                  c0.197-0.145,0.312-0.369,0.312-0.607C20.295,14.803,20.177,14.58,19.982,14.438z"/>
+                              <path d="M15.026,0.002C6.726,0.002,0,6.728,0,15.028c0,8.297,6.726,15.021,15.026,15.021c8.298,0,15.025-6.725,15.025-15.021
+                                  C30.052,6.728,23.324,0.002,15.026,0.002z M15.026,27.542c-6.912,0-12.516-5.601-12.516-12.514c0-6.91,5.604-12.518,12.516-12.518
+                                  c6.911,0,12.514,5.607,12.514,12.518C27.541,21.941,21.937,27.542,15.026,27.542z"/>
+                          </g>	
+                      </svg>
+                      <span class="tcycle_excute_side_cases-counter-val">00:00:00</span>
+                  </span>
+                </div>
+            </li>
+        `);
+        i++;
+      }
+    }
+
+    // start new execution call 
+    function startNewExecution(){
+      stopTimer();
+      let testcaseId = !tCycleExecute.detailList[tCycleExecute.selectedTestCaseIndex]['testcase_id']?tCycleExecute.detailList[tCycleExecute.selectedTestCaseIndex]['id']:tCycleExecute.detailList[tCycleExecute.selectedTestCaseIndex]['testcase_id'];
+      callTestExecuteDetail(executeId, testcaseId, tCycleExecute.detailList[tCycleExecute.selectedTestCaseIndex].version, true);
+    }
+
+    //call execution detail api-----------------------
+    function callTestExecuteDetail(executeId, testCaseId, testCaseVersion, isNewExecution=false){
+      if(testCaseId == null)
+      {
+        return false;
+      }
+
+      let tIndex = tCycleExecute.detailList.findIndex(x=> x.id == testCaseId);
+      tCycleExecute.selectedTestCaseIndex=tIndex = tIndex!=-1?tCycleExecute.selectedTestCaseIndex:0;
+
+      $('.tcycle_excute_side_cases').removeClass('active');
+      $(`#tcycle-excute-side-elem-${testCaseId}`).addClass('active');
+      $('#action-loader-wrapper').css('display', 'flex');
+      $.ajax({
+            "type": "GET",
+            "url": `${isNewExecution?'/testexecution/newExecution':'/testexecution/runDetails'}?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=${domain_id}&testcycle_id=${executeId}&testcase_id=${testCaseId}&version=${testCaseVersion}`,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    
+                    if(isNewExecution){
+                        data.res.data['testcase_id'] = data.res.data.id;
+                        tCycleExecute.detailList.push(data.res.data);
+                        appendNewExecution(data.res.data, tCycleExecute.detailList.length-1, true, true);
+                        $(`#tcycle-excute-side-elem-${tCycleExecute.testCaseId} .tcycle_excute_side_cases-counter-val`).html('00:00:00');
+                        toaster('Added new execution.');
+                    }
+                    else{
+                      $('#test-execute-list').html('');
+                      
+                      tCycleExecute.detailList = [];
+                      tCycleExecute.timer = {
+                        status: 'not_started',
+                        value:0,
+                        display_time:'00:00:00'
+                      }
+                      tCycleExecute.selectedIndex = null;
+                      tCycleExecute.testCaseId = null;
+                      tCycleExecute.selectedTestCaseIndex = null;
+
+                      tCycleExecute.detailList = data.res.data;
+                      let res = tCycleExecute.detailList;
+                      
+                      tCycleExecute.detailList.forEach((elem,index) => {
+                        appendNewExecution(elem, index, index==0?true:false, false);
+                      });
+                      tCycleExecute.selectedTestCaseIndex=0;
+                    }                    
+
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+    function appendNewExecution(res, index, isOpen=false, isNew=false){
+        if(isNew && (tCycleExecute.selectedIndex !=null || tCycleExecute.selectedIndex !=undefined) ){
+          $(`#t-main-execute-${tCycleExecute.selectedIndex}`).addClass('disable_execution');
+          //collapseMainPanel(index);
+        }
+
+        let disabledClass='';
+        if(isOpen){      
+          tCycleExecute.testCaseId = !res['testcase_id']?res['id']:res['testcase_id'];
+          tCycleExecute.selectedIndex = index;
+        }
+        else{
+         disabledClass = 'disable_execution';
+        }
+        
+        let methodCall =isNew?'prepend':'append';
+         $('#test-execute-list')[methodCall](
+           `<form class="aui" name="executeForm" method="post"  onsubmit="saveExecution();" action="javascript:void(0);" autocomplete="off" novalidated="novalidated">
+              <section class="test-cycle-field ${disabledClass}" id="t-main-execute-${index}">
+              <div class="row">
+                  <div class="testcycle-header col-12">
+                      <span class="testcycle-header-collapse-icon rotate90" onclick="collapseMainPanel(${index})">
+                        <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                          <g><g>
+                            <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                          </g></g>
+                        </svg>
+                      </span>
+                      <h3 class="texecute_heading">
+                        <a href="javascript:void();"></a>
+                        <span></span>
+                      </h3>
+                      
+                      <select name="execu_btn" class="form-control select not-exec-btn" onchange="saveExecution('Global Status', 'Executed')"></select>
+                      <span style="float: right;">
+                          <span class="aui-button display-timer">00.00.00</span>
+                          <svg class="play-icon" onclick="startTimer()" version="1.1" width="20" height="20" fill="#0052cc" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                viewBox="0 0 30.051 30.051" style="enable-background:new 0 0 30.051 30.051;" xml:space="preserve">
+                                <g>
+                                    <path d="M19.982,14.438l-6.24-4.536c-0.229-0.166-0.533-0.191-0.784-0.062c-0.253,0.128-0.411,0.388-0.411,0.669v9.069
+                                        c0,0.284,0.158,0.543,0.411,0.671c0.107,0.054,0.224,0.081,0.342,0.081c0.154,0,0.31-0.049,0.442-0.146l6.24-4.532
+                                        c0.197-0.145,0.312-0.369,0.312-0.607C20.295,14.803,20.177,14.58,19.982,14.438z"/>
+                                    <path d="M15.026,0.002C6.726,0.002,0,6.728,0,15.028c0,8.297,6.726,15.021,15.026,15.021c8.298,0,15.025-6.725,15.025-15.021
+                                        C30.052,6.728,23.324,0.002,15.026,0.002z M15.026,27.542c-6.912,0-12.516-5.601-12.516-12.514c0-6.91,5.604-12.518,12.516-12.518
+                                        c6.911,0,12.514,5.607,12.514,12.518C27.541,21.941,21.937,27.542,15.026,27.542z"/>
+                                </g>	
+                          </svg>
+                          <svg class="pause-icon"  onclick="stopTimer()" style="display: none;" version="1.1" id="Capa_1" width="20" height="20" fill="#0052cc"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            viewBox="0 0 271.953 271.953" style="enable-background:new 0 0 271.953 271.953;" xml:space="preserve">
+                            <g>
+                              <g>
+                                <path d="M135.977,271.953c75.097,0,135.977-60.879,135.977-135.977S211.074,0,135.977,0S0,60.879,0,135.977
+                                  S60.879,271.953,135.977,271.953z M135.977,21.756c62.979,0,114.22,51.241,114.22,114.22s-51.241,114.22-114.22,114.22
+                                  s-114.22-51.241-114.22-114.22S72.992,21.756,135.977,21.756z"/>
+                                <path d="M110.707,200.114c7.511,0,13.598-6.086,13.598-13.598V83.174c0-7.511-6.086-13.598-13.598-13.598
+                                  c-7.511,0-13.598,6.086-13.598,13.598v103.342C97.109,194.028,103.195,200.114,110.707,200.114z"/>
+                                <path d="M165.097,200.114c7.511,0,13.598-6.086,13.598-13.598V83.174c0-7.511-6.086-13.598-13.598-13.598
+                                  S151.5,75.663,151.5,83.174v103.342C151.5,194.028,157.586,200.114,165.097,200.114z"/>
+                              </g>
+                            </g>
+                          </svg>
+                        <h5></h5>
+                      </span>
+                      <div>
+                        <p class="texecute_heading_estimate"></p>
+                      </div>
+                  </div>
+              </div>
+              <div class="testcycle-content-div row" style="display: none;">
+                <div class="testcycle-header col-6">
+                  <section class="details">
+                    <form id="tcycle-execute-form">
+                    <div class="diff-section">
+                      <h4 onclick="collapsePanel('execution')"  id="texecute-heading-execution">
+                        <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                          <g><g>
+                            <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                          </g></g>
+                        </svg>
+                        Execution</h4>
+                      </span>
+                      <table id="texecute-panel-execution" class="aui-1 sub_section" style="width: 100%;">
+                        <tbody>
+                          <tr>
+                            <td headers="basic" style="width: 112.5px;"><b>Environment:</b></td>
+                            <td class="texecute_content_env" headers="option"></td>
+                          </tr>
+                          <tr>
+                            <td headers="basic" style="width: 112.5px;"><b>Assigned To:</b></td>
+                            <td class="texecute_content_assign" headers="option"></td>
+                          </tr>
+                          <tr>
+                            <td headers="basic" style="width: 112.5px;"><b>Executed By:</b></td>
+                            <td class="texecute_content_executed" headers="option">-</td>
+                          </tr>
+                          <tr>
+                            <td headers="basic" style="width: 112.5px;"><b>Estimated(s):</b></td>
+                            <td class="texecute_content_estimate" headers="option"></td>
+                          </tr>
+                          <tr>
+                            <td headers="basic" style="width: 112.5px;"><b>Actual:</b></td>
+                            <td class="texecute_content_actual" headers="option"></td>
+                          </tr>
+
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div class="diff-section">
+                      <h4 onclick="collapsePanel('objective')" id="texecute-heading-objective">
+                        <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                          <g><g>
+                            <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                          </g></g>
+                        </svg>
+                        Objective</h4>
+                      </span>
+                      <p id="texecute-panel-objective" class="texecute_content_objective sub_section"></p>
+                    </div>
+
+                    <div class="diff-section">
+                      <h4 onclick="collapsePanel('precondition')" id="texecute-heading-precondition">
+                        <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                          <g><g>
+                            <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                          </g></g>
+                        </svg>
+                        Precondition
+                      </h4>
+                      <p id="texecute-panel-precondition" class="texecute_content_precondition sub_section"></p>
+                    </div>
+
+                    <div class="diff-section">
+                      <h4 onclick="collapsePanel('details')" id="texecute-heading-details">
+                        <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                          <g><g>
+                            <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                          </g></g>
+                        </svg>
+                        Details
+                      </h4>
+                      <div id="texecute-panel-details" class="sub_section">
+                        <table class="aui-2" style="width: 100%;">
+                          <tbody>
+                            <tr>
+                              <td style="width: 1px;">Folder:</td>
+                              <td class="texecute_content_folder" >None</td>
+                              <td style="width: 1px;">Status:</td>
+                              <td class="texecute_content_approved">Approved</td>
+                              <td style="width: 1px;">Priority:
+                              <td class="texecute_content_priority">High</td>
+                            </tr>
+                            <tr>
+                              <td colspan="6" class="texecute_content_labels">Labels:
+                                <span>
+                                </span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <p>Attachment:</p>
+                        <div class="texecute_content_attachList">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="diff-section">                
+                        <h4 class="heading" onclick="collapsePanel('issues')" id="texecute-heading-issues">
+                          <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                            <g><g>
+                              <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                  L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                  c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                  C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                            </g></g>
+                          </svg>
+                          Issues
+                        </h4>
+                        <div id="texecute-panel-issues" class="sub_section">
+                          <a href="javascript:void(0);"  class="add_an_issue" onclick="addQuickIssuePopup()">+ Add an issue</a>
+
+                          <div id="issue-list-data-table-seaction" style="display: none;">
+                              <table class="aui test-data-table" style="margin: 0 0 11.25px; width: 100%;">
+                                  <tbody id="issue_list_table_tbody"></tbody>
+                              </table>
+                          </div>
+                        </div>
+                    </div>
+
+                    <div class="diff-section">
+                      <h4 onclick="collapsePanel('attachment')" id="texecute-heading-attachment">
+                        <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                          <g><g>
+                            <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                          </g></g>
+                        </svg>
+                        Attachments
+                      </h4>
+                        <div id="texecute-panel-attachment" class="sub_section">
+                          <div class="aui-page-panel-content content-section-attachment" >
+                            <div class="attachment-section" ondrop="fileAddedTestExecution(event, true, 'testcase')">
+                              <input type="file" class="upfile" name="myfile" multiple onchange="fileAddedTestExecution(event, false, 'testcase')" />
+                              <h6 class="drop-files">Drop file here or &nbsp; <a href="#">browse from system</a></h6>
+                            </div>
+                            
+                          </div>
+                          <table class="aui">
+                              <tbody id="texecuteAttachList"></tbody>
+                          </table>
+                        </div>
+                    </div>
+
+                    <div class="diff-section">
+                      <h4 onclick="collapsePanel('comments')" id="texecute-heading-comments">
+                        <svg width="14" height="14" fill="#777777" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                          viewBox="0 0 612.004 612.004" style="enable-background:new 0 0 612.004 612.004;" xml:space="preserve">
+                          <g><g>
+                            <path d="M499.147,160.094L330.222,329.019c-6.472,6.472-15.075,10.035-24.223,10.035c-9.146,0-17.749-3.561-24.218-10.035
+                                L112.854,160.094c-25.822-25.817-67.674-25.817-93.491,0c-25.817,25.819-25.817,67.674,0,93.491L188.29,422.508
+                                c31.443,31.445,73.245,48.764,117.712,48.764s86.269-17.319,117.714-48.761l168.925-168.925c25.817-25.817,25.817-67.674,0-93.491
+                                C566.822,134.277,524.962,134.277,499.147,160.094z"/>
+                          </g></g>
+                        </svg>
+                        Comments
+                      </h4>
+                      <div id="texecute-panel-comments" class="sub_section">
+                        <input class="text" type="text" id="text-input-comment" name="text-input" title="Text input"
+                        placeholder="Add a Comment" onChange="saveExecution('Comment', 'Commented')">
+                      </div>
+
+                    </div>
+                    </form>
+                  </section>
+                </div>
+
+                <div class="right-test-cycle-field col-6">  
+                  <h4 class="heading">Test Scripts</h4>
+                  <div id="test-script-div">
+                  </div>            
+                </div>
+              </div>
+             </section>
+            </form>`
+          );
+
+          //basic details
+          $(`#t-main-execute-${index} .texecute_heading a`).text(`${res.test_key}(${res.version})`);
+          $(`#t-main-execute-${index} .texecute_heading span`).text(`${res.name}`);
+
+          $(`#t-main-execute-${index} .texecute_content_env`).text(!res['environment']?"{{environment}}":res['environment']);
+          let assignedUser = jiraUserListArray.find(user=> user.id == res.assigned_to);
+          if(!!assignedUser){
+            $(`#t-main-execute-${index} .texecute_content_assign`).text(assignedUser.name);
+          }
+          $(`#t-main-execute-${index} .texecute_content_estimate`).text(!res['estimated_time']?'-':res['estimated_time']);
+          $(`#t-main-execute-${index} .texecute_content_actual`).text(!res['recorded_time']?'-':msToTimeConv(res['recorded_time']));
+          $(`#t-main-execute-${index} .texecute_content_folder`).text(!res['folder_name']?'None':'/'+res['folder_name']);
+
+          if(!!res['executed_by']){
+            let executed_by_user = jiraUserListArray.find(user=> user.id == res['executed_by']);
+            $(`#t-main-execute-${index} .texecute_content_executed`).text(executed_by_user!=-1?executed_by_user.name:'-');
+          }
+          
+          jiraTestCaseStatusListArray.forEach(s=>{
+            $(`#t-main-execute-${index} .not-exec-btn`).append(`<option class=".exec_btn_${s.sc_name}" value="${s.sc_name}">${s.sc_name}</option>`)
+          })
+          if(!!res.execution_status){
+            $(`#t-main-execute-${index} .not-exec-btn option[value="${res.execution_status}"]`).prop('selected', true);
+          }
+
+          updateTestExecutionHeading(res, isNew);
+
+          $(`#t-main-execute-${index} #texecute-panel-precondition`).text(!res.precondition?'No data':res.precondition);
+          $(`#t-main-execute-${index} #texecute-panel-objective`).text(!res.objective?'No data':res.objective);
+
+          $(`#t-main-execute-${index} .texecute_content_approved`).text(res.status);
+          $(`#t-main-execute-${index} .texecute_content_approved`).addClass(res.status=='Approved'?'text-success':res.status=='Deprecated'?'text-danger':'text-primary');
+
+          $(`#t-main-execute-${index} .texecute_content_priority`).text(res.priority);
+          $(`#t-main-execute-${index} .texecute_content_priority`).addClass(res.priority=='Low'?'text-warning':res.priority=='High'?'text-danger':'text-primary');
+          
+          $(`#t-main-execute-${index} #text-input-comment`).val(!res['execution_comment']?'':res['execution_comment']);
+          
+          //labels
+          let labels = JSON.parse(res.label);
+          if(labels.length >0){
+            labels.forEach(elem => {                
+              $(`#t-main-execute-${index} .texecute_content_labels span`).append(`
+                <button class="aui-button" id="button-spin-1">${elem}</button>
+              `);
+            });
+          }
+
+          //previous attachment
+          $(`#t-main-execute-${index} .texecute_content_attachList`).html("");
+          if(res.attachments.length >0){
+            res.attachments.forEach((elem, tIndex) => {                
+              $(`#t-main-execute-${index} .texecute_content_attachList`).append(`
+                <a class="aui-button" onclick="downloadFileAttached('${elem.file_key_name}', 'attachments')">${elem.file_name}</a>
+              `);
+            });
+          }
+
+          //test-script
+          $(`#t-main-execute-${index} #test-script-div`).html('');
+          if(!res.testexecution_id && res.testscript_type != "step_by_step"){
+            let tElemData=JSON.stringify([{
+              expected_output:res.testscript,
+              actual_output: null,
+              status: null
+            }]);
+            res.testscript = tElemData;
+          }
+          tCycleExecute.testCaseDetail.testscript= res.testscript=JSON.parse(res.testscript);
+            if(res.testscript.length > 0){
+              res.testscript.forEach((elem, tIndex) => { 
+                  let descritption = !elem['description']?'-':elem.description;
+                  let test_data = !elem['test_data']?'-':elem.test_data;
+                  let tScriptTemplate =`
+                    <div class="test-script-right" id="tscript-sec-${tIndex}">
+                      <div class="test-script-sectionbtn" >
+                        <button type="button" class="aui-button-number"><h1 style="color: white;">${tIndex+1}</h1></button>`;
+                        let loopLength = jiraTestCaseStatusListArray.length>3?3:jiraTestCaseStatusListArray.length;
+                        for(let i=0; i<loopLength; i++){
+                          let classStatus = jiraTestCaseStatusListArray[i].sc_name.replace(/ /g, '');
+                          tScriptTemplate+=`<button type="button" class="aui-button-opt t_script_status t_script_status_${classStatus}" style="background:${elem['status']==jiraTestCaseStatusListArray[i].sc_name?jiraTestCaseStatusListArray[i].sc_color:'#FAFAFA'}; color:${elem['status']==jiraTestCaseStatusListArray[i].sc_name?'#FFFFFF':'#111111'}" onclick="updateTscriptStatus(${tIndex}, '${jiraTestCaseStatusListArray[i].sc_name}', '${res.testscript_type}', '${jiraTestCaseStatusListArray[i].sc_color}')">${jiraTestCaseStatusListArray[i].sc_name}</button>`;
+                        }
+                        if(jiraTestCaseStatusListArray.length>3){
+                          tScriptTemplate+=`<button class="aui-button aui-dropdown2-trigger" style="margin-left:6px;" aria-controls="statusList-dropdown-${tIndex}">
+                                More
+                            </button>`;
+                          tScriptTemplate+=`<aui-dropdown-menu id="statusList-dropdown-${tIndex}">
+                            <aui-section>`;
+                              for(let i=3; i<jiraTestCaseStatusListArray.length; i++){
+                                let classStatus = jiraTestCaseStatusListArray[i].sc_name.replace(/ /g, '');
+                                tScriptTemplate+=`<aui-item-link href="javascript:void(0);" class="t_script_status t_script_status_${classStatus}" style="background:${elem['status']==jiraTestCaseStatusListArray[i].sc_name?jiraTestCaseStatusListArray[i].sc_color:'#FAFAFA'}; color:${elem['status']==jiraTestCaseStatusListArray[i].sc_name?'#FFFFFF':'#111111'}" onclick="updateTscriptStatus(${tIndex}, '${jiraTestCaseStatusListArray[i].sc_name}', '${res.testscript_type}', '${jiraTestCaseStatusListArray[i].sc_color}')">${jiraTestCaseStatusListArray[i].sc_name}</aui-item-link>`;
+                              }
+                          tScriptTemplate+=`</aui-section>
+                          </aui-dropdown-menu>`;
+                        }
+                    tScriptTemplate+= `</div>
+                      <table class="aui-3">`;
+                        if(res.testscript_type == "step_by_step"){
+                          tScriptTemplate+=`
+                            <tbody>
+                              <tr>
+                                <td style="width: 105px;"><b>Step</b></td>
+                                <td>${descritption}</td>
+                              </tr>
+                              <tr>
+                                <td style="width: 105px;"><b>Test Data</b></td>
+                                <td>${test_data}</td>
+                              </tr>
+                              <tr>
+                                <td style="width: 105px;"><b>Expected Result</b></td>
+                                <td>${elem.expected_output}</td>
+                              </tr>
+                            </tbody>`;
+                        }
+                        else{
+                          tScriptTemplate+=`
+                            <tbody>                                
+                                <td style="width: 105px;"><b>Description</b></td>
+                                <td>${elem.expected_output}</td>
+                              </tr>
+                            </tbody>`;
+                        }
+                      tScriptTemplate+=`</table>
+                      <span style="margin-left: 7.5px;">
+                        <label>Actual Result</label>
+                      </span>
+                      <div style="margin-left: 7.5px;">
+                        <input class="text" type="text" name="tscript-sec-${tIndex}" value="${!elem['actual_output']?'':elem['actual_output']}" title="Text input"
+                          placeholder="Enter actual result here..." onChange="saveExecution('Actual Result', 'Updated')">
+                      </div>
+                    </div>
+                  `;
+
+                  $(`#t-main-execute-${index} #test-script-div`).append(tScriptTemplate);
+              });
+            }
+            
+            if(!res['execution_attachment']){
+               res['execution_attachment']=[];
+            }
+            for (const file of res.execution_attachment) {
+              file['operation'] = 'no_change';
+              appendFileInAttachment(file, index);
+            }
+            
+            if(!res['execution_issues']){
+               res['execution_issues']=[];
+            }
+            //append issue in html
+            appendIssueRow(index);
+            
+            res['activity_log']=[];
+            /*if(!res['activity_log']){              
+            /*}
+            else{
+              res['activity_log'] = JSON.parse(res['activity_log']);
+            }*/
+            
+            if(isOpen){
+              collapseMainPanel(index);
+            }
+    }
+
+    //test script status
+    function updateTscriptStatus(index, status, tScriptType, color){
+      let classStatus = status.replace(/ /g, '');
+      $(`#t-main-execute-${tCycleExecute.selectedIndex} #tscript-sec-${index} .t_script_status`).css({ background: '#FAFAFA', color: '#000000'});
+      $(`#t-main-execute-${tCycleExecute.selectedIndex} #tscript-sec-${index} .t_script_status_${classStatus}`).css({background: color, color: '#ffffff'});
+      
+        tCycleExecute.detailList[tCycleExecute.selectedIndex].testscript[index]['status']=status;
+        if(status == 'Fail' || status == 'Blocked'){
+          $(`#t-main-execute-${tCycleExecute.selectedIndex} .not-exec-btn option[value="${status}"]`).prop('selected', true);
+          tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status']=status;
+          stopTimer();
+        }
+        else if(status=='Pass'){
+          if(tCycleExecute.detailList[tCycleExecute.selectedIndex].length == 1){
+            $(`#t-main-execute-${tCycleExecute.selectedIndex} .not-exec-btn option[value="${status}"]`).prop('selected', true);
+            tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status']=status;
+          }
+          else{
+            let count=0;
+            tCycleExecute.detailList[tCycleExecute.selectedIndex].testscript.forEach(x=>{
+              if(x.status == 'Pass'){
+                 count++;
+              }
+            });
+            if(count == tCycleExecute.detailList[tCycleExecute.selectedIndex].testscript.length){
+              $(`#t-main-execute-${tCycleExecute.selectedIndex} .not-exec-btn option[value="${status}"]`).prop('selected', true);
+              tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status']=status;
+              stopTimer();
+            }
+            else{
+              $(`#t-main-execute-${tCycleExecute.selectedIndex} .not-exec-btn option[value="In Progress"]`).prop('selected', true);
+              tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status']='In Progress';
+            }
+          }
+        }
+        else{
+            $(`#t-main-execute-${tCycleExecute.selectedIndex} .not-exec-btn option[value="In Progress"]`).prop('selected', true);
+            tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status']='In Progress';
+        }
+
+        tCycleExecute.detailList[tCycleExecute.selectedIndex].last_execution = new Date();
+        
+        tCycleExecute.detailList[tCycleExecute.selectedIndex]['activity_log']=[];
+        tCycleExecute.detailList[tCycleExecute.selectedIndex]['activity_log'].push({
+          status : status,
+          status_color: color,
+          tested_by: `Script updated by `+getJiraUserNameByJiraId("{{userAccountId}}"),
+          detail: tCycleExecute.detailList[tCycleExecute.selectedIndex].name
+        });
+
+        let eStatus = tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status'];
+        let eStatusDetail = jiraTestCaseStatusListArray.find(x=>x.sc_name == eStatus);
+        tCycleExecute.detailList[tCycleExecute.selectedIndex]['activity_log'].push({
+          status : eStatus,
+          status_color: !eStatusDetail?nul:eStatusDetail.sc_color,
+          tested_by: `Executed by `+getJiraUserNameByJiraId("{{userAccountId}}"),
+          detail: tCycleExecute.detailList[tCycleExecute.selectedIndex].name
+        });
+        saveExecution('Status', 'Scripted');
+        updateTestExecutionHeading(tCycleExecute.detailList[tCycleExecute.selectedIndex]);
+    }
+
+    function updateTestExecutionHeading(res, isNew=false){
+      let estimated_det = !res['estimated_time']?'No Estimated Time': 'Estimate '+res['estimated_time'];
+      let recorded_time = !res['recorded_time']?'Actual 0s': 'Actual '+msToTimeConv(res.recorded_time);
+      let last_execution = (!res.last_execution || isNew)?'Not executed': getFormateDate(res.last_execution);
+      $(`#t-main-execute-${tCycleExecute.selectedIndex} .texecute_heading_estimate`).text(`${estimated_det} | ${recorded_time} | ${last_execution}`);
+    }
+
+    function getFormateDate(dateVal) {
+        var newDate = new Date(dateVal);
+
+        var sMonth = padValue(newDate.getMonth() + 1);
+        var sDay = padValue(newDate.getDate());
+        var sYear = newDate.getFullYear();
+        var sHour = newDate.getHours();
+        var sMinute = padValue(newDate.getMinutes());
+        var sAMPM = "AM";
+
+        var iHourCheck = parseInt(sHour);
+
+        if (iHourCheck > 12) {
+            sAMPM = "PM";
+            sHour = iHourCheck - 12;
+        }
+        else if (iHourCheck === 0) {
+            sHour = "12";
+        }
+
+        sHour = padValue(sHour);
+
+        return sMonth + "-" + sDay + "-" + sYear + " " + sHour + ":" + sMinute + " " + sAMPM;
+    }
+
+    function padValue(value) {
+        return (value < 10) ? "0" + value : value;
+    }
+
+    /*
+     add files
+    */
+    function fileAddedTestExecution(event, dropped = false) {
+      let files = null;
+      // If file is dropped  
+        if (dropped) {
+          event.preventDefault();
+          event.stopPropagation();
+             files = event.dataTransfer.files;
+        } else {
+            files = event.srcElement.files;
+        }
+        if(files.length>0){            
+            for (const file of files) {
+                var currentIndex = tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_attachment.length;
+                tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_attachment.push({
+                    'operation': 'new',
+                    'file_name' : file.name,
+                    'file_key_name': `file_${Math.floor((Math.random() * 1000000) + 1)}`,
+                    'file_url': `testexecution/attachment-${Math.floor((Math.random() * 1000000) + 1)}.pdf`,
+                    'uploaded_by': getJiraUserNameByJiraId("{{userAccountId}}"),
+                    'uploaded_on': new Date().toLocaleDateString(),
+                    'size': file.size,
+                    'file_type': file.type,
+                    'file': file
+                });
+                appendFileInAttachment(tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_attachment[currentIndex], tCycleExecute.selectedIndex);
+            }
+            saveExecution('Attachment', 'Added');
+        }      
+   }
+
+    function appendFileInAttachment(file, currentIndex){
+
+         var file_name_ext='OTR';
+         
+        if(file.file_name.split('.').length == 2){
+            file_name_ext = file.file_name.split('.')[1].toUpperCase();
+        }
+        var file_name_color = '#0052cc';
+        if(file_name_ext == 'PDF'){
+            file_name_color = '#f15642';
+        }
+        else if (file_name_ext == 'CSV'){
+            file_name_color = '#41a72e';
+        }
+        else if(file_name_ext == 'PNG' || file_name_ext == 'SVG'  || file_name_ext == 'JPEG' || file_name_ext == 'JPG'){
+            color = '#7c589c';
+        }
+        let uploadId=`attachement-elem-${file.file_key_name}`;
+        
+          $(`#t-main-execute-${currentIndex} #texecuteAttachList`).append(`<tr id="${uploadId}">
+              <td class="issue-td">
+                <svg style="margin-right:3.75px;" xmlns="http://www.w3.org/2000/svg" width="23.536" height="26.898" viewBox="0 0 23.536 26.898">
+                    <g transform="translate(-32)">
+                      <path d="M97.681,0A1.686,1.686,0,0,0,96,1.681V25.217A1.686,1.686,0,0,0,97.681,26.9h16.812a1.686,1.686,0,0,0,1.681-1.681V6.725L109.449,0Z" transform="translate(-60.638)" fill="#e2e5e7"></path>
+                      <path d="M353.681,6.725h5.044L352,0V5.043A1.686,1.686,0,0,0,353.681,6.725Z" transform="translate(-303.188)" fill="#b0b7bd"></path>
+                      <path d="M389.043,133.043,384,128h5.043Z" transform="translate(-333.507 -121.275)" fill="#cad1d8"></path>
+                      <path d="M52.174,249.246a.843.843,0,0,1-.841.841H32.841a.843.843,0,0,1-.841-.841v-8.406a.843.843,0,0,1,.841-.841H51.333a.843.843,0,0,1,.841.841Z" transform="translate(0 -227.391)" fill="${file_name_color}"></path>
+                      <g transform="translate(35.664 15.462)">
+                          <text font-size="8" fill="#fff" transform="translate(-2 5)">${file_name_ext}</text>                           
+                      </g>
+                      <path d="M111.971,416.841H96v.841h15.971a.843.843,0,0,0,.841-.841V416A.843.843,0,0,1,111.971,416.841Z" transform="translate(-60.638 -394.145)" fill="#cad1d8"></path>
+                    </g>
+                </svg>
+                <a href="javascript:void(0)" onclick="downloadFileAttached('${file.file_key_name}', 'execution_attachment')">${file.file_name} (${(file.size/(1024*1024)).toFixed(2)} MB)</a></td>
+              <td class="issue-td-progress" ><aui-progressbar value="10" max="100"></aui-progressbar></td>
+              <td class="issue-td-action" style="display: none;"> <img class="operation-icon" onclick="deleteAttachmentRowData('${file.file_key_name}')" src={{furl "/images/trash.svg"}} /> </td>
+          </tr>`);
+
+        if(!file['signed_file_url']){
+            setTimeout(() => {
+                document.querySelector(`#t-main-execute-${currentIndex} #${uploadId} aui-progressbar`).value=100;
+                    setTimeout(() => {
+                        $(`#t-main-execute-${currentIndex} #${uploadId} .issue-td-progress`).hide();
+                        $(`#t-main-execute-${currentIndex} #${uploadId} .issue-td-action` ).show();
+                    }, 1000);
+            }, 2000);
+        }
+        else{
+          $(`#t-main-execute-${currentIndex} #${uploadId} .issue-td-progress`).hide();
+          $(`#t-main-execute-${currentIndex} #${uploadId} .issue-td-action` ).show();
+        }
+    }
+
+    
+    /*
+      Add Issues
+    */
+
+    function addQuickIssuePopup() {
+      $('#Issue_testcase_table_body').html(
+          `<tr class="border-top-none middle-align">
+              <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                      <div class="no_data_test_cycle" >
+                      <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                      <h3>Search Issues</h3>
+                          <h5>Search by name, and select some issues</h5>
+                      </div>
+                  </div>
+              </td>
+          </tr>`
+      );
+
+      $('#already_used_issue_warning').css('display', 'none'); 
+      $("#issue_search_keyword").val("");
+      AJS.dialog2('#action-issues-dialog').show();
+      $("#add-issue-dialog-confirm").attr("disabled", true);
+    }
+
+    function closeIssuePopup() {
+      searchSelectedList = [];
+      $('#Issue_testcase_table_body').html(
+          `<tr class="border-top-none middle-align">
+              <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                      <div class="no_data_test_cycle" >
+                      <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                      <h3>Search Issues</h3>
+                          <h5>Search by name, and select some issues</h5>
+                      </div>
+                  </div>
+              </td>
+          </tr>`
+      );    
+      AJS.dialog2('#action-issues-dialog').hide();
+      $("#add-issue-dialog-confirm").attr("disabled", true);
+    }  
+
+    function addQuickIssue() {
+      AP.jira.openCreateIssueDialog(function(issues){
+        tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_issues.push({
+          'issue_name': issues[0].fields.summary,
+          'issue_status': issues[0].fields.status.name,
+          'project_id': '{{projectId}}',
+          'domain_id': domain_id,
+          'test_type': 'testexecution',
+          'issue_id': issues[0].id,
+          'issue_key': issues[0].key,
+          'issue_icon': issues[0].fields.issuetype.iconUrl,
+          'issue_type': issues[0].fields.issuetype.name,
+          'issue_priority': issues[0].fields.priority.name,
+          'issue_to_link': issues[0].self
+        });            
+        appendIssueRow(tCycleExecute.selectedIndex);
+        saveExecution('Issue', 'Added');
+      }, {
+        pid: "{{projectId}}",
+        issueType: 1,
+        callback: "testcasr/sadfasdasdadds"
+      });        
+    }
+
+
+    function deleteIssueRowData(index) {    
+       tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_issues.splice(index, 1);
+       saveExecution('Issue', 'Deleted');
+    }
+
+    function deleteAttachmentRowData(keyName)
+    {   
+        let eIndex = tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_attachment.findIndex(x=> x.file_key_name == keyName);
+        tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_attachment.splice(eIndex, 1);
+        $(`#t-main-execute-${tCycleExecute.selectedIndex} #attachement-elem-${keyName}`).remove();
+        saveExecution('Attachment', 'Deleted');
+    }
+
+    
+
+    function appendIssueRow(currentIndex) {
+      if(tCycleExecute.detailList[currentIndex].execution_issues.length > 0 ) 
+      {
+        $(`#t-main-execute-${currentIndex} #issue-list-data-table-seaction`).css('display', 'block')
+        $(`#t-main-execute-${currentIndex} #issue-list-data-add-link`).css('display', 'none')
+
+        $(`#t-main-execute-${currentIndex} #issue_list_table_tbody`).html("");
+
+        for (let j = 0; j < tCycleExecute.detailList[currentIndex].execution_issues.length; j++) 
+        {   
+            $(`#t-main-execute-${currentIndex} #issue_list_table_tbody`).append('<tr>'+
+                        '<td class="issue-td"><img src="'+tCycleExecute.detailList[currentIndex].execution_issues[j].issue_icon+'"/> <a href="javascript:void(0)" onclick="navigateToLink(`/browse/'+tCycleExecute.detailList[currentIndex].execution_issues[j].issue_key+'`)" >'+tCycleExecute.detailList[currentIndex].execution_issues[j].issue_key+'</a> '+ tCycleExecute.detailList[currentIndex].execution_issues[j].issue_name+'</td>'+
+                        '<td class="issue-td-action"><span class="issue-span-status">'+tCycleExecute.detailList[currentIndex].execution_issues[j].issue_status+'</span> <img class="operation-icon" onclick="deleteIssueRowData('+j+')" src={{furl "/images/trash.svg"}} /></td>'+
+                    '</tr>');
+        }
+      } 
+      else 
+      {
+        $(`#t-main-execute-${currentIndex} #issue-list-data-table-seaction`).css('display', 'none')
+        $(`#t-main-execute-${currentIndex} #issue-list-data-add-link`).css('display', 'block')
+      }
+    }
+
+
+    function actionOnIssue(id) 
+    {
+      let index = searchSelectedList.findIndex(x => x.id == id);
+
+      if(index !== -1) {
+        searchSelectedList.splice(index, 1);
+      } else {
+        let index_2 = searchIssueList.findIndex(x => x.id == id);
+        searchSelectedList.push(searchIssueList[index_2]);
+      }
+
+      if(searchSelectedList.length > 0) {
+        $("#add-issue-dialog-confirm").attr("disabled", false);
+      } else {
+        $("#add-issue-dialog-confirm").attr("disabled", true);
+      }
+    }
+
+
+    function addSelectedIssueArray()
+    {
+        if(searchSelectedList.length > 0)
+        {
+            for (let j = 0; j < searchSelectedList.length; j++) 
+            {
+                tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_issues.push({
+                    'issue_name': searchSelectedList[j].fields.summary,
+                    'issue_status': searchSelectedList[j].fields.status.name,
+                    'project_id': '{{projectId}}',
+                    'domain_id': domain_id,
+                    'test_type': 'testexecution',
+                    'issue_id': searchSelectedList[j].id,
+                    'issue_key': searchSelectedList[j].key,
+                    'issue_icon': searchSelectedList[j].fields.issuetype.iconUrl,
+                    'issue_type': searchSelectedList[j].fields.issuetype.name,
+                    'issue_priority': searchSelectedList[j].fields.priority.name,
+                    'issue_to_link': searchSelectedList[j].self
+                });
+            }
+                
+            appendIssueRow(tCycleExecute.selectedIndex);
+            saveExecution('Issue', 'Added');
+            AJS.dialog2('#action-issues-dialog').hide();
+            $("#add-issue-dialog-confirm").attr("disabled", true);
+        }
+    }
+
+
+
+    function submitIssueSearch() 
+    {     
+        let searchkeyword = $('#issue_search_keyword').val();
+
+        if(searchkeyword !== "")
+        {
+          if(searchkeyword.indexOf(' ') >= 0)
+          {            
+              toaster('Please use single word to search issue', 'info');
+          }
+          else 
+          {
+            searchSelectedList = [];
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $('#already_used_issue_warning').css('display', 'none');  
+
+            AP.request('/rest/api/2/search?jql=summary~'+searchkeyword+'&project={{projectKey}}&maxResults=10000&fields=id,key,summary,priority,issuetype,status,created,self', {
+                success: function (responceUserList) {
+
+                    searchIssueList =  JSON.parse(responceUserList).issues;              
+
+                    $('#Issue_testcase_table_body').html('');
+		    
+                    if(searchIssueList.length > 0 ) 
+                    {
+                        for (let j = 0; j < searchIssueList.length; j++) 
+                        { 
+                            let index = tCycleExecute.detailList[tCycleExecute.selectedIndex].execution_issues.findIndex(x => x.issue_id == searchIssueList[j].id);
+
+                            let searchIssueListListHtml = "";
+
+                            if(index !== -1) {
+                                $('#already_used_issue_warning').css('display', 'block');  
+                                searchIssueListListHtml += '<tr class="border-top-none middle-align already_used_tr">';
+                            } else {
+                                searchIssueListListHtml += '<tr class="border-top-none middle-align">';
+                            }
+
+                            searchIssueListListHtml += '<td style="width: 1px;">'+
+                                        '<input class="checkbox" type="checkbox" style="width: 12px;height: 12px;position: relative;top: 2.25px;" onclick="actionOnIssue(`'+searchIssueList[j].id+'`)">'+
+                                    '</td>'+
+                                    '<td class="issue-td"><img src="'+searchIssueList[j].fields.issuetype.iconUrl+'"/> <a href="javascript:void(0)" onclick="navigateToLink(`/browse/'+searchIssueList[j].key+'`)" >'+searchIssueList[j].key+'</a> '+ searchIssueList[j].fields.summary+'</td>'+
+                                    '<td style="text-align: right;">'+
+                                        '<span class="issue-span-status testcycle_status">'+searchIssueList[j].fields.status.name+'</span>'+
+                                        '<span class="issue-span-status testcycle_date">'+getFormateDateForHistory(searchIssueList[j].fields.created)+'</span>'+
+                                    '</td>'+
+                                '</tr>';
+
+                            $('#Issue_testcase_table_body').append(searchIssueListListHtml);
+                        }
+                    } 
+                    else 
+                    {
+                        $('#Issue_testcase_table_body').html(
+                            `<tr class="border-top-none middle-align">
+                                <td colspan="3" style="border: none;height: 277.5px;text-align: center;vertical-align: middle;">
+                                        <div class="no_data_test_cycle" >
+                                        <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                                        <h3>Search Issues</h3>
+                                            <h5>Search by name, and select some issues</h5>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>`
+                        );                        
+                    }
+
+                    $('#action-loader-wrapper').css('display', 'none');  
+
+                }
+            });
+          }
+        }
+    }
+
+
+
+
+   
+    function saveExecution(status=false, action=false){
+      
+      let currentReq = tCycleExecute.detailList[tCycleExecute.selectedIndex];
+
+      let updatePresent=!!currentReq['testexecution_id'];
+      const formData = new FormData(); 
+
+      currentReq.testscript.forEach((elem, index) =>{
+          elem['actual_output'] = $(`#t-main-execute-${tCycleExecute.selectedIndex} input[name="tscript-sec-${index}"]`).val();
+      })
+      currentReq.execution_comment=$(`#t-main-execute-${tCycleExecute.selectedIndex} #text-input-comment`).val();
+      currentReq.execution_status = $(`#t-main-execute-${tCycleExecute.selectedIndex} .not-exec-btn`).val();
+
+      let formFieldsData=[];
+      formFieldsData = Object.assign({}, currentReq);
+
+      formFieldsData['project_id'] = parseInt("{{projectId}}");
+      formFieldsData['acct_id'] = "{{userAccountId}}";
+      formFieldsData['test_key'] = "{{projectKey}}";
+      formFieldsData['domain_id'] = domain_id;
+      formFieldsData['testcycle_id'] = executeId;
+
+      formFieldsData['execution_issues'] = currentReq.execution_issues;
+      
+      formFieldsData['testscript'] = JSON.stringify(formFieldsData['testscript']);
+      formFieldsData['folder_name'] =  !formFieldsData['folder_name']?"None": '/'+formFieldsData['folder_name'];
+      formFieldsData['environment'] =  !formFieldsData['environment']?"{{environment}}": formFieldsData['environment'];
+      
+        let assignedUser = jiraUserListArray.find(user=> user.id == "{{userAccountId}}");
+          if(!!assignedUser){
+            $(`#t-main-execute-${tCycleExecute.selectedIndex} .texecute_content_executed`).text(assignedUser.name);
+            formFieldsData['executed_by'] = assignedUser.id;
+          }
+      formFieldsData['testscript_status'] = $(`#t-main-execute-${tCycleExecute.selectedIndex} .not-exec-btn`).val();
+
+      let attachIndex=0;
+      for (const file of currentReq.execution_attachment) 
+      {                    
+          if(file.operation == 'new')
+          {
+              formData.append('file_'+attachIndex, file['file']);
+              file['file']=null;
+          }
+          attachIndex++;
+      }
+      formFieldsData['execution_attachment'] = currentReq.execution_attachment;
+
+      formFieldsData['recorded_time'] = tCycleExecute.timer.value;
+      formFieldsData['last_execution'] = new Date();
+
+      // update activity logs-----
+      formFieldsData['activity_log'] = JSON.stringify(updateActivityLogs(status, action));
+      console.log(formFieldsData);
+
+      formData.append('data', JSON.stringify(formFieldsData));
+      
+      $.ajax({
+          "type": updatePresent?"PUT":"POST",
+          "url": `${updatePresent?'/testexecution/update':'/testexecution/add'}?user={{userAccountId}}`,
+          "headers": {
+              'Authorization': "JWT "+user_token,
+          },
+          "data": formData,
+          "processData": false,
+          "contentType": false,
+          "error": function (xhr, textStatus, errorThrown) {
+              toaster('Error while fetching project details', 'error');
+              $('#action-loader-wrapper').css('display', 'none');
+          },
+          "success": function (data) {
+              if (data.res.status === 200) {                 
+                if(!updatePresent){
+                currentReq.testexecution_id = data.res.data.testexecution_id;
+                }
+               
+                updateTestExecutionHeading(formFieldsData);
+
+                currentReq.execution_attachment.map(x=>{
+                  x.operation= x.operation=='new'?'no_change':x.operation;
+                });
+              }
+          }
+      });
+    }
+
+
+    /*
+      TIMER---------------------
+    */
+    var timerExecute = null;
+    function startTimer(){   
+       $(`#t-main-execute-${tCycleExecute.selectedIndex} .play-icon`).hide();
+       $(`#t-main-execute-${tCycleExecute.selectedIndex} .pause-icon`).show();
+       if (timerExecute) {
+         clearInterval(timerExecute);
+       }
+        timerExecute = setInterval(() => {
+            tCycleExecute.timer.value += 1000;
+            tCycleExecute.timer.display_time = msToTimeString(tCycleExecute.timer.value);
+            if(tCycleExecute.selectedIndex != null){
+              tCycleExecute.detailList[tCycleExecute.selectedIndex]['recorded_time'] = tCycleExecute.timer.value;
+              updateTestExecutionHeading(tCycleExecute.detailList[tCycleExecute.selectedIndex]);
+              $(`#t-main-execute-${tCycleExecute.selectedIndex} .texecute_content_actual`).text(msToTimeConv(tCycleExecute.timer.value));
+            }
+            $(`#t-main-execute-${tCycleExecute.selectedIndex} .display-timer`).html(tCycleExecute.timer.display_time);
+            $(`#tcycle-excute-side-elem-${tCycleExecute.testCaseId} .tcycle_excute_side_cases-counter-val`).html(tCycleExecute.timer.display_time);            
+        }, 1000);
+    }
+
+    function stopTimer(){     
+       $(`#t-main-execute-${tCycleExecute.selectedIndex} .play-icon`).show();
+       $(`#t-main-execute-${tCycleExecute.selectedIndex} .pause-icon`).hide();
+        clearInterval(timerExecute);
+    }
+
+    function msToTimeString(ms) {
+        let seconds = (ms / 1000) % 60;
+        let minutes = Math.floor(ms / 1000 / 60) % 60;
+        let hours = Math.floor(ms / 1000 / 60 / 60);
+
+        seconds = ('0' + seconds).slice(-2);
+        minutes = ('0' + minutes).slice(-2);
+        hours = ('0' + hours).slice(-2);
+
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function msToTimeConv(ms) {
+        var seconds = (ms / 1000);
+        var minutes = (ms / (1000 * 60)).toFixed(1);
+        var hours = (ms / (1000 * 60 * 60)).toFixed(1);
+        var days = (ms / (1000 * 60 * 60 * 24)).toFixed(1);
+
+        if (seconds < 60) {
+            return seconds + " s";
+        } else if (minutes < 60) {
+            return minutes + " m";
+        } else if (hours < 24) {
+            return hours + " h";
+        } else {
+            return days + " d"
+        }
+    }
+
+    function downloadFileAttached(keyName, type){   
+        let eIndex = tCycleExecute.detailList[tCycleExecute.selectedIndex][type].findIndex(x=> x.file_key_name == keyName);
+        let elem = tCycleExecute.detailList[tCycleExecute.selectedIndex][type][eIndex];
+        if(!!elem['signed_file_url']){
+          downloadAttachmentURI(elem.signed_file_url, elem.file_name);
+        }
+    }
+
+    /*
+     ======= Update Activity Logs =============
+    */
+    function updateActivityLogs(status, action){
+      let activity_log = [];
+      if(status == 'Status'){
+        activity_log=tCycleExecute.detailList[tCycleExecute.selectedIndex]['activity_log'];
+      }
+      else if(status == 'Global Status'){
+        let eStatus = tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status'];
+        let eStatusDetail = jiraTestCaseStatusListArray.find(x=>x.sc_name == eStatus);
+        activity_log.push({
+          status : eStatus,
+          status_color: !eStatusDetail?nul:eStatusDetail.sc_color,
+          tested_by: `${action} by `+getJiraUserNameByJiraId("{{userAccountId}}"),
+          detail: tCycleExecute.detailList[tCycleExecute.selectedIndex].name
+        });
+        if(tCycleExecute.detailList[tCycleExecute.selectedIndex]['execution_status'] != 'In Progress'){
+          stopTimer();
+        }
+      }
+      else if(status == 'Comment' || status == 'Actual Result'){
+        activity_log.push({
+          status : status,
+          status_color: '#5243AA',
+          tested_by: `${action} by `+getJiraUserNameByJiraId("{{userAccountId}}"),
+          detail: tCycleExecute.detailList[tCycleExecute.selectedIndex].name
+        });
+      }
+      else if(status == 'Attachment' || status == 'Issue'){
+        activity_log.push({
+          status : status,
+          status_color: '#008DA6',
+          tested_by: `${action} by `+getJiraUserNameByJiraId("{{userAccountId}}"),
+          detail: tCycleExecute.detailList[tCycleExecute.selectedIndex].name
+        });
+      }    
+      console.log(activity_log);
+      return activity_log;    
+    }
+    
+  </script>

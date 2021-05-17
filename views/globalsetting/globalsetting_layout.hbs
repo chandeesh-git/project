@@ -1,0 +1,43 @@
+{{> common/head }}
+
+<div id="loader-wrapper">
+  {{!-- <div id="loader"></div> --}}
+  <aui-spinner size="large"></aui-spinner>
+</div>
+
+<div id="action-loader-wrapper">
+  {{!-- <div id="action-loader"></div> --}}
+  <aui-spinner size="large"></aui-spinner>
+</div>
+
+<div class="d-flex" id="wrapper" class="checkForAdminPermission" style="display: none !important;">
+
+
+
+  {{#ifCond isProject "false"}}
+
+  {{> common/sidebar_without_project currentPage='globalsetting' }}
+
+  {{/ifCond}}
+
+  {{#ifCond isProject "true" }}
+
+  {{> common/sidebar currentPage='globalsetting' }}
+
+  {{/ifCond}}
+
+
+  
+  <section id="content" role="main">
+
+    <div id='globalsettingFunctionality'>
+      {{> globalsetting/globalsetting_view }}
+    </div>
+
+    {{> globalsetting/globalsetting_js }}
+
+  </section>
+
+</div>
+
+{{> common/footer }}

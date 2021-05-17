@@ -1,0 +1,87 @@
+<!-- Page Content -->
+<div id="page-content-wrapper">
+
+  <nav class="navbar navbar-expand-lg navbar-light border-bottom" style="background-color: #FAFAFA;">
+    <button class="btn btn-default" id="menu-toggle">
+      <img class="gear-icon-search" src={{furl "/images/pie-chart-4.svg"}} />
+      <label class="main-title" id="current_page_tag">Traceability Reports</label>
+    </button>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+        <li class="nav-item active" style="display: inline-block;">
+          <button class="aui-button" id="button-spin-1">Cancel and Go Back</button>
+          <a onclick="getTokendata()" class="aui-button aui-button-primary" href="#">
+            Save
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <!---sub-sidebar-section--->
+  <div id="sub-sidebar-div">
+    <div class="aui-page-panel">
+      <aside class="aui-page-panel-sidebar sub-sidebar" style="width: 226.5px; ">
+        <ul>
+
+
+          <li class="active" id="" style="background-color:white;">
+            <a href="#" style="color: black;">
+              Test Executions
+            </a>
+          </li>
+
+          <li class="active" id="" style="background-color: white;">
+            <a href="#" style="color: black;">
+              Traceability
+            </a>
+          </li>
+
+          <li class="active" id="" style="background-color: white;">
+            <a href="#" style="color: black;">
+              Legacy Reports
+            </a>
+          </li>
+
+        </ul>
+      </aside>
+
+      <!--testcases-webpage-->
+      <section class="aui-page-panel-content content-section-reports">
+        
+        
+        <table class="aui" style="width: 1053.75px;">
+          <thead>
+            <tr>
+              <th id="basic"></th>
+              <th id="basic"></th>
+            </tr>
+          </thead>
+
+          <tbody style="background: #F5F6F9;">
+            <tr>
+              <td headers="basic" style="width: 1px;"> <input class="checkbox" type="checkbox" name="checkBoxOne" id="checkBoxOne"></td>
+              <td headers="basic">Coverage Report</td>
+            </tr>
+            <tr>
+              <td headers="basic"  style="width: 1px;"> <input class="checkbox" type="checkbox" name="checkBoxOne" id="checkBoxOne"></td>
+              <td headers="basic">Traceability Report</td>
+            </tr>
+          </tbody>
+          </table>
+      </section>
+
+
+
+      <p class="addon-data hidden">
+        <code>
+        </code>
+      </p>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>

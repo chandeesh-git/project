@@ -1,0 +1,109 @@
+<section class="aui-page-panel-content history" style="display: flow-root;width: 100%;padding: 0;">
+    <div class="main-history">
+        <table class="aui" id="testcaseExecutionTableDiv">
+            <thead style="background-color: white;">
+                <tr>
+                    <th style="width: 41.25px;">Key</th>
+                    <th>Status</th>
+                    <th>Name</th>
+                    <th>Actual End Date</th>
+                    <th>Estimated(s)</th>
+                    <th>Actual</th>
+                    <th>Assignee</th>
+                    <th>Version</th>
+                    <th>Issues</th>
+                    <th>Environment</th>
+                </tr>
+            </thead>
+            <tbody id="testcaseExecutionTable"></tbody>
+        </table>
+        <div id="testcaseExecutionTableDivWarning"></div>
+    </div>
+</section>
+
+
+
+
+<script>
+
+
+    getTestCaseExecutiondata();
+
+
+    function getTestCaseExecutiondata() 
+    {
+        if("{{editId}}" !== "")
+        {
+            $.ajax({
+                "type": "GET",
+                "url": "/testcase/executionList?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id + "&testcase_id={{editId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        let execution = data.res.data
+
+                        $('#testcaseExecutionTableDiv').css('display', 'table');
+                        $('#testcaseExecutionTableDivWarning').css('display', 'none');
+                        $('#testcaseExecutionTable').html('');
+
+                        if(execution.length > 0)
+                        {
+                            for (let i = 0; i < execution.length; i++) 
+                            {
+                                let execution_status_color = "";
+
+                                if(execution[i].execution_status === 'Not Executed') {
+                                    execution_status_color = '#DEDEDE';
+                                } else if(execution[i].execution_status === 'In Progress') {
+                                    execution_status_color = '#FFA900';
+                                } else if(execution[i].execution_status === 'Pass') {
+                                    execution_status_color = '#3ABB4B';
+                                } else if(execution[i].execution_status === 'Fail') {
+                                    execution_status_color = '#DF4C4C';
+                                } else if(execution[i].execution_status === 'Blocked') {
+                                    execution_status_color = '#4B88E7';
+                                } else {
+                                    execution_status_color = '#DEDEDE';
+                                }
+
+                                let actual_end_date = new Date(execution[i].actual_end_date);
+
+                                let htmlData = '<tr>'+
+                                        '<td><span style="color: #0052CC;">' + execution[i].test_key + '</span></td>' +
+                                        '<td><span class="execution_status" style="background: '+execution_status_color+'">' + execution[i].execution_status + '</td>' +
+                                        '<td>' + execution[i].name + '</td>' +
+                                        '<td>' + getFormattedDate(actual_end_date.getDate()) + ' ' + months[actual_end_date.getMonth()] + ', ' + actual_end_date.getFullYear() + ' ' + formatAMPM(actual_end_date) + '</td>' +
+                                        '<td>' + execution[i].estimated_time + '</td>' +
+                                        '<td>' + funMsToTimeConv(execution[i].recorded_time) + '</td>' +
+                                        '<td>' + getJiraUserNameByJiraId(execution[i].assigned_to) + '</td>' +
+                                        '<td>' + execution[i].version + '</td>' +
+                                        '<td><span style="color: #DF4C4C;">' + execution[i].execution_issues + '</span></td>' +
+                                        '<td>' + execution[i].environment + '</td>' +
+                                    '</tr>';
+
+                                $('#testcaseExecutionTable').append(htmlData);
+                            }
+                        }
+                        else
+                        {
+                            $('#testcaseExecutionTableDiv').css('display', 'none');
+                            $('#testcaseExecutionTableDivWarning').css('display', 'block');
+                            $('#testcaseExecutionTableDivWarning').html('<div class="aui-message aui-message-info"><p class="title"><strong>Info !</strong></p><p>No details are available</p></div>');
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+
+
+</script>

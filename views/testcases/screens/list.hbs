@@ -1,0 +1,1457 @@
+<div id="page-content-wrapper">
+    <div class="listing-dev">
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom" style="background-color: #FAFAFA;">
+            <button class="btn btn-default menu-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17.35875" height="21" viewBox="0 0 23.145 28">
+                    <g transform="translate(-2 0.226)">
+                        <path d="M20.315,8.629a2.315,2.315,0,1,1,2.315-2.315A2.317,2.317,0,0,1,20.315,8.629Z"
+                            transform="translate(2.516 0.629)" fill="#0052cc"></path>
+                        <circle cx="2" cy="2" r="2" transform="translate(17 -0.226)" fill="#344563"></circle>
+                        <path
+                            d="M23.649,12.861,16.127,5.339A1.157,1.157,0,0,0,14.49,6.975l.161.161L3.492,18.3a5.091,5.091,0,1,0,7.2,7.2L21.852,14.336l.161.161a1.157,1.157,0,0,0,1.636-1.635ZM6.629,23.516a1.157,1.157,0,1,1,1.157-1.157A1.158,1.158,0,0,1,6.629,23.516Zm4.629-3.472a1.157,1.157,0,1,1,1.157-1.157A1.158,1.158,0,0,1,11.258,20.044ZM17.013,15.9a1.84,1.84,0,0,1-1.4-.119l-.911-.514a3.614,3.614,0,0,0-3.415,0l-.9.506a1.858,1.858,0,0,1-1.272.168l7.173-7.173L20.214,12.7Z"
+                            transform="translate(0 0.786)" fill="#"></path>
+                        <path
+                            d="M13.355,12.1a1.173,1.173,0,0,1-1.643,0L10.45,10.843,12.093,9.2l1.261,1.261A1.166,1.166,0,0,1,13.355,12.1Z"
+                            transform="translate(1.329 1.447)" fill="#344563"></path>
+                    </g>
+                </svg>
+                <label class="main-title" id="current_page_tag">Test Case</label>
+            </button>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <li class="nav-item active" style="display: inline-block;">
+
+                        <button class="aui-button aui-dropdown2-trigger aui-dropdown2-trigger-arrowless table-column-sort-icon tooltip_btn" title="Columns" aria-controls="testcase-table-checkbox-items" id="button-spin-1">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg" width="19" height="14" viewBox="0 0 19 14">
+                                <g transform="translate(0 -53.333)">
+                                    <g transform="translate(0 53.333)">
+                                        <path
+                                            d="M4,53.333H1a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1H4a1,1,0,0,0,1-1v-12A1,1,0,0,0,4,53.333Z"
+                                            transform="translate(0 -53.333)"></path>
+                                        <path
+                                            d="M153.334,53.333h-3a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1h3a1,1,0,0,0,1-1v-12A1,1,0,0,0,153.334,53.333Z"
+                                            transform="translate(-142.334 -53.333)"></path>
+                                        <path
+                                            d="M302.667,53.333h-3a1,1,0,0,0-1,1v12a1,1,0,0,0,1,1h3a1,1,0,0,0,1-1v-12A1,1,0,0,0,302.667,53.333Z"
+                                            transform="translate(-284.667 -53.333)"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+
+                        <span id="testcaseTableColumnCheckList"></span>
+
+                        <button class="aui-button tooltip_btn table-column-sort-icon" id="filter-enable-disable-button" title="Filters" resolved="" onclick="showHideFilter('testcase')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13.309" height="14" viewBox="0 0 13.309 14">
+                                <g transform="translate(-10.118)">
+                                    <g transform="translate(10.118)">
+                                        <path
+                                            d="M23.186,0H10.359a.239.239,0,0,0-.192.384l4.7,6.588A1.716,1.716,0,0,1,15.2,7.986v5.749c.017.192.175.315.332.245l2.674-1.014a.211.211,0,0,0,.14-.21V7.986a1.757,1.757,0,0,1,.332-1.014l4.7-6.588A.239.239,0,0,0,23.186,0Z"
+                                            transform="translate(-10.118)"></path>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+
+                        <input id="testcaseSearchKeyword" type="text" placeholder="Search..." class="search-bar" onchange="updateTestCaseListing()">
+                        
+                        {{!-- import button --}}
+                        <button  id="dialog-show-button-import" class="aui-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="17" style="margin-right: 7.5px;"
+                            viewBox="0 0 20.077 20">
+                            <g transform="translate(0 -0.117)">
+                                <path
+                                d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                transform="translate(0 -10.958)" fill="#344563" />
+                                <path
+                                d="M25.481,9.64a.986.986,0,0,0-.7.29l-1.238,1.238V1.106a.989.989,0,1,0-1.978,0V11.234L20.26,9.93a.989.989,0,0,0-1.4,1.4l2.953,2.953a.985.985,0,0,0,.7.289h.015a.984.984,0,0,0,.7-.289l2.953-2.953a.989.989,0,0,0-.7-1.688Z"
+                                transform="translate(-12.45 0)" fill="#344563" />
+                            </g>
+                            </svg>Import
+                        </button>
+
+                        {{!-- export button --}}
+                        <button class="aui-button aui-dropdown2-trigger btn_spinner export-report-icon" aria-controls="example-dropdown">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="import-export" width="20.077" height="18"
+                                style="margin-right: 7.5px;margin-top: -4.5px;" viewBox="0 0 20.077 21">
+                                <g transform="translate(0 0.883)">
+                                    <path class="a"
+                                        d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z"
+                                        transform="translate(0 -10.958)"></path>
+                                    <path class="a"
+                                        d="M25.48,5.047a.986.986,0,0,1-.7-.29L23.543,3.519V13.581a.989.989,0,1,1-1.978,0V3.452l-1.3,1.3a.989.989,0,0,1-1.4-1.4L21.814.406a.985.985,0,0,1,.7-.289h.015a.984.984,0,0,1,.7.289l2.952,2.953a.989.989,0,0,1-.7,1.688Z"
+                                        transform="translate(-12.449 -1)"></path>
+                                </g>
+                            </svg>
+                            Export
+                        </button>
+                        <aui-dropdown-menu id="example-dropdown">
+                            <aui-section label="Export File as">
+                                <aui-item-link href="javascript:void(0)" onclick="exportCsv('testcase', 'csv')">.CSV Format</aui-item-link>
+                                <aui-item-link href="javascript:void(0)" onclick="exportCsv('testcase', 'xlsx')">.XLS Formate</aui-item-link>
+                            </aui-section>
+                        </aui-dropdown-menu>
+
+                        {{!-- bulk upload button --}}
+                        <button id="dialog-button-bulk-create" class="aui-button btn_spinner" aria-controls="example-dropdown" resolved="" 
+                            aria-haspopup="true" aria-expanded="false">
+                            
+                            <svg version="1.1" id="Capa_1" width="13.5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                viewBox="0 0 512.18 512.18" style="enable-background:new 0 0 512.18 512.18;" xml:space="preserve">
+                                <g>
+                                    <g>
+                                        <path d="M448.18,80h-320c-17.673,0-32,14.327-32,32s14.327,32,32,32h320c17.673,0,32-14.327,32-32S465.853,80,448.18,80z"/>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path d="M64.18,112c-0.036-8.473-3.431-16.586-9.44-22.56c-12.481-12.407-32.639-12.407-45.12,0
+                                            C3.61,95.414,0.215,103.527,0.18,112c-0.239,2.073-0.239,4.167,0,6.24c0.362,2.085,0.952,4.124,1.76,6.08
+                                            c0.859,1.895,1.876,3.715,3.04,5.44c1.149,1.794,2.49,3.457,4,4.96c1.456,1.45,3.065,2.738,4.8,3.84
+                                            c1.685,1.227,3.512,2.248,5.44,3.04c2.121,1.1,4.382,1.908,6.72,2.4c2.073,0.232,4.167,0.232,6.24,0
+                                            c8.45,0.007,16.56-3.329,22.56-9.28c1.51-1.503,2.851-3.166,4-4.96c1.164-1.725,2.181-3.545,3.04-5.44
+                                            c1.021-1.932,1.826-3.971,2.4-6.08C64.419,116.167,64.419,114.073,64.18,112z"/>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path d="M64.18,256c0.238-2.073,0.238-4.167,0-6.24c-0.553-2.065-1.359-4.053-2.4-5.92c-0.824-1.963-1.843-3.839-3.04-5.6
+                                            c-1.109-1.774-2.455-3.389-4-4.8c-12.481-12.407-32.639-12.407-45.12,0C3.61,239.414,0.215,247.527,0.18,256
+                                            c0.062,4.217,0.875,8.388,2.4,12.32c0.802,1.893,1.766,3.713,2.88,5.44c1.217,1.739,2.611,3.348,4.16,4.8
+                                            c1.414,1.542,3.028,2.888,4.8,4c1.685,1.228,3.511,2.249,5.44,3.04c1.951,0.821,3.992,1.412,6.08,1.76
+                                            c2.047,0.459,4.142,0.674,6.24,0.64c2.073,0.239,4.167,0.239,6.24,0c2.036-0.349,4.024-0.94,5.92-1.76
+                                            c1.981-0.786,3.861-1.807,5.6-3.04c1.772-1.112,3.386-2.458,4.8-4c1.542-1.414,2.888-3.028,4-4.8c1.23-1.684,2.251-3.51,3.04-5.44
+                                            c1.093-2.124,1.9-4.384,2.4-6.72C64.426,260.167,64.426,258.073,64.18,256z"/>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path d="M64.18,400c0.237-2.073,0.237-4.167,0-6.24c-0.553-2.116-1.359-4.157-2.4-6.08c-0.859-1.895-1.876-3.715-3.04-5.44
+                                            c-1.112-1.772-2.458-3.386-4-4.8c-12.481-12.407-32.639-12.407-45.12,0c-1.542,1.414-2.888,3.028-4,4.8
+                                            c-1.164,1.725-2.181,3.545-3.04,5.44c-0.83,1.948-1.421,3.99-1.76,6.08c-0.451,2.049-0.665,4.142-0.64,6.24
+                                            c0.036,8.473,3.431,16.586,9.44,22.56c1.414,1.542,3.028,2.888,4.8,4c1.685,1.228,3.511,2.249,5.44,3.04
+                                            c1.951,0.821,3.992,1.412,6.08,1.76c2.047,0.459,4.142,0.674,6.24,0.64c2.073,0.239,4.167,0.239,6.24,0
+                                            c2.036-0.349,4.024-0.94,5.92-1.76c1.981-0.786,3.861-1.807,5.6-3.04c1.772-1.112,3.386-2.458,4.8-4
+                                            c1.542-1.414,2.888-3.028,4-4.8c1.231-1.683,2.252-3.51,3.04-5.44c1.092-2.125,1.899-4.384,2.4-6.72
+                                            C64.426,404.167,64.426,402.073,64.18,400z"/>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path d="M480.18,224h-352c-17.673,0-32,14.327-32,32s14.327,32,32,32h352c17.673,0,32-14.327,32-32S497.853,224,480.18,224z"/>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g>
+                                        <path d="M336.18,368h-208c-17.673,0-32,14.327-32,32c0,17.673,14.327,32,32,32h208c17.673,0,32-14.327,32-32
+                                            C368.18,382.327,353.853,368,336.18,368z"/>
+                                    </g>
+                                </g>
+                            </svg>
+                            Bulk Create
+                        </button>
+
+                        <a href="javascript:void(0)" onclick="mainSidebarDirectRedirection('testcase', 'add')" id="spinnerbutton" class="create-test-button create-testcase-button aui-button aui-button-primary">
+                            + Create 
+                        </a>                            
+
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!---sub-sidebar-section--->
+        <div id="sub-sidebar-div">
+            <div class="aui-page-panel">
+                <aside class="aui-page-panel-sidebar sub-sidebar"
+                    style="width: 226.5px; background: background: #344563 ;">
+                    <ul>
+                        <li class="active">
+                            <a id="addFolderButtonImg" href="javascript:void(0);" style="margin-right: 0 !important;" onclick="enabledAddFolderBox()">                                
+                                <img src={{furl "/images/add_folder.svg"}} />
+                            </a>
+                            <a href="javascript:void(0);">
+                                <img src={{furl "/images/expand_folder.svg"}} />                                
+                            </a>
+                            <a style="margin-left: 50.25px; margin-right: 6px;" href="javascript:void(0)" onclick="getFolderListByDataType('testcase')">
+                                <img src={{furl "/images/home.png"}} style="width: 21px;"/>
+                            </a>
+                        </li>
+
+                        <div id="testcase_folder_list" class="folder_list"></div>
+
+                        <button id="addFolderButton" onclick="enabledAddFolderBox()" class="create-button create_folder_button aui-button">+ Create New Folder</button>
+
+                        <div id="addFolderInputBox" style="display: none;">
+                            <form class="aui" action="javascript:void(0);" onsubmit="addNewFolderFormSubmit('testcase')" autocomplete="off">                      
+                                <input class="text medium-field" type="text" id="folderName" name="folderName" required="required"/>
+                                <button style="border: none;">
+                                    <img src={{furl "/images/folder-save.svg"}} />
+                                </button>
+                                <a href="javascript:void(0)" onclick="disabledAddFolderBoxPopup()" style="float: right;margin-right: 9px;">cancel</a>
+                            </form>
+                        </div>
+                    </ul>
+                </aside>
+                <section class="aui-page-panel-content content-section">
+                    <div id="testcase-filter-section" class="filter-section hide">
+                        <div>
+                            <b>Filter: </b> 
+                            <span id="testcase-saved-filter"></span>
+                            <span class="filter-save-edit-action">
+                                <a id="f-save-a" class="f-action hide" href="javascript:void(0)" onclick="openFilter()">Save</a>
+                                <a id="f-edit-a" class="f-action hide" href="javascript:void(0)" onclick="editCurrentFilter()">Edit</a>
+                                <a id="f-delete-a" class="f-action hide" href="javascript:void(0)" onclick="deleteCurrentFilter()">Delete</a>
+                                <a id="f-clear-all-a" class="f-action hide" href="javascript:void(0)" onclick="clearAllFilter()">Clear All</a>
+                                <a id="f-reset-all-a" class="f-action hide" href="javascript:void(0)" onclick="resetFilter()">Reset All</a>
+                            </span>
+                        </div>
+                        <div style="margin-top: 7.5px;">
+
+                            <span class="filter-span" id="testcase-Name-filter"></span>
+                            <span class="filter-span" id="testcase-Priority-filter"></span>
+                            <span class="filter-span" id="testcase-Version-filter"></span>
+                            <span class="filter-span" id="testcase-Owner-filter"></span>
+                            <span class="filter-span" id="testcase-Status-filter"></span>
+                            <span class="filter-span" id="testcase-Created-On-filter"></span>
+                            <span class="filter-span" id="testcase-Last-Execution-filter"></span>
+                            <span id="all-filter-span"></span>
+
+                        </div>
+                    </div>
+                    <table class="aui">
+                        <thead>
+                            <tr>
+                                <th id="basic-checkbox" style="width: 1px;">
+                                    <input class="checkbox" onclick="checkedAllListRow('testcase')" type="checkbox" name="checkBoxOne" id="testcase-header-checkbox">
+                                </th>
+                                <th id="basic-Priority" style="width: 1px;"><b>P</b></th>
+                                <th id="basic-Key" style="width: 60px;"><b>Key</b></th>
+                                <th id="basic-Name"><b>Name</b></th>
+                                <th id="basic-Version"><b>Version</b></th>
+                                <th id="basic-Owner"><b>Owner</b></th>
+                                <th id="basic-Status"><b>Status</b></th>
+                                <th id="basic-Create-On"><b>Create-On</b></th>
+                                <th id="basic-Last-Execution"><b>Last-Execution</b></th>
+                                <th id="basic-Actions test-action" style="text-align: right; padding-right: 18.75px;"><b>Actions</b></th>
+                            </tr>
+                        </thead>
+                        <tbody id="testcase_table_body" style="background-color: #F5F6F9;"></tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{!-- import csv modal popup --}}
+<section
+    id="demo-dialog-import"
+    class="aui-dialog2 aui-dialog2-small aui-layer"
+    role="dialog"
+    tabindex="-1"
+    aria-labelledby="dialog-show-button--heading"  style="width:382.5px"  
+>
+    <header class="aui-dialog2-header" style="background-color: white;">
+        <h3 class="aui-dialog2-header-main" id="dialog-show-button--heading">
+          <svg style="margin: 0 3px 4.5px 0; " xmlns="http://www.w3.org/2000/svg" width="20.077" height="20" viewBox="0 0 20.077 20"><g transform="translate(0 -0.117)"><path d="M16.338,16.464H13v1.978h3.333c.992,0,1.761.506,1.761.942v8.771c0,.435-.769.942-1.761.942H3.738c-.991,0-1.76-.507-1.76-.942v-8.77c0-.436.769-.942,1.76-.942H7.071V16.465H3.738c-2.1,0-3.738,1.283-3.738,2.92v8.771c0,1.638,1.642,2.92,3.738,2.92h12.6c2.1,0,3.738-1.283,3.738-2.92V19.385C20.077,17.747,18.435,16.464,16.338,16.464Z" transform="translate(0 -10.958)" fill="#000000"/><path d="M25.481,9.64a.986.986,0,0,0-.7.29l-1.238,1.238V1.106a.989.989,0,1,0-1.978,0V11.234L20.26,9.93a.989.989,0,0,0-1.4,1.4l2.953,2.953a.985.985,0,0,0,.7.289h.015a.984.984,0,0,0,.7-.289l2.953-2.953a.989.989,0,0,0-.7-1.688Z" transform="translate(-12.45 0)" fill="#000000"/></g></svg>
+          Import from Files</h3>
+        <button class="aui-close-button" type="button" aria-label="close"></button>
+    </header>
+    <div class="aui-dialog2-content" style="color: #B2BED4; overflow: hidden;" >
+      <section class="image-upload"  ondrop="selectTestCaseCsv(event, true)"
+        style="border:1px dashed #9c9a9a; position: relative; border-radius: 5px; padding: 15px;">
+        <div style="display: flex; text-align: center;  justify-content: center; flex-direction: column;" id="dialog-import-csv-dropzone">
+            <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" id="myfile" 
+                onchange="selectTestCaseCsv(event)" name="myfile" style="width: 100%; opacity: 0; position: absolute; height: 100%; top: 0; left: 0;">
+
+            <svg style="width: 100%; margin-bottom: 10.5px;" width="40px" height="40px" fill="#B2BED4" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 486.3 486.3" style="enable-background:new 0 0 486.3 486.3;" xml:space="preserve">
+                <g>
+                    <g>
+                        <path d="M395.5,135.8c-5.2-30.9-20.5-59.1-43.9-80.5c-26-23.8-59.8-36.9-95-36.9c-27.2,0-53.7,7.8-76.4,22.5
+                            c-18.9,12.2-34.6,28.7-45.7,48.1c-4.8-0.9-9.8-1.4-14.8-1.4c-42.5,0-77.1,34.6-77.1,77.1c0,5.5,0.6,10.8,1.6,16
+                            C16.7,200.7,0,232.9,0,267.2c0,27.7,10.3,54.6,29.1,75.9c19.3,21.8,44.8,34.7,72,36.2c0.3,0,0.5,0,0.8,0h86
+                            c7.5,0,13.5-6,13.5-13.5s-6-13.5-13.5-13.5h-85.6C61.4,349.8,27,310.9,27,267.1c0-28.3,15.2-54.7,39.7-69
+                            c5.7-3.3,8.1-10.2,5.9-16.4c-2-5.4-3-11.1-3-17.2c0-27.6,22.5-50.1,50.1-50.1c5.9,0,11.7,1,17.1,3c6.6,2.4,13.9-0.6,16.9-6.9
+                            c18.7-39.7,59.1-65.3,103-65.3c59,0,107.7,44.2,113.3,102.8c0.6,6.1,5.2,11,11.2,12c44.5,7.6,78.1,48.7,78.1,95.6
+                            c0,49.7-39.1,92.9-87.3,96.6h-73.7c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5h74.2c0.3,0,0.6,0,1,0c30.5-2.2,59-16.2,80.2-39.6
+                            c21.1-23.2,32.6-53,32.6-84C486.2,199.5,447.9,149.6,395.5,135.8z"/>
+                        <path d="M324.2,280c5.3-5.3,5.3-13.8,0-19.1l-71.5-71.5c-2.5-2.5-6-4-9.5-4s-7,1.4-9.5,4l-71.5,71.5c-5.3,5.3-5.3,13.8,0,19.1
+                            c2.6,2.6,6.1,4,9.5,4s6.9-1.3,9.5-4l48.5-48.5v222.9c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5V231.5l48.5,48.5
+                            C310.4,285.3,318.9,285.3,324.2,280z"/>
+                    </g>
+                </g>
+            </svg>
+
+            <h5 class="drop-files" style="color: #B2BED4; text-align: center;" >Click to browse <br>
+            OR<br>
+            Drop your file here</h5>
+            <h6></h6>
+        </div>
+        <div style="padding: 45px 0; display: block; display: none;" id="dialog-import-csv-progress-div">
+            <aui-progressbar id="dialog-import-csv-progress" value="0" max="100"></aui-progressbar>
+        </div>
+      </section>
+        <ul style="list-style-type:disc; padding-left: 15px; margin: 10.5px 0 0 0;">
+          <li>Only .csv and .xls files are allowed.</li>
+          <li>Max. file size 2MB.</li>
+        </ul>
+    </div>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            <button class="aui-button aui-button-link" resolved="" onclick="downloadTestcaseSampleFile()">Download Sample File</button>
+            <a style="opacity:0;" id="testCasesampleFileLink" href={{furl "/file/testcase-sample-file.csv"}} download="test-cases-sample.csv"></a>
+            <button id="dialog-submit-button-import" class="aui-button aui-button-primary" onclick="uploadCsv('testcase')">Start Import</button>
+        </div>
+    </footer>
+</section>
+
+{{!-- Bulk Create Dialog --}}
+<section
+    id="bulk-create-dialog"
+    class="aui-dialog2 aui-dialog2-small aui-layer"
+    role="dialog"
+    tabindex="-1"
+    aria-labelledby="dialog-show-button--heading"  style="width:600px"  
+>
+    <header class="aui-dialog2-header" style="background-color: white;">
+        <h3 class="aui-dialog2-header-main" id="dialog-show-button--heading">
+          <svg version="1.1" id="Capa_1" width="16.5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                viewBox="0 0 512.18 512.18" style="enable-background:new 0 0 512.18 512.18;" xml:space="preserve">
+                <g>
+                    <g>
+                        <path d="M448.18,80h-320c-17.673,0-32,14.327-32,32s14.327,32,32,32h320c17.673,0,32-14.327,32-32S465.853,80,448.18,80z"/>
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path d="M64.18,112c-0.036-8.473-3.431-16.586-9.44-22.56c-12.481-12.407-32.639-12.407-45.12,0
+                            C3.61,95.414,0.215,103.527,0.18,112c-0.239,2.073-0.239,4.167,0,6.24c0.362,2.085,0.952,4.124,1.76,6.08
+                            c0.859,1.895,1.876,3.715,3.04,5.44c1.149,1.794,2.49,3.457,4,4.96c1.456,1.45,3.065,2.738,4.8,3.84
+                            c1.685,1.227,3.512,2.248,5.44,3.04c2.121,1.1,4.382,1.908,6.72,2.4c2.073,0.232,4.167,0.232,6.24,0
+                            c8.45,0.007,16.56-3.329,22.56-9.28c1.51-1.503,2.851-3.166,4-4.96c1.164-1.725,2.181-3.545,3.04-5.44
+                            c1.021-1.932,1.826-3.971,2.4-6.08C64.419,116.167,64.419,114.073,64.18,112z"/>
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path d="M64.18,256c0.238-2.073,0.238-4.167,0-6.24c-0.553-2.065-1.359-4.053-2.4-5.92c-0.824-1.963-1.843-3.839-3.04-5.6
+                            c-1.109-1.774-2.455-3.389-4-4.8c-12.481-12.407-32.639-12.407-45.12,0C3.61,239.414,0.215,247.527,0.18,256
+                            c0.062,4.217,0.875,8.388,2.4,12.32c0.802,1.893,1.766,3.713,2.88,5.44c1.217,1.739,2.611,3.348,4.16,4.8
+                            c1.414,1.542,3.028,2.888,4.8,4c1.685,1.228,3.511,2.249,5.44,3.04c1.951,0.821,3.992,1.412,6.08,1.76
+                            c2.047,0.459,4.142,0.674,6.24,0.64c2.073,0.239,4.167,0.239,6.24,0c2.036-0.349,4.024-0.94,5.92-1.76
+                            c1.981-0.786,3.861-1.807,5.6-3.04c1.772-1.112,3.386-2.458,4.8-4c1.542-1.414,2.888-3.028,4-4.8c1.23-1.684,2.251-3.51,3.04-5.44
+                            c1.093-2.124,1.9-4.384,2.4-6.72C64.426,260.167,64.426,258.073,64.18,256z"/>
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path d="M64.18,400c0.237-2.073,0.237-4.167,0-6.24c-0.553-2.116-1.359-4.157-2.4-6.08c-0.859-1.895-1.876-3.715-3.04-5.44
+                            c-1.112-1.772-2.458-3.386-4-4.8c-12.481-12.407-32.639-12.407-45.12,0c-1.542,1.414-2.888,3.028-4,4.8
+                            c-1.164,1.725-2.181,3.545-3.04,5.44c-0.83,1.948-1.421,3.99-1.76,6.08c-0.451,2.049-0.665,4.142-0.64,6.24
+                            c0.036,8.473,3.431,16.586,9.44,22.56c1.414,1.542,3.028,2.888,4.8,4c1.685,1.228,3.511,2.249,5.44,3.04
+                            c1.951,0.821,3.992,1.412,6.08,1.76c2.047,0.459,4.142,0.674,6.24,0.64c2.073,0.239,4.167,0.239,6.24,0
+                            c2.036-0.349,4.024-0.94,5.92-1.76c1.981-0.786,3.861-1.807,5.6-3.04c1.772-1.112,3.386-2.458,4.8-4
+                            c1.542-1.414,2.888-3.028,4-4.8c1.231-1.683,2.252-3.51,3.04-5.44c1.092-2.125,1.899-4.384,2.4-6.72
+                            C64.426,404.167,64.426,402.073,64.18,400z"/>
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path d="M480.18,224h-352c-17.673,0-32,14.327-32,32s14.327,32,32,32h352c17.673,0,32-14.327,32-32S497.853,224,480.18,224z"/>
+                    </g>
+                </g>
+                <g>
+                    <g>
+                        <path d="M336.18,368h-208c-17.673,0-32,14.327-32,32c0,17.673,14.327,32,32,32h208c17.673,0,32-14.327,32-32
+                            C368.18,382.327,353.853,368,336.18,368z"/>
+                    </g>
+                </g>
+            </svg>
+          Create Test Case in Bulk</h3>
+        <button class="aui-close-button" type="button" aria-label="close"></button>
+    </header>
+    <div class="aui-dialog2-content" style="color: #B2BED4; overflow: hidden;" >
+      <section class="bulk_upload_form_div">
+        <div class="aui-message">
+            <p class="title">
+                <strong>Type or paste multiple test case</strong>
+            </p>
+            <p>In order to create test case in bulk, please type one test case name per line. They will be created at the currently selected folder with their fields set as defined below.</p>
+        </div>
+        <form class="aui" id="bulkCreateForm" onsubmit="submitBulkCreate()" action="javascript:void(0);" autocomplete="off">
+            <div id="bulkCreateFormDetails">
+                <div class="" style="">
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group select-field-type">
+                                {{!-- <label class="label required-field"> names</label> --}}
+                                <textarea required="required" style="max-width:100%;" class="textarea" rows="4" name="name" id="bulk_create_test_cases" placeholder="Enter test case here"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                                
+
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group select-field-type">
+                                <label class="label required-field">Status</label>
+                                <select id="testcase_status_select" class="form-control select customFieldTypeSelect"
+                                    name="status" required="required" style="max-width: 100%;">
+                                    <option value="">Select Status</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group select-field-type">
+                                <label class="label required-field">Priority</label>
+                                <select id="testcase_priority_select" class="form-control select customFieldTypeSelect"
+                                    name="priority" required="required" style="max-width: 100%;">
+                                    <option value="">Select Priority</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group select-field-type">
+                                <label class="label" for="form-control">Components</label>
+                                <select id="testcase_component_select" class="form-control select customFieldTypeSelect"
+                                    name="component" style="max-width: 100%;">
+                                    <option value="">Select Component</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group select-field-type">
+                                <label class="label required-field">Owner</label>
+                                <select id="testcase_owner_select" class="form-control select customFieldTypeSelect"
+                                    name="owner" required="required" style="max-width: 100%;">
+                                    <option value="">Select Owner</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-8">
+                            <div class="form-group select-field-type">
+                                <label class="label">Labels</label>
+                                <select multiple id="testcase_label_select" class="form-control select customFieldTypeSelect"
+                                    name="label" style="max-width: 100%; padding: 3px 0;">
+                                </select>
+                                {{!-- <select id="testcase_label_select" class="select multi-selector-dropdown" name="label" multiple="multiple" style="max-width: 100%;"></select> --}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+      </section>
+       
+    </div>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            <button type="button" id="dialog-close-button-bulk-create" class="aui-button aui-button-link" type="button" aria-label="close">Cancel</button>
+            <button type="submit" id="dialog-submit-button-bulk-create" class="aui-button aui-button-primary">Create</button>
+        </div>
+    </footer>
+</section>
+
+<section id="action-excute-dialog" style="width: 450px; height: auto;" class="aui-dialog2 aui-dialog2-large-history aui-layer" role="dialog" aria-hidden="true">
+    <header class="aui-dialog2-header" style="background: #F4F5F7 0% 0% no-repeat padding-box;border: 1px solid #DFE1E5;">
+        <h3 id="excute_title" class="aui-dialog2-header-main">Excute</h3>
+        <button class="aui-close-button" type="button" aria-label="close"></button>
+    </header>
+    <form class="aui" name="myForm" method="post" onsubmit="submitTestCaseExcution()" action="javascript:void(0);" style="margin-top: 0;"  autocomplete="off">
+        <input type="hidden" id="hidden_folder_id"/>
+        <input type="hidden" id="hidden_editId"/>
+        <div class="aui-dialog2-content">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Select Version</label>
+                        <select id="testcase_version_select" name="version" data-aui-validation-field
+                            class="form-control select customFieldTypeSelect"
+                            required="required">
+                            <option value="">Select Version</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Select Environment</label>
+                        <select id="testcase_environment_select" name="enviroment" data-aui-validation-field
+                            class="form-control select customFieldTypeSelect"
+                            required="required">
+                            <option value="">Select Environment</option>
+                        </select>
+                    </div>
+                </div>
+            </div>            
+            <div class="form-group select-field-type">
+                <label class="label required-field">Select Tester</label>
+                <select id="testcase_owner_select_2" name="tester" data-aui-validation-field
+                    class="form-control select customFieldTypeSelect"
+                    required="required">
+                    <option value="">Select Tester</option>
+                </select>
+            </div>
+        </div>
+        <footer class="aui-dialog2-footer" style="background: #F4F5F7 0% 0% no-repeat padding-box;border: 1px solid #DFE1E5;height: 45px;display: flex;align-items: center;justify-content: flex-end;">
+            <div class="aui-dialog2-footer-actions">
+                <button type="submit" id="warning-dialog-confirm" class="aui-button aui-button-primary">Proceed to Execute</button>
+            </div>
+        </footer>
+    </form>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{!-- filter add edit Dialog --}}
+<section
+    id="filter-add-edit-dialog"
+    class="aui-dialog2 aui-dialog2-small aui-layer"
+    role="dialog"
+    tabindex="-1"
+    aria-labelledby="filter-add-edit-dialog-heading"
+    hidden
+>
+    <header class="aui-dialog2-header">
+        <h3 class="aui-dialog2-header-main" id="filter-add-edit-dialog-heading">Save Filter</h3>
+        <button class="aui-close-button" type="button" aria-label="close" onclick="closeFilter()"></button>
+    </header>
+    <form class="aui" name="myform" action="javascript:void(0);" style="margin: 0;" autocomplete="off">
+        <input id="filter_id" type="hidden" name="filter_id">
+        <div class="aui-dialog2-content">
+            <div class="form-group">
+                <label class="label required-field">Name</label>
+                <input id="filter_name" type="text" class="form-control text medium-field" name="filter_name" placeholder="Enter name" required="required">
+            </div>
+            <div class="form-group select-field-type">
+                <label class="label required-field">Visibility</label>
+                <select id="filter_visibility" class="form-control select customFieldTypeSelect" name="filter_visibility" required="required" style="max-width: 100%;">
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                </select>
+            </div>
+        </div>
+        <footer class="aui-dialog2-footer">
+            <div class="aui-dialog2-footer-actions">
+                <button type="submit" class="aui-button aui-button-primary" onclick="addUpdateFilter('testcase')">Save</button>
+                <button type="button" class="aui-button" onclick="closeFilter()">Cancel</button>
+            </div>
+        </footer>
+    </form>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+    loadList("{{selectedFolderId}}");
+
+    function loadList(folder_id="")
+    {
+        if(folder_id === "" || folder_id === "null" || folder_id === null)
+        {
+            getFolderListByDataType('testcase');
+        }
+        else
+        {
+            getFolderListByDataType('testcase', false, folder_id);
+        }
+    } 
+
+
+    const uniqueArrayFilter = (value, index, self) => {
+        return self.indexOf(value) === index
+    }
+
+
+    const uniqueArrayFilterObject = (v, index, self) => {
+        return self.findIndex(v.filter) === index
+    }
+
+
+    function updateTableColumnFilterValue() 
+    {
+        let all_column = ["Priority", "Key", "Name", "Version", "Owner", "Status", "Create-On", "Last-Execution"];
+
+        let tableColumnSortHtml = '<aui-dropdown-menu id="testcase-table-checkbox-items"><aui-section label="Select Columns">';
+        for (let j = 0; j < all_column.length; j++) 
+        {
+            let temp_index = testcaseTableColumn.indexOf(all_column[j]);
+
+            if(temp_index !== -1) {
+                tableColumnSortHtml += '<aui-item-checkbox interactive checked>'+all_column[j]+'</aui-item-checkbox>';
+            } else {
+                tableColumnSortHtml += '<aui-item-checkbox interactive>'+all_column[j]+'</aui-item-checkbox>';
+            }                
+        }
+        tableColumnSortHtml += '</aui-section></aui-dropdown-menu>';
+        
+        $('#testcaseTableColumnCheckList').html(tableColumnSortHtml);
+
+
+        var dropdown = document.getElementById('testcase-table-checkbox-items');
+        dropdown.addEventListener('change', function (e) {        
+            var isChecked = e.target.hasAttribute('checked');
+            if (isChecked) {
+                testcaseTableColumn.push(e.target.textContent);
+            } else {            
+                let index = testcaseTableColumn.indexOf(e.target.textContent)
+                testcaseTableColumn.splice(index, 1);
+            }
+
+            testcaseTableColumn = testcaseTableColumn.filter(uniqueArrayFilter);
+            AP.cookie.save('testcaseTableColumn', JSON.stringify(testcaseTableColumn));
+            updateTestTableColumBestOnSelection()
+        });
+    }  
+
+
+    function updateTestTableColumBestOnSelection()
+    {        
+        let all_column = ["Priority", "Key", "Name", "Version", "Owner", "Status", "Create-On", "Last-Execution"];
+            
+        for (let j = 0; j < all_column.length; j++) 
+        {
+            let temp_index = testcaseTableColumn.indexOf(all_column[j]);
+
+            if(temp_index !== -1) {
+                $('#basic-'+all_column[j]).css('display', '');
+                $('.basic-'+all_column[j]).css('display', '');
+            } else {
+                $('#basic-'+all_column[j]).css('display', 'none');
+                $('.basic-'+all_column[j]).css('display', 'none');
+            }
+        }
+    }
+
+     
+    //click link button to download sample csv file
+    function downloadTestcaseSampleFile(){         
+        document.getElementById('testCasesampleFileLink').click();
+    }
+
+    //import button popup
+    AJS.$("#dialog-show-button-import").on('click', function(e) {
+        e.preventDefault();
+        AJS.dialog2("#demo-dialog-import").show();
+    });
+
+    //bulk create dialog open
+    AJS.$("#dialog-button-bulk-create").on('click', function(e) {
+        e.preventDefault();
+        AJS.dialog2("#bulk-create-dialog").show();        
+        AJS.$("#testcase_label_select").auiSelect2();
+
+        document.getElementById("bulkCreateForm").reset();
+        $('#testcase_priority_select').html('<option value="">Select Priority</option>');
+        $('#testcase_status_select').html('<option value="">Select Status</option>');
+        $('#testcase_component_select').html('<option value="">Select Component</option>');
+        $('#testcase_owner_select').html('<option value="">Select Owner</option>');
+        $('#testcase_label_select').html('');
+        getCommonStatusData('testcase');
+        getCommonPriorityData('testcase');
+        getCommonComponentData('testcase');
+        commonOwnerSelectListing('testcase');
+        getCommonConfigurationLabelData('testcase');
+    });
+
+    //close dialog bulk create
+    AJS.$(document).on('click', '#dialog-close-button-bulk-create', function() {
+        document.getElementById("bulkCreateForm").reset();
+        AJS.dialog2("#bulk-create-dialog").hide(); 
+
+
+    });
+    
+    //bulk create form submit
+    AJS.$(document).on('click', '#dialog-submit-button-bulk-create', function() {        
+        let allAreFilled = true;
+
+        document.getElementById("bulkCreateForm").querySelectorAll("[required]").forEach(function(i) {
+            if (!allAreFilled) return;
+            if (!i.value) allAreFilled = false;
+            if (i.type === "radio") {
+                let radioValueCheck = false;
+                document.getElementById("myForm").querySelectorAll(`[name=${i.name}]`).forEach(function(r) {
+                    if (r.checked) radioValueCheck = true;
+                })
+                allAreFilled = radioValueCheck;
+            }
+        })        
+
+        if (!allAreFilled) 
+        {
+            toaster('Please enter required details', 'warning');
+        }
+        else 
+        {
+            submitBulkCreate(this);            
+        }
+    });
+
+    //bulk create add button
+    function submitBulkCreate(btnRef){        
+        if (btnRef.isBusy())
+           return false;
+        btnRef.busy(); 
+
+        var formFieldsData = {};
+        formFieldsData['acct_id'] = "{{userAccountId}}";
+        formFieldsData['project_id'] = parseInt("{{projectId}}");
+        formFieldsData['test_key'] = "{{projectKey}}";
+        formFieldsData['domain_id'] = domain_id;
+
+        $('#bulkCreateFormDetails').find("select[name]").each(function (index, node) {
+            formFieldsData[node.name] = node.value;
+        });
+
+        if($('#testcase_label_select').val() !== null) {
+            formFieldsData['label'] = JSON.stringify($('#testcase_label_select').val());
+        } else {
+            formFieldsData['label'] = JSON.stringify([]);
+        }
+
+        formFieldsData['name']  = JSON.stringify(document.getElementById('bulk_create_test_cases').value.split(/\n/g));
+      
+        $.ajax({
+            "type": "POST",
+            "url": "/testcase/bulkCreate?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": formFieldsData,
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while adding bulk test case', 'error');
+                btnRef.idle(); 
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    toaster('Test-cases information added successfully');
+                    AJS.dialog2("#bulk-create-dialog").hide();
+                    if(selectedFolderId === "" || selectedFolderId === "null" || selectedFolderId === null) {
+                        getFolderListByDataType('testcase');
+                    } else {
+                        getFolderListByDataType('testcase', false, selectedFolderId);
+                    }
+                }
+                btnRef.idle();
+            }
+        });
+    }   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    var savedFilterList = [];
+    var selectedSavedFilter = null;
+    var selectedFilterCriteria = [];
+
+
+    getAllFilter();
+    updateAllFilters();
+
+
+
+    function updateAllFilters() 
+    {       
+        $('#all-filter-span').html("");
+
+        let all_filter = ["Name", "Priority", "Version", "Owner", "Status", "Created-On", "Last-Execution"];
+
+        let filterHtml = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="filter-criteria">Add criteria</button>
+                        <aui-dropdown-menu id="filter-criteria"><aui-section label="Select Columns">`;
+
+        for (let j = 0; j < all_filter.length; j++) 
+        {
+            let temp_index = selectedFilterCriteria.findIndex(x => x.filter == all_filter[j]);
+            if(temp_index !== -1) {
+                filterHtml += '<aui-item-checkbox checked>'+all_filter[j]+'</aui-item-checkbox>';
+            } else {
+                filterHtml += '<aui-item-checkbox>'+all_filter[j]+'</aui-item-checkbox>';
+            }                
+        }
+        filterHtml += '</aui-section></aui-dropdown-menu>';        
+        $('#all-filter-span').html(filterHtml);
+
+        var dropdown = document.getElementById('filter-criteria');
+        dropdown.addEventListener('change', function (e) {        
+            var isChecked = e.target.hasAttribute('checked');
+            if (isChecked) {
+                if(e.target.textContent == 'Name' || e.target.textContent == 'Version' || e.target.textContent == 'Created-On' || e.target.textContent == 'Last-Execution') {
+                    selectedFilterCriteria.push({
+                        'filter': e.target.textContent,
+                        'value': 'All'
+                    });
+                } else {
+                    selectedFilterCriteria.push({
+                        'filter': e.target.textContent,
+                        'value': []
+                    });
+                }
+            } else {            
+                let index = selectedFilterCriteria.findIndex(x => x.filter == e.target.textContent);
+                selectedFilterCriteria.splice(index, 1);
+            }
+
+            const result = [];
+            const map = new Map();
+            for (const item of selectedFilterCriteria) {
+                if(!map.has(item.filter)){
+                    map.set(item.filter, true);
+                    result.push({
+                        filter: item.filter,
+                        value: item.value
+                    });
+                }
+            }            
+            selectedFilterCriteria = result;
+            updateTestCaseListingWithFilter(selectedFilterCriteria);
+            addFilter()
+        });
+    } 
+
+
+
+    function addFilter (type='testcase') 
+    {
+        let all_filter = ["Name", "Priority", "Version", "Owner", "Status", "Created-On", "Last-Execution"];
+             
+        $('.filter-span').html('');
+        
+        $('.f-action').addClass('hide');
+        $('.f-action').removeClass('show');
+
+        if(selectedFilterCriteria.length > 0) {
+            if(selectedSavedFilter !== null)
+            {
+                if(selectedSavedFilter.acct_id == "{{userAccountId}}")
+                {
+                    $('#f-save-a').removeClass('hide');
+                    $('#f-save-a').addClass('show');
+
+                    $('#f-edit-a').removeClass('hide');
+                    $('#f-edit-a').addClass('show');
+
+                    $('#f-delete-a').removeClass('hide');
+                    $('#f-delete-a').addClass('show');
+                } 
+
+                $('#f-clear-all-a').removeClass('show');
+                $('#f-clear-all-a').addClass('hide');
+
+                $('#f-reset-all-a').removeClass('hide');
+                $('#f-reset-all-a').addClass('show');
+            } 
+            else 
+            {
+                $('#f-save-a').removeClass('hide');
+                $('#f-save-a').addClass('show');
+
+                $('#f-reset-all-a').addClass('hide');
+                $('#f-reset-all-a').removeClass('show');
+
+                $('#f-clear-all-a').removeClass('hide');
+                $('#f-clear-all-a').addClass('show');
+            }
+        }
+
+        for (let j = 0; j < all_filter.length; j++) 
+        {
+            let filter = '';
+
+            let temp_index = selectedFilterCriteria.findIndex(x => x.filter == all_filter[j]);
+
+            if(temp_index !== -1) 
+            {
+                if(all_filter[j] == "Name" || all_filter[j] == "Version")
+                {
+                    filter = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+all_filter[j]+`-select">`+all_filter[j]+`: <span id='filter-value-`+all_filter[j]+`'>`+selectedFilterCriteria[temp_index].value+`</span></button>
+                                <span onclick="removeFilter('`+all_filter[j]+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+                                <aui-dropdown-menu id="save-filter-`+all_filter[j]+`-select">
+                                    <form action="javascript:void(0)" onsubmit="submitFromInputSearch('`+all_filter[j]+`')" class="aui filter-form" autocomplete="off">
+                                        <div class="form-group">
+                                            <input id="filter`+all_filter[j]+`Input" class="form-control text medium-field" placeholder="Contains text">
+                                        </div>
+                                        <div class="filter-form-action">                                                      
+                                            <button type="submit" class="aui-button aui-button-primary">Update</button>
+                                            <button type="button" class="aui-button aui-button-primary" onclick="clearFromInputSearch('`+all_filter[j]+`')">Cancel</button>
+                                        </div>
+                                    </form>
+                                </aui-dropdown-menu>`;
+    
+                    $('#testcase-'+all_filter[j]+'-filter').html(filter);
+                    clearFromInputSearch(all_filter[j]);
+                }
+                else if(all_filter[j] == "Created-On" || all_filter[j] == "Last-Execution")
+                {
+                    filter = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+all_filter[j]+`-select">`+all_filter[j]+`: <span id='filter-value-`+all_filter[j]+`'>`+selectedFilterCriteria[temp_index].value+`</span></button>
+                                <span onclick="removeFilter('`+all_filter[j]+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+                                <aui-dropdown-menu id="save-filter-`+all_filter[j]+`-select">
+                                    <form action="javascript:void(0)" onsubmit="submitDateFromInputSearch('`+all_filter[j]+`')" class="aui filter-form" style="width: 161.25px;" autocomplete="off">
+                                        <div class="form-group">
+                                            <label class="label">Min</label>
+                                            <input type="date" id="filterMin`+all_filter[j]+`Input" onchange="onchangeFilterDate('`+all_filter[j]+`')" class="form-control text medium-field" placeholder="Min date">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="label">Max</label>
+                                            <input type="date" id="filterMax`+all_filter[j]+`Input" onchange="onchangeFilterDate('`+all_filter[j]+`')" class="form-control text medium-field" placeholder="Max date">
+                                        </div>
+                                        <div id="date`+all_filter[j]+`warning" style="display: none;color: red;margin-bottom: 7.5px;">Note: Min date should be less than or equal to max date</div>
+                                        <div class="filter-form-action">                                                      
+                                            <button id="date`+all_filter[j]+`FormSubmitButton" type="submit" class="aui-button aui-button-primary" disabled >Update</button>
+                                            <button type="button" class="aui-button aui-button-primary" onclick="clearDateFromInputSearch('`+all_filter[j]+`')">Cancel</button>
+                                            <button type="button" class="aui-button aui-button-primary" onclick="clearAllDateFromInputSearch('`+all_filter[j]+`')">Clear</a>
+                                        </div>
+                                    </form>
+                                </aui-dropdown-menu>`;
+                                
+                    $('#testcase-'+all_filter[j]+'-filter').html(filter);
+                    clearDateFromInputSearch(all_filter[j])
+                }
+                else
+                {                            
+                    if(all_filter[j] == "Priority") 
+                    {
+                        if(testcase_priority_list.length == 0)
+                        {
+                            $('#action-loader-wrapper').css('display', 'flex');
+                            $.ajax({
+                                "type": "GET",
+                                "url": "/priority/allList?project_id={{projectId}}&user={{userAccountId}}&priority_type="+type+"&domain_id=" + domain_id,
+                                "headers": {
+                                    'Authorization': "JWT "+user_token,
+                                },
+                                "dataType": "json",
+                                "error": function (xhr, textStatus, errorThrown) {
+                                    toaster('Error while fetching project details', 'error');
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                },
+                                "success": function (data) {
+                                    if (data.res.status === 200) 
+                                    {
+                                        testcase_priority_list = data.res.data.priority;
+                                        dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, testcase_priority_list, 'pc_name');
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, testcase_priority_list, 'pc_name');
+                        }
+                    }
+                    else if(all_filter[j] == "Owner") 
+                    {
+                        let temp_jiraUserListArray = jiraUserListArray;
+                        dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, temp_jiraUserListArray, 'id');
+                    }
+                    else if(all_filter[j] == "Status") 
+                    {
+                        if(testcase_status_list == 0)
+                        {
+                            $('#action-loader-wrapper').css('display', 'flex');
+                            $.ajax({
+                                "type": "GET",
+                                "url": "/configuration/statusList?project_id={{projectId}}&user={{userAccountId}}&sc_type="+type+"&domain_id=" + domain_id,
+                                "headers": {
+                                    'Authorization': "JWT "+user_token,
+                                },
+                                "dataType": "json",
+                                "error": function (xhr, textStatus, errorThrown) {
+                                    toaster('Error while fetching project details', 'error');
+                                    $('#loader-wrapper').css('display', 'none');
+                                    $('#action-loader-wrapper').css('display', 'none');
+                                },
+                                "success": function (data) {
+                                    if (data.res.status === 200) 
+                                    {
+                                        testcase_status_list = data.res.data;
+                                        dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, testcase_status_list, 'sc_name');
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            dropdownValueUpdateFunction(all_filter[j], selectedFilterCriteria[temp_index].value, testcase_status_list, 'sc_name');
+                        }
+
+                    }
+                    else
+                    {
+                        filter = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+all_filter[j]+`-select">`+all_filter[j]+`: `+selectedFilterCriteria[temp_index].value+`</button>
+                        <span onclick="removeFilter('`+all_filter[j]+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+                        <aui-dropdown-menu id="save-filter-`+all_filter[j]+`-select">
+                        <aui-section><aui-item-radio>dfgdfgdgdg</aui-item-radio>
+                        </aui-section></aui-dropdown-menu>`;
+
+                        $('#testcase-'+all_filter[j]+'-filter').html(filter);
+                    }           
+                }
+            }            
+        }
+    }
+
+
+
+    function removeFilter(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria.splice(index, 1);
+        updateAllFilters();
+        addFilter();
+    }
+
+
+
+    function clearAllFilter()
+    {
+        selectedFilterCriteria = [];
+        updateAllFilters();
+        addFilter();
+    }
+
+
+
+    function openFilter()
+    {
+        if(selectedSavedFilter && selectedSavedFilter.id && selectedSavedFilter.id != '') {
+            $('#filter_id').val(selectedSavedFilter.id);
+            $('#filter_name').val(selectedSavedFilter.filter_name);
+            addUpdateFilter('testcase');
+
+        } else {
+            $('#filter_id').val('');
+            $('#filter_name').val('');
+            $('#filter-add-edit-dialog-heading').html('Save Filter');
+            AJS.dialog2("#filter-add-edit-dialog").show();
+        }
+    }
+
+
+
+    function editCurrentFilter()
+    {
+        $('#filter_id').val(selectedSavedFilter.id);
+        $('#filter_name').val(selectedSavedFilter.filter_name);
+        $('#filter-add-edit-dialog-heading').html('Update Filter');
+        AJS.dialog2("#filter-add-edit-dialog").show();
+    }
+
+
+
+    function closeFilter()
+    {
+        $('#filter_id').val('');
+        $('#filter_name').val('');
+        AJS.dialog2("#filter-add-edit-dialog").hide();
+    }
+
+
+
+    function getValueHtmlFromArr(val_arr)
+    {
+        let value_html = '';
+
+        val_arr = val_arr.filter(uniqueArrayFilter);
+
+        if(val_arr.length > 0) 
+        {
+            for (let l = 0; l < val_arr.length; l++) 
+            {                
+                if(l+1 == val_arr.length) {
+                    value_html += val_arr[l];
+                } else {
+                    value_html += val_arr[l]+', ';
+                }
+            } 
+        }
+        else
+        {
+            value_html = 'All'
+        }
+
+        return value_html;
+    }
+
+
+
+    function dropdownValueUpdateFunction(filter, value, list, key)
+    {   
+        let value_html = getValueHtmlFromArr(value);
+
+        let html = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="save-filter-`+filter+`-select">`+filter+`: <span id='filter-value-`+filter+`'>`+value_html+`</span></button>
+        <span onclick="removeFilter('`+filter+`')" class="filter-remove-icon aui-icon aui-icon-small aui-iconfont-add-circle">Remove</span>
+        <aui-dropdown-menu id="save-filter-`+filter+`-select">
+        <aui-section>`;
+
+        for (let k = 0; k < list.length; k++) 
+        {
+            let check = value.indexOf(list[k][key]) != -1 ? 'checked' : '';
+            html += `<aui-item-checkbox `+check+`>`+list[k][key]+`</aui-item-checkbox>`;
+        }
+        html += `</aui-section></aui-dropdown-menu>`;
+
+        $('#testcase-'+filter+'-filter').html(html);
+
+
+        var dropdown = document.getElementById(`save-filter-`+filter+`-select`);
+        dropdown.addEventListener('change', function (e) {   
+
+            let index = selectedFilterCriteria.findIndex(x => x.filter == filter);     
+            selectedFilterCriteria[index].value = selectedFilterCriteria[index].value.filter(uniqueArrayFilter);
+
+            var isChecked = e.target.hasAttribute('checked');
+
+            if (isChecked) {
+                selectedFilterCriteria[index].value.push(e.target.textContent);                
+            } else {            
+                let remove_index = selectedFilterCriteria[index].value.indexOf(e.target.textContent);
+                selectedFilterCriteria[index].value.splice(remove_index, 1);
+            }
+            let value_html = getValueHtmlFromArr(selectedFilterCriteria[index].value);
+            $('#filter-value-'+filter).html(value_html)
+            updateTestCaseListingWithFilter(selectedFilterCriteria);
+        });
+
+        
+        $('#action-loader-wrapper').css('display', 'none');
+    }
+
+
+
+    function clearFromInputSearch(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        $('#filter'+filter+'Input').val(selectedFilterCriteria[index].value);
+    }
+
+
+
+    function resetFilter(filter)
+    {
+        selectedFilterCriteria = JSON.parse(selectedSavedFilter.filter_key);
+        updateTestCaseListingWithFilter(selectedFilterCriteria);
+        addFilter();
+    }
+
+
+
+    function submitFromInputSearch(filter)
+    {
+        let new_val =  $('#filter'+filter+'Input').val();
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria[index].value = new_val;
+        $('#filter-value-'+filter).html(new_val == '' ? 'All' : new_val);
+        updateTestCaseListingWithFilter(selectedFilterCriteria);
+    }
+
+
+
+    function submitDateFromInputSearch(filter)
+    {
+        let max_date =  $('#filterMax'+filter+'Input').val();
+        let min_date =  $('#filterMin'+filter+'Input').val();
+        
+        let value_html = max_date+' to '+min_date;
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria[index].value = value_html;
+        $('#filter-value-'+filter).html(value_html);
+        updateTestCaseListingWithFilter(selectedFilterCriteria);
+    }
+
+
+
+    function clearDateFromInputSearch(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        let date_arr = selectedFilterCriteria[index].value.split(" to "); 
+        $('#filterMax'+filter+'Input').val(date_arr[0]);
+        $('#filterMin'+filter+'Input').val(date_arr[1]);
+    }
+
+
+
+    function clearAllDateFromInputSearch(filter)
+    {
+        let index = selectedFilterCriteria.findIndex(x => x.filter == filter);
+        selectedFilterCriteria[index].value = 'All';
+        $('#filter-value-'+filter).html('All');
+        $('#filterMax'+filter+'Input').val('');
+        $('#filterMin'+filter+'Input').val('');
+        updateTestCaseListingWithFilter(selectedFilterCriteria);
+    }
+
+
+
+    function onchangeFilterDate(filter)
+    {
+        let min_date =  $('#filterMin'+filter+'Input').val();
+        let max_date =  $('#filterMax'+filter+'Input').val();
+
+        console.log(min_date)
+
+        if(max_date !== "" && min_date !== "") {
+            if(Date.parse(min_date) <= Date.parse(max_date)) {
+                $('#date'+filter+'FormSubmitButton').attr("disabled", false);
+                $('#date'+filter+'warning').css('display', 'none');
+            } else {
+                $('#date'+filter+'FormSubmitButton').attr("disabled", true);
+                $('#date'+filter+'warning').css('display', 'block');
+            }
+        } else {
+            $('#date'+filter+'FormSubmitButton').attr("disabled", true);
+        }
+    }
+
+
+
+    function addUpdateFilter(type) 
+    {
+        let filter_id = $('#filter_id').val();
+        let filter_name = $('#filter_name').val();
+        let filter_type = $('#filter_visibility').val();
+
+        if(filter_name !== "")
+        {
+            let url = filter_id ? "/customFilter/update?user={{userAccountId}}" : "/customFilter/create?user={{userAccountId}}";
+
+            let data = {
+                'acct_id': "{{userAccountId}}",
+                'project_id': "{{projectId}}",
+                'domain_id': domain_id,
+                'filter_name': filter_name,
+                'test_type': type,
+                'filter_key': JSON.stringify(selectedFilterCriteria),
+                'filter_type': filter_type
+            }
+
+            if(filter_id !== '') {
+                data.custom_filter_id = filter_id;
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": filter_id ? "PUT" : "POST",
+                "url": url,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": data,
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        closeFilter();
+                        if(filter_id == '') {
+                            selectedSavedFilter = data.res.data;
+                        } else {
+                            selectedSavedFilter.filter_name = filter_name
+                            selectedSavedFilter.filter_type = filter_type
+                        }
+                        if(filter_id !== '') {
+                            toaster('Filter added successfully');
+                        } else {
+                            toaster('Filter updated successfully');
+                        }
+                        updateTestCaseListingWithFilter(selectedFilterCriteria);
+                        getAllFilter();
+                    }
+                }
+            });
+        }
+        else
+        {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+
+
+
+    function deleteCurrentFilter() 
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "PUT",
+            "url": "/customFilter/delete?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": {
+                'acct_id': "{{userAccountId}}",
+                'project_id': "{{projectId}}",
+                'domain_id': domain_id,
+                'custom_filter_id': selectedSavedFilter.id
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    selectedSavedFilter = null;
+                    updateTestCaseListingWithFilter(selectedFilterCriteria);
+                    getAllFilter();
+                }
+            }
+        });
+    }
+
+
+
+    function getAllFilter(type='testcase')
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/customFilter/list?project_id={{projectId}}&acct_id={{userAccountId}}&test_type=" + type + "&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    savedFilterList = [{filter_key: '[]', filter_name: 'none' }, ...data.res.data];
+
+                    let html = `<button class="aui-button aui-dropdown2-trigger filter-button" aria-controls="saved-filter-select"><span id='saved-filter-value'>Choose saved filter</span></button>
+                    <aui-dropdown-menu id="saved-filter-select">
+                    <aui-section>`;
+
+                    for (let k = 0; k < savedFilterList.length; k++) 
+                    {
+                        let check = selectedSavedFilter ? selectedSavedFilter.filter_name == savedFilterList[k].filter_name ? 'checked' : '' : '';
+
+                        if(selectedSavedFilter == null && savedFilterList[k].filter_name == 'none') {
+                            check = 'checked';
+                        }
+
+                        html += `<aui-item-radio `+check+`>`+savedFilterList[k].filter_name+`</aui-item-radio>`;
+                    }
+                    html += `</aui-section></aui-dropdown-menu><span class="filter-type hide" id="testcase-selected-saved-filter-type"></span>`;
+
+                    $('#testcase-saved-filter').html(html);
+
+                    var dropdown = document.getElementById(`saved-filter-select`);
+                    dropdown.addEventListener('change', function (e) {   
+
+                        let index = savedFilterList.findIndex(x => x.filter_name == e.target.textContent);
+                        var isChecked = e.target.hasAttribute('checked');
+                        if (isChecked) {
+                            if(e.target.textContent == 'none') {
+                                selectedSavedFilter = null;
+                                $('#testcase-selected-saved-filter-type').removeClass('show2');
+                                $('#testcase-selected-saved-filter-type').addClass('hide');     
+                                $('#saved-filter-value').html('Choose saved filter');                            
+                            } else {
+                                selectedSavedFilter = savedFilterList[index];  
+                                $('#testcase-selected-saved-filter-type').removeClass('hide'); 
+                                $('#testcase-selected-saved-filter-type').addClass('show2');   
+                                $('#testcase-selected-saved-filter-type').html(savedFilterList[index].filter_type); 
+                                $('#saved-filter-value').html(e.target.textContent);
+                            }   
+                            selectedFilterCriteria = JSON.parse(savedFilterList[index].filter_key);
+                            updateAllFilters();
+                            addFilter();   
+                        }
+
+                    });        
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+         
+
+</script>
+
+

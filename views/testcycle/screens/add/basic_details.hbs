@@ -1,0 +1,178 @@
+<form class="aui" id="testcycleAddEditForm" action="javascript:void(0);" autocomplete="off">
+    <input type="hidden" value="save" id="submitFormType">
+
+    <div id="testcycleBasicDetails">
+        <div class="form-group select-field-type">
+            <label class="label" for="form-control">Select Folder</label>
+            <select id="testcycle_folder_select" name="folder_id" class="form-control select customFieldTypeSelect">
+                <option value="">Select Folder</option>
+            </select>
+        </div>
+
+
+        <div class="form-group">
+            <label class="label required-field">Test Cycle Name</label>
+            <input id="testcycle_name" type="text" data-aui-validation-field class="form-control text medium-field"
+                placeholder="Enter test cycle name" required="required" name="name" style="width: 540px;">
+        </div>
+
+
+        <div class="form-group">
+            <label class="label required-field">Description</label>
+            <textarea id="testcycle_description" data-aui-validation-field class="form-control textarea" name="description" rows="5" style="width: 540px;height: unset !important;padding: .28125rem .5625rem !important;"
+                required="required"></textarea>
+        </div>
+
+
+        <div class="container1">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Status</label>
+                        <select id="testcycle_status_select" name="status" data-aui-validation-field
+                            class="form-control select customFieldTypeSelect" style="width: 156.75px;"
+                            required="required">
+                            <option value="">Select Status</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Owner</label>
+                        <select id="testcycle_owner_select" name="owner" data-aui-validation-field
+                            class="form-control select customFieldTypeSelect" style="width: 156.75px;"
+                            required="required">
+                            <option value="">Select Owner</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Environment</label>
+                        <select id="testcycle_environment_select" name="environment" data-aui-validation-field
+                            class="form-control select customFieldTypeSelect" style="width: 156.75px;"
+                            required="required">
+                            <option value="">Select Environment</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container1">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Plan Start Date</label>
+                        <input type="date" id="testcycle_planned_start_date" name="planned_start_date" data-aui-validation-field
+                            class="form-control text medium-field" placeholder="Enter Plan Start Date"
+                            required="required" style="width: 156.75px;">
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Plan End Date</label>
+                        <input type="date" id="testcycle_planned_end_date" name="planned_end_date" data-aui-validation-field
+                            class="form-control text medium-field" placeholder="Enter Plan End Date"
+                            required="required" style="width: 156.75px;">
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-group select-field-type">
+                        <label class="label required-field">Version</label>
+                        <input type="text" id="testcycle_version" class="form-control text medium-field" name="version" data-aui-validation-field
+                            placeholder="Enter Version" required="required" style="width: 156.75px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <span class="head testcycleCustomFieldDiv-head" style="display: none;">
+        <h4 class="other-info" style="margin-top: 15px;">Other Information</h4>
+        <hr class="heading-line" size="8" color="#FFFFFF">
+    </span>
+
+    <div id="testcycleCustomFieldDiv"></div>
+
+    <div style="opacity: 0;">
+        <button type="submit" id="testCycleSubmitButton" class="aui-button btn1" id="spinnerbutton">Next: Setup Test Scripts</button>
+    </div>
+
+</form>
+
+<script>
+    
+    CKEDITOR.replace( 'testcycle_description', {
+        toolbar: [
+            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ] },
+            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+            { name: 'insert', items: [ 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak' ] },
+            '/',
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] },
+        ]
+    });
+
+    function submitFormDataTestCycle(type) {
+        let allAreFilled = true;
+
+        if (type !== 'draft') {
+            document.getElementById("testcycleAddEditForm").querySelectorAll("[required]").forEach(function (i) {
+                if (!allAreFilled) return;
+                if (!i.value) allAreFilled = false;
+                if (i.type === "radio") {
+                    let radioValueCheck = false;
+                    document.getElementById("myForm").querySelectorAll(`[name=${i.name}]`).forEach(function (r) {
+                        if (r.checked) radioValueCheck = true;
+                    })
+                    allAreFilled = radioValueCheck;
+                }
+            })
+
+            if (!allAreFilled) {
+                toaster('Please enter required details', 'warning');
+                $("#testCycleSubmitButton").trigger("click");
+            }
+            else {
+
+                let start_date = $('#testcycle_planned_start_date').val();
+                let end_date = $('#testcycle_planned_end_date').val();
+
+                if(Date.parse(start_date) <= Date.parse(end_date)) {
+                    let inputHidden = document.createElement("INPUT");
+                    inputHidden.setAttribute("type", "hidden");
+                    inputHidden.setAttribute("value", type);
+                    inputHidden.setAttribute('id', 'submitFormType');
+                    document.getElementById('testcycleBasicDetails').append(inputHidden);
+                    submitCreationDataByType('testcycle');
+                } else {
+                    toaster('Start date should be less than or equal to end date ', 'warning');
+                }
+            }
+        }
+        else {
+
+            let start_date = $('#testcycle_planned_start_date').val();
+            let end_date = $('#testcycle_planned_end_date').val();
+
+            if(Date.parse(start_date) <= Date.parse(end_date)) {
+                let inputHidden = document.createElement("INPUT");
+                inputHidden.setAttribute("type", "hidden");
+                inputHidden.setAttribute("value", "draft");
+                inputHidden.setAttribute('id', 'submitFormType');
+                document.getElementById('testcycleBasicDetails').append(inputHidden);
+                submitCreationDataByType('testcycle');
+            } else {
+                toaster('Start date should be less than or equal to end date ', 'warning');
+            }
+        }
+    }
+</script>

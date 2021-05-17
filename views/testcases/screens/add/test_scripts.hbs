@@ -1,0 +1,579 @@
+<div style="display: flow-root;">
+    <div id="parent_step_by_step_type_selection_top" class="parent_test_script" style="float: left;">
+        <button class="aui-button add-step-btn" id="smallspinnerbutton" onclick="addSteps()">
+            + Add Step
+        </button>
+        <button class="aui-button aui-dropdown2-trigger test-type-btn" aria-controls="test-type-selection">
+            <svg class="gear-icon" xmlns="http://www.w3.org/2000/svg" width="23.351" height="24" viewBox="0 0 23.351 24"><g transform="translate(-5.768)"><g transform="translate(5.768)"><path d="M28.889,15.156,26.357,13.17A9.424,9.424,0,0,0,26.441,12a9.424,9.424,0,0,0-.084-1.17l2.538-1.986a.6.6,0,0,0,.144-.768l-2.4-4.158a.594.594,0,0,0-.732-.258L22.919,4.866a9.105,9.105,0,0,0-2.028-1.182L20.441.5a.617.617,0,0,0-.6-.5h-4.8a.606.606,0,0,0-.594.5L14,3.684a8.88,8.88,0,0,0-2.028,1.182L8.981,3.66a.6.6,0,0,0-.732.258l-2.4,4.158a.6.6,0,0,0,.144.768L8.525,10.83A9.424,9.424,0,0,0,8.441,12a9.424,9.424,0,0,0,.084,1.17L5.993,15.156a.6.6,0,0,0-.144.768l2.4,4.158a.594.594,0,0,0,.732.258l2.988-1.206A9.105,9.105,0,0,0,14,20.316l.45,3.18a.606.606,0,0,0,.594.5h4.8a.606.606,0,0,0,.594-.5l.45-3.18a8.88,8.88,0,0,0,2.028-1.182L25.9,20.34a.6.6,0,0,0,.732-.258l2.4-4.158A.6.6,0,0,0,28.889,15.156ZM17.441,16.2a4.2,4.2,0,1,1,4.2-4.2A4.2,4.2,0,0,1,17.441,16.2Z" transform="translate(-5.768)"/></g></g></svg>
+        </button>
+        <aui-dropdown-menu id="test-type-selection">
+            <aui-section label="Select Test Script Type">
+                <aui-item-link onclick="showTestDateSection('none')" aria-selected="true">None</aui-item-link>
+                <aui-item-link onclick="showTestDateSection('test_data')">Test Data</aui-item-link>
+                <aui-item-link onclick="showTestDateSection('parameters')">Parameters</aui-item-link>
+            </aui-section>
+        </aui-dropdown-menu>
+    </div>
+
+    <div style="position: relative;top: 5.25px; float: right;">
+        <span class="radio-list">
+            <input class="radio test_script_type_radio" type="radio" onclick="activeTestScriptSection('step_by_step')" name="radiobuttons" id="radioButton_step_by_step" checked="checked" >
+            <label for="radioButton_step_by_step"><b>Step by Step</b></label>
+        </span>
+        <span class="radio-list">
+            <input class="radio test_script_type_radio" type="radio" onclick="activeTestScriptSection('plain_test')" name="radiobuttons" id="radioButton_plain_test">
+            <label for="radioButton_plain_test"><b>Plain Text</b></label>
+        </span>
+        <span class="radio-list">
+            <input class="radio test_script_type_radio" type="radio" onclick="activeTestScriptSection('bdd_gherkin_script')" name="radiobuttons" id="radioButton_bdd_gherkin_script">
+            <label for="radioButton_bdd_gherkin_script"><b>BDD-Gherkin Script</b></label>
+        </span>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="parent_step_by_step_type_selection" class="parent_test_script">
+
+    {{!-- test data section --}}
+    <div id="test_data_section" class="test-data test_type_class" style="display: none;">
+
+        <h5 contenteditable="true">Test Data</h5>
+
+        <div class="test-data-seaction">
+            <form class="aui" action="javascript:void(0)" style="margin: 3.75px 3.75px 33.75px; display: flex;">
+                <span id="testcase_dataset_select_box"></span>
+                <input class="form-control text medium-field" id="test_data_table_column_name" style="width: 143.25px;margin-right: 4.5px;background: #091E4214;height: 24px;padding: 7.5px 8.25px;" type="text" placeholder="Add Column Name">
+                <button class="aui-button aui-button-add" id="smallspinnerbutton" onclick="addTestDataHeaderColumn()">ADD</button>
+            </form>
+
+            <table class="aui test-data-table" style="margin: 11.25px; width: 100%;">
+                <thead id="test_data_table_header"></thead>
+                <tbody id="test_data_table_tbody"></tbody>
+            </table>
+            <button class="aui-button" style="margin: 3px;" onclick="addTestDataRow()">+ Add Row</button>
+        </div>
+    </div>
+
+    {{!-- parameter section --}}
+    <div id="parameters_section" class="test-data test_type_class" style="display: none;">
+
+        <h5>Parameters</h5>
+
+        <div class="test-data-seaction">
+            <table class="aui test-data-table" style="margin: 0 0 11.25px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th id="basic-cname" style="width: 195px;">Parameter name</th>
+                        <th id="basic-desc">Default value</th>
+                        <th id="basic-bin"></th>
+                    </tr>
+                </thead>
+                <tbody id="parameter_table_tbody"></tbody>
+            </table>
+            <button class="aui-button" style="margin: 0 0px 7.5px;" onclick="addParameterRow()">+ Add Row</button>
+        </div>
+    </div>
+
+    {{!-- step section --}}
+    <h5 style="margin-top: 30px;">Steps</h5>
+    <div id="step-card-section"></div>
+
+</div>
+
+
+
+<div id="parent_plain_test_type_selection" class="parent_test_script" style="display: none;">
+    <label style="color: #6B778C;">Description</label>
+    <textarea id="plain_text_textarea" onfocusout="addPlainTestData(this.value)" class="form-control textarea" rows="5" name="description" style="width: 540px;height: unset !important;padding: .28125rem .5625rem !important;"></textarea>
+</div>
+
+
+
+<div id="parent_bdd_gherkin_script_type_selection" class="parent_test_script" style="display: none;">
+    <label style="color: #6B778C;">BDD - Gherkin Script</label>
+    <textarea id="bdd_gherkin_script_textarea" onfocusout="addBddGherkinScriptTestData(this.value)" class="form-control textarea" rows="5" name="description" style="width: 540px;height: unset !important;padding: .28125rem .5625rem !important;background: black;color: white;"></textarea>
+</div>
+
+
+
+
+
+<button type="btn" class="aui-button btn1 skip-disabled-class" id="spinnerbutton" onclick="changeAddSubPages('basic-details')" style="margin-left: 0;">Prev: Basic Details</button>
+<button type="btn" class="aui-button btn1 skip-disabled-class" id="spinnerbutton" onclick="changeAddSubPages('traceability')">Next: Traceability</button>
+
+
+
+
+
+
+
+
+<script>
+
+
+    AJS.$("#dialog-show-button").on('click', function (e) {
+        e.preventDefault();
+        AJS.dialog2("#demo-dialog").show();
+    });
+
+
+    AJS.$("#dialog-submit-button").on('click', function (e) {
+        e.preventDefault();
+        AJS.dialog2("#demo-dialog").hide();
+    });
+
+
+    function showTestDateSection(type) 
+    {
+        $('.test_type_class').css('display', 'none')
+        $('#'+type+'_section').fadeIn();
+
+        if(type === "test_data") {
+            testScriptParameters = [];
+            appendParameterRow();
+        } else if(type === "parameters") {
+            testScriptTestDataHeader = [];
+            testScriptTestDataRow = [];
+            appendTestDataTableHeaderAndRow();
+        }
+    }
+
+
+
+
+    function activeTestScriptSection(test_script_type='step_by_step')
+    {        
+        let radiobtn = document.getElementById("radioButton_"+test_script_type);
+        radiobtn.checked = true;
+
+        testScriptType = test_script_type;
+        $('.parent_test_script').css('display', 'none')
+        $('#parent_'+test_script_type+'_type_selection').fadeIn();
+        $('#parent_'+test_script_type+'_type_selection_top').fadeIn();
+    }
+
+
+
+
+
+
+
+    function updateSelectedValueToInputBox()
+    {
+        let selected_dataset = document.getElementById("test-data-selection");
+        $('#test_data_table_column_name').val(selected_dataset.value);
+    }
+
+
+
+
+
+
+
+    function addPlainTestData(value)
+    {
+        testScriptPlainTestData = value;
+    }
+
+
+    function addBddGherkinScriptTestData(value)
+    {
+        testScriptBddGherkinScriptTestData = value;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    function addTestDataHeaderColumn()
+    {
+        let column = $('#test_data_table_column_name').val();
+        
+        if(column === "")
+        {
+            toaster('Column name not be empty', 'warning');
+        }
+        else if(testScriptTestDataHeader.includes(column))
+        {
+            toaster('Column name must be unique', 'warning');
+        }
+        else
+        {
+            testScriptTestDataHeader.push(column);
+            $('#test_data_table_column_name').val('');
+            document.getElementById("test-data-selection").value = "";
+        }
+
+        appendTestDataTableHeaderAndRow();
+    }
+
+
+    function deleteTestDataHeaderColumn(index)
+    {
+        let row = testScriptTestDataRow;
+        let delete_key = testScriptTestDataHeader[index]
+        testScriptTestDataHeader.splice(index, 1);
+
+        for (let j = 0; j < row.length; j++) 
+        {
+            delete row[j][delete_key]; 
+        }
+
+        appendTestDataTableHeaderAndRow()
+    }
+
+
+    function appendTestDataTableHeaderAndRow()
+    {
+        $('#test_data_table_header').html("");
+
+        let header = testScriptTestDataHeader;
+        let row = testScriptTestDataRow;
+
+        let test_data_table_header_html = '<tr><th id="basic-number" style="width: 26.25px;">#</th>';
+
+        for (let j = 0; j < header.length; j++) 
+        {   
+            test_data_table_header_html += '<th id="basic-cname">'+ header[j]+' <img class="operation-icon" onclick="deleteTestDataHeaderColumn('+j+')" src={{furl "/images/trash.svg"}} /></th>';      
+        }
+        test_data_table_header_html += '<th id="basic-bin"></th></tr>';
+
+        $('#test_data_table_header').html(test_data_table_header_html);
+
+        updateTestDataRow()
+    }
+
+
+    function updateTestDataRow()
+    {
+        let row = testScriptTestDataRow;
+        let header = testScriptTestDataHeader;
+
+        for (let j = 0; j < row.length; j++) 
+        {     
+            for (let k = 0; k < header.length; k++) 
+            {
+                let key_name = header[k];
+
+                if(!row[j].hasOwnProperty(key_name))
+                {
+                    row[j][key_name] = "";  
+                }   
+            }
+        }
+
+        appendTestDataRow();
+    }
+
+
+    function addTestDataRow()
+    {
+        let row_object = {};
+        let header = testScriptTestDataHeader;
+        
+        for (let j = 0; j < header.length; j++) 
+        {  
+            let key_name = header[j];
+            row_object[key_name] = "";     
+        }
+
+        testScriptTestDataRow.push(row_object);
+        appendTestDataRow()
+    }
+
+
+    function appendTestDataRow()
+    {
+        $('#test_data_table_tbody').html("");
+        let row = testScriptTestDataRow;
+
+        for (let j = 0; j < row.length; j++) 
+        {   
+            let no = j+1;
+            
+            let test_data_table_row_html = '<tr><td id="basic-number" style="width: 26.25px;">'+no+'</td>';
+
+            let single_row_keys = Object.keys(row[j]);
+
+            for (let k = 0; k < single_row_keys.length; k++) 
+            {
+                test_data_table_row_html += '<td>'+
+                        '<input class="form-control text medium-field editable-table-input" value="'+ row[j][single_row_keys[k]]+'" onfocusout="updateTestDataRowValue(`'+single_row_keys[k]+'`, '+j+', this.value)" type="text" placeholder="Enter Details" required="required">'+
+                        '</td>';
+            }
+
+            test_data_table_row_html += '<td headers="basic-bin" style="text-align: right;"><img class="operation-icon" onclick="deleteTestDataRow('+j+')" src={{furl "/images/trash.svg"}} /></td></tr>';
+
+            $('#test_data_table_tbody').append(test_data_table_row_html);
+        }
+    }
+
+
+    function deleteTestDataRow(index)
+    {
+        testScriptTestDataRow.splice(index, 1);
+        appendTestDataRow();
+    }
+
+
+    function updateTestDataRowValue(key, index, value)
+    {
+        testScriptTestDataRow[index][key] = value
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function addParameterRow()
+    {
+        testScriptParameters.push({
+            'name': "",
+            'value': "",
+        });
+        appendParameterRow();
+    }
+
+
+    function appendParameterRow()
+    {
+        $('#parameter_table_tbody').html("");
+
+        for (let j = 0; j < testScriptParameters.length; j++) 
+        {   
+            $('#parameter_table_tbody').append('<tr>'+
+                        '<td headers="basic-cname">'+
+                        '<input class="form-control text medium-field editable-table-input" value="'+ testScriptParameters[j].name+'" onfocusout="updateParameterRowData(`name`, '+j+', this.value)" type="text" placeholder="Type a name" required="required">'+
+                        '</td>'+
+                        '<td headers="basic-cname">'+
+                        '<input class="form-control text medium-field editable-table-input" value="'+ testScriptParameters[j].value+'" onfocusout="updateParameterRowData(`value`, '+j+', this.value)" type="text" placeholder="None" required="required">'+
+                        '</td>'+
+                        '<td headers="basic-bin" style="text-align: right;"><img class="operation-icon" onclick="deleteParameterRowData('+j+')" src={{furl "/images/trash.svg"}} /></td>'+
+                    '</tr>');
+        }
+    }
+
+
+    function deleteParameterRowData(index)
+    {
+        testScriptParameters.splice(index, 1);
+        appendParameterRow();
+    }
+
+
+    function updateParameterRowData(key, index, value)
+    {
+        if (key === 'name') {
+            testScriptParameters[index].name = value;
+        } else if (key === 'value') {
+            testScriptParameters[index].value = value;
+        }
+        console.log(testScriptParameters)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    function showHideData(id) 
+    {
+        if ($('#step-card-'+id).hasClass("open")) 
+        {
+            $('#step-card-'+id).removeClass("open");
+            $('.step-sub-details-'+id).css('display', 'none')
+            $('#step-showHide-btn-'+id).html('<label><img src={{furl "/images/arrow-bottom-2.svg"}} /> View More</label>');
+        } 
+        else 
+        {
+            $('#step-card-'+id).addClass("open");
+            $('.step-sub-details-'+id).css('display', 'block')
+            $('#step-showHide-btn-'+id).html('<label><img src={{furl "/images/arrow-top-2.svg"}} /> View Less</label>');
+        }
+    }
+
+
+    function addSteps() 
+    {
+        testScriptStepData.push({
+            'key_id': "ts_"+Math.floor((Math.random() * 100) + 1),
+            'description': "",
+            'test_data': "",
+            'expected_output': "",
+        });
+        appendSteps();
+    }
+
+
+    function appendSteps()
+    {
+        $('#step-card-section').html("");
+
+        for (let j = 0; j < testScriptStepData.length; j++) 
+        {   
+            let no = j+1;
+
+            let first_class = j === 0 ? "icon-disabled" : "";
+            let last_class = j === testScriptStepData.length-1 ? "icon-disabled" : "";
+
+            let step_html = '<div id="step-card-'+j+'" class="step-card">'+
+                '<div class="side-form">'+
+                    '<div class="up-down-scroll">';
+
+                        if(j === 0) {
+                            step_html += '<img class="gear-icon operation-icon icon-disabled" src={{furl "/images/top-arrow.svg"}} />';
+                        } else {
+                            step_html += '<img onclick="stepOrderDecrease('+j+')" class="gear-icon operation-icon" src={{furl "/images/top-arrow.svg"}} />';
+                        }
+
+                        step_html += '<h2 class="gear-number" style="text-align: center;">'+no+'</h2>';
+
+                        if(j === testScriptStepData.length-1) {
+                            step_html += '<img class="gear-icon operation-icon icon-disabled" src={{furl "/images/bottom-arrow.svg"}} />';
+                        } else {
+                            step_html += '<img onclick="stepOrderIncrease('+j+')" class="gear-icon operation-icon" src={{furl "/images/bottom-arrow.svg"}} />';
+                        }
+
+                    step_html += '</div>'+
+                '</div>'+
+                '<form class="aui">'+
+                    '<div class="form-group">'+
+                        '<label class="label">Step Description</label>'+
+                        '<input class="form-control text medium-field" value="'+testScriptStepData[j].description+'" onfocusout="updateStepData(`description`, '+j+', this.value)" type="text" placeholder="Enter Description">'+
+                    '</div>'+                
+                    '<div class="form-group step-sub-details-'+j+'" style="display: none;">'+
+                        '<label class="label">Test Data</label>'+
+                        '<input class="form-control text medium-field" value="'+testScriptStepData[j].test_data+'" onfocusout="updateStepData(`test_data`, '+j+', this.value)" type="text" placeholder="Click here to type test data">'+
+                    '</div>'+                
+                    '<div class="form-group step-sub-details-'+j+'" style="display: none;">'+
+                        '<label class="label">Expected Output</label>'+
+                        '<input class="form-control text medium-field" value="'+testScriptStepData[j].expected_output+'" onfocusout="updateStepData(`expected_output`, '+j+', this.value)" type="text" placeholder="Click here to type test data">'+
+                    '</div>'+                
+                    '<div class="form-group action-section">'+
+                        '<button id="step-showHide-btn-'+j+'" type="button" class="aui-button skip-disabled-class" onclick="showHideData('+j+')">'+
+                            '<label><img src={{furl "/images/arrow-bottom-2.svg"}} /> View More</label>'+
+                        '</button>'+
+                        '<button type="button" class="aui-button">Call to Test</button>'+                
+                        '<button type="button" class="aui-button" onclick="cloneStepData('+j+')">Clone</button>'+
+                        '<button type="button" class="aui-button" onclick="deleteStepData('+j+')">Delete</button>'+
+                    '</div>'+
+                '</form>'+
+            '</div>';
+            
+            $('#step-card-section').append(step_html);
+        }
+    }
+
+
+    function cloneStepData(index)
+    {
+        testScriptStepData.push({
+            'description': testScriptStepData[index].description,
+            'test_data': testScriptStepData[index].test_data,
+            'expected_output': testScriptStepData[index].expected_output,
+        });
+        appendSteps();
+    }
+
+
+    function deleteStepData(index)
+    {
+        testScriptStepData.splice(index, 1);
+
+        if(testScriptStepData.length === 0) {
+            testScriptStepData = [{
+                'description': "",
+                'test_data': "",
+                'expected_output': "",
+            }];
+        }
+
+        appendSteps();
+    }
+
+
+    function stepOrderDecrease(index)
+    {
+        const tmp = testScriptStepData[index]
+        testScriptStepData[index] = testScriptStepData[index-1]
+        testScriptStepData[index-1] = tmp
+        appendSteps();
+    }
+
+
+    function stepOrderIncrease(index)
+    {
+        const tmp = testScriptStepData[index]
+        testScriptStepData[index] = testScriptStepData[index+1]
+        testScriptStepData[index+1] = tmp 
+        appendSteps();
+    }
+
+
+    function updateStepData(key, index, value)
+    {
+        if (key === 'description') {
+            testScriptStepData[index].description = value;
+        } else if (key === 'test_data') {
+            testScriptStepData[index].test_data = value;
+        } else if (key === 'expected_output') {
+            testScriptStepData[index].expected_output = value;
+        }
+    }
+
+
+
+
+
+
+    activeTestScriptSection(testScriptType)
+    appendSteps();
+    getCommonConfigurationDatasetData('testcase');
+
+
+</script>

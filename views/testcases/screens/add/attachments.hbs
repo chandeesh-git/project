@@ -1,0 +1,18 @@
+<section class="aui-page-panel-content content-section-attachment">
+  <section class="attachment-section" ondrop="fileAdded(event, true, 'testcase')">
+    <input type="file" class="upfile" name="myfile" multiple onchange="fileAdded(event, false, 'testcase')" />
+    <h6 class="drop-files">Drop file here or &nbsp; <a href="#">browse from system</a></h6>
+  </section>
+  <table class="aui">
+    <thead>
+      <tr>
+        <th id="basic-type">Type</th>
+        <th id="basic-name">Name</th>
+        <th id="basic-size">Size</th>
+        <th id="basic-upby">Uploaded By</th>
+        <th id="basic-upon">Uploaded On</th>
+      </tr>
+    </thead>
+    <tbody style="background: #F5F6F9;" id="testcaseAttachList"></tbody>
+  </table>
+</section>

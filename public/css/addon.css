@@ -1,0 +1,17 @@
+/* =================================== */
+
+/* add-on styles */
+.intro-header h1 {
+    font-size: 36px;
+    line-height: 45px;
+    padding-top: 15px;
+}
+.intro-header p.subtitle {
+    font-size: 18px;
+    line-height: 22.5px;
+    padding-bottom: 15px;
+}
+.main-panel .aui-page-panel-item {
+    padding: 15px 30px 15px 0;
+    height: 75px;
+}

@@ -1,0 +1,465 @@
+.create-button {
+    text-align: center;
+    border: transparent;
+    margin: auto;
+    height: 24px; 
+    width: 132px;
+    font-size: 10.5px;
+}
+
+.search-bar{
+    background-color: #FAFBFC;
+    border: 1.5px solid #DFE1E5;
+    width: 119.25px;
+    height: 24px;
+    padding: 1.5px 7.5px;
+}
+
+.popup-dropdown{
+    width: 151.5px;
+    height: 28.5px;
+}
+
+#dialog-submit-button{
+    background: #0052CC;
+}
+
+/* test case list */
+#page-content-wrapper .test_case_list .navbar{
+    height: auto;
+    padding: 0 0 11.25px 0;
+}
+
+/* add test case dialog */
+.add_test_case_dailog {
+    max-width: 45%;
+}
+
+.add_test_case_dailog .aui-dialog2-content{
+    padding: 0;    
+}
+
+.add_test_case_dailog .folder_list .testcase_no_folder{
+    text-align: center;
+    color: #777;
+    line-height: 37.5px;
+}
+
+.add_test_case_dailog .folder_list .testcase_no_folder div{
+    width: 100%;
+    font-size: 10.5px;
+}
+
+.add_test_case_dailog .content-section{
+    padding: 7.5px!important;
+}
+
+.select_borderless{
+    border: none;
+    background-color: transparent;
+}
+
+.no_data_test_cycle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    zoom: 75%;
+}
+
+.no_data_test_cycle >div{
+    text-align: left;
+    width: 377.25px;
+    border: 2.25px solid #e2e2e2;
+    padding: 30px 15px;
+    border-radius: 3px;
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: 90px;
+}
+
+.no_data_test_cycle h3{
+    margin-bottom: 15px;
+}
+
+.no_data_test_cycle h5{
+    color: #999;
+}
+
+/*
+    TEST- CYCLE EXECUTE ------ CSS
+*/
+
+.aui-page-panel-content.tcycle_execute_section{
+    width: calc(100% - 300px);
+    display: inline-block;
+}
+
+#sub-sidebar-div .sub-sidebar.tcycle_execute_sidebar{
+    width: 294px !important;
+    display: inline-block;
+}
+
+#sub-sidebar-div .sub-sidebar ul li.tcycle_excute_side_cases_top{
+    background-color: #344563;
+    padding: 7.5px;
+    line-height: 21px;
+    color: #fff;
+}
+
+#sub-sidebar-div .sub-sidebar ul li.tcycle_excute_side_cases_top h4{
+    color: #ffffff;
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+#sub-sidebar-div .sub-sidebar ul li .tcycle_excute_side_cases_top_assign{
+    margin-left: auto;
+}
+
+#sub-sidebar-div .sub-sidebar ul li .tcycle_excute_side_cases_top_assign select{
+    background: transparent;
+    border: transparent;
+    color: #ffffff;
+    margin-right: 15px;
+    width: 44px;
+}
+
+#sub-sidebar-div .sub-sidebar ul li .tcycle_excute_side_cases_top_assign select option{
+    color: #111111;
+}
+
+#sub-sidebar-div .sub-sidebar ul li.tcycle_excute_side_cases{
+    height: auto;
+    padding: 6px;
+    zoom: 75%;
+    display: flex;
+    align-items: center;
+}
+
+#sub-sidebar-div .sub-sidebar ul li.tcycle_excute_side_cases.active{
+    background-color: #E5EDFA;
+    pointer-events: none;
+}
+
+.sub-sidebar  .tcycle_excute_side_cases-letter{
+    width: 33px;
+    height: 33px;
+    border-radius: 75px;
+    background: #4B88E7;
+    padding: 3.75px;
+}
+
+.sub-sidebar .tcycle_excute_side_cases-letter h3 {
+    margin-bottom: 0;
+    padding: 5.25px 4.5px;
+    font-size: 12px;
+    margin: auto;
+}
+
+.sub-sidebar  .tcycle_excute_side_cases-letter h3{
+    color: #ffffff;
+}
+
+.tcycle_execute_sidebar .tcycle_excute_side_cases-name{
+        text-align: left;
+        width: calc(100% - 34.5px);
+        padding: 0px 7.5px;
+}
+
+.tcycle_execute_sidebar .tcycle_excute_side_cases-fc{
+    text-align: left;
+    width: 100%;
+}
+
+#sub-sidebar-div .sub-sidebar ul li.active .tcycle_excute_side_cases-flag a, #sub-sidebar-div .sub-sidebar ul li .tcycle_excute_side_cases-flag a {
+    color: #007bff;
+    margin-left: 3px;
+}
+
+.tcycle_execute_sidebar .tcycle_excute_side_cases-counter{
+    float: right;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    line-height: 16.5px;
+}
+
+.tcycle_execute_sidebar .tcycle_excute_side_cases-counter span{
+    padding-left: 3px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .new-test-btn{
+    width: 150.75px;
+    height: 30px;
+    background: #B2BED4;
+    color: white;
+    font-size: 10.5px;
+    border: transparent;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field{
+    height: auto; 
+    background: #FFFFFF; 
+    border: 1px solid #B2BED4;
+    padding: 11.25px 11.25px;
+    margin-top: 11.25px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .testcycle-header h3{
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 0;
+    margin-right: 7.5px;
+}
+
+.testcycle-header .texecute_heading_estimate {
+    margin-top: 10px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .testcycle-header h3 a {
+    margin-right: 7.5px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .testcycle-header .not-exec-btn{
+    width: 106.5px;
+    display: inline-block;
+}
+
+.aui-page-panel-content #texecute-panel-attachment .content-section-attachment{
+    border: none
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section #texecute-panel-attachment .attachment-section{
+    width: 100%;
+    border-radius: 3.75px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section{
+    margin-top: 15px;
+    color: #344563;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .sub_section{
+    margin-left: 15.75px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section h4{
+    position: relative;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section h4 svg {
+    width: 10px;
+    margin-right: 3px;
+}
+
+.test-cycle-field:not(.open) .play-icon{
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.test-cycle-field.disable_execution .not-exec-btn, .test-cycle-field.disable_execution input[type="text"], .test-cycle-field:not(.open) .not-exec-btn{
+    pointer-events: none;
+    border: 2px solid transparent;
+    background-color: #f4f5f7;
+    color: #97a0af;
+}
+
+.test-cycle-field.disable_execution .attachment-section, .test-cycle-field.disable_execution  .add_an_issue,
+.test-cycle-field.disable_execution .operation-icon{
+    display: none;
+    
+}
+.test-cycle-field.disable_execution .aui-button-opt, .test-cycle-field.disable_execution .play-icon{
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .head-execution{
+    position: relative;
+    left: 75px;
+    width: 52.5%;
+    color: #DFE1E5;
+    top: -12.75px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .head-obj{
+    position: relative;
+    left: 75px;
+    width: 52.5%;
+    color: #DFE1E5;
+    top: -12.75px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .head-precon{
+    position: relative;
+    left: 105px;
+    width: 48%;
+    color: #DFE1E5;
+    top: -12.75px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .head-detail{
+    position: relative;
+    left: 60px;
+    width: 55.5%;
+    color: #DFE1E5;
+    top: -12.75px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .head-issue{
+    position: relative;
+    left: 52.5px;
+    width: 57%;
+    color: #DFE1E5;
+    top: -12.75px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .head-attach{
+    position: relative;
+    left: 97.5px;
+    width: 49.5%;
+    color: #DFE1E5;
+    top: -12.75px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .head-comment{
+    position: relative;
+    left: 90px;
+    width: 69%;
+    color: #DFE1E5;
+    top: -12.75px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .attachment-section{
+    width: 341.25px;
+    height: 56.25px;
+    background: #FFFFFF;
+    border: 1px dashed #6B778C;
+    opacity: 1;
+    text-align: center;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section .attachment-section .upfile{
+    width: auto;
+    opacity: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .test-cycle-field .details .diff-section #text-input-comment{
+    width: 339.75px;
+    height: 30px;
+    background: #091E420A;
+    border: transparent;
+}
+
+.testcycle-header-collapse-icon svg{
+    margin-top: -6px;
+}
+
+.testcycle-header-collapse-icon.rotate90 svg, .diff-section svg.rotate90{
+    transform: rotate(-90deg);
+    transition: all 0.05s ease-in;
+}
+
+.test-cycle-field.open span.testcycle-header-collapse-icon{
+    display:none;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .select-timer{
+    width: 94.5px;
+    height: 22.5px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #B2BED4;
+    border-radius: 3.75px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right{
+    margin-bottom: 11.25px;
+    padding-bottom: 11.25px;
+    background: #FFFFFF;
+    border: 1px solid #B2BED4;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .test-script-sectionbtn{
+    background: #091E420A;
+    display: flex;
+    align-items: center;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .aui-3{
+    width: 75%;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .aui-3 tr td{
+    padding: 7.5px 7.5px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .test-script-sectionbtn .aui-button-number{
+    width: 65px;
+    height: 40px;
+    margin-right: 6px;
+    background: #008000;
+    border: transparent;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .test-script-sectionbtn .aui-button-number h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .test-script-sectionbtn .aui-button-opt{
+    min-width: 75px;
+    min-height: 27px;
+    background: #FAFAFA;
+    border: 2.25px solid #E5EDFA;
+    margin-left: 6px;
+    white-space: nowrap;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .t_script_status_success.active_btn{
+    color:#ffffff;
+    background-color: #008000;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .t_script_status_failed.active_btn{
+    color:#ffffff;
+    background-color: #dc3545;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right .t_script_status_blocked.active_btn{
+    color:#ffffff;
+    background-color: #007bff;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .heading .head-testscript{
+    position: relative;
+    left: 86.25px;
+    width: 60%;
+    color: #DFE1E5;
+    top: -9px;
+    margin: 0;
+}
+
+.aui-page-panel-content.content-section-testcycle-oauth .right-test-cycle-field .test-script-right #text-input-result{
+    width: 423.75px;
+    height: 34.5px;
+    background: #091E420A  ;
+    border: transparent; 
+}
+
+.test-script-right .aui-dropdown2 a:not(.aui-dropdown2-disabled):active, .test-script-right .aui-dropdown2 a:not(.aui-dropdown2-disabled).active{
+    background-color: #091e4214;
+}
+
+.aui-page-panel-content table.aui>tbody>tr {
+    font-size: 10.5px;
+}

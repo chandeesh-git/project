@@ -1,0 +1,2341 @@
+<script>
+
+
+
+    let current_report_page = "";
+
+    let project_list = [];
+    let test_cycle_list = [];
+
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    changeReportPage('report-test-executions');
+    updateProjectSelectBox('testexecution_project_select');
+
+
+
+
+
+    function changeReportPage(page) {
+
+        current_report_page = page;
+
+        $(".report-common-class").removeClass("active");
+        $(".report-common-class-div").css("display", "none");
+
+        if (page === "report-test-executions") 
+        {            
+            $("#current_page_tag").html("Test Execution Reports");
+            $("#testexecution_start_date").attr("disabled", true);
+            $("#testexecution_end_date").attr("disabled", true);
+            $("#testexecution_environment_select").attr("disabled", true);
+            $("#testexecution_testcycle_select").attr("disabled", true);
+            $("#testexecution_testcycle_multi_select").attr("disabled", true);
+            $('#testexecution_start_date').val('');
+            $('#testexecution_end_date').val('');
+            $('#testexecution_environment_select').html('<option value="">Select Environment</option>');
+            $('#testexecution_testcycle_select').html('<option value="">Select Test Cycle</option>');
+            $('#testCaseMultiSelectSpan').html('<select id="testexecution_testcycle_multi_select" class="multi-selector-dropdown" name="cycle" multiple disabled data-aui-validation-field style="width: 426px;" class="form-control select customFieldTypeSelect" onchange="getTestExecutionCycleSelect()" required="required"></select>');
+            updateProjectSelectBox('testexecution_project_select');
+        }
+        else if (page === "report-traceability") 
+        {
+            $("#current_page_tag").html("Traceability Reports");
+            $("#testexecution_start_date").attr("disabled", true);
+            $("#testexecution_end_date").attr("disabled", true);
+            $("#testexecution_environment_select").attr("disabled", true);
+            $("#testexecution_testcycle_select").attr("disabled", true);
+            $("#testexecution_testcycle_multi_select").attr("disabled", true);
+            $('#testexecution_start_date').val('');
+            $('#testexecution_end_date').val('');
+            $("#first_second_graphZero").prop('checked', true);
+            $('#testexecution_environment_select').html('<option value="">Select Environment</option>');
+            $('#testexecution_testcycle_select').html('<option value="">Select Test Cycle</option>');
+            $('#testCaseMultiSelectSpan').html('<select id="testexecution_testcycle_multi_select" class="multi-selector-dropdown" name="cycle" multiple disabled data-aui-validation-field style="width: 426px;" class="form-control select customFieldTypeSelect" onchange="getTestExecutionCycleSelect()" required="required"></select>');
+            updateProjectSelectBox('testexecution_project_select');
+
+            showTestExecutionFilter(3)
+        }
+        else if (page === "report-live-statistics") 
+        {
+            $("#current_page_tag").html("Live Statistics Reports");
+            $("#report-live-statistics-chart-table").hide();
+            updateProjectSelectBox('testexecution_project_select_live');            
+        }
+        else if (page === "report-test-case-report") 
+        {
+            $("#current_page_tag").html("Test Case Reports");
+            showTestExecutionFilter(5);
+            updateProjectSelectBox('test_case_project_select');
+            $("#submit-testcase-dialog-confirm-btn").attr("disabled", true);
+        }
+            
+        $('#report-go-back-btn').css('display', 'none');
+
+        
+
+        $("#"+page).addClass("active");
+
+        if (page === "report-test-case-report") 
+        {
+            current_report_page = "report-test-executions";
+            $("#report-test-executions").addClass("active");
+            $('#report-go-back-btn').css('display', 'block');
+        }
+
+        if (page != "report-traceability") 
+        {
+            $("#"+page+"-div").css("display", "block");
+        }
+    }
+
+
+
+
+
+
+    function getReportInitailPage() 
+    {
+        changeReportPage(current_report_page);
+    }
+
+
+
+
+
+
+    function showTestExecutionFilter(type)
+    {
+        $(".report-common-class-div").css("display", "none");     
+
+        if(type == 1) {
+            $("#report-test-executions-div-1").css("display", "block");
+            $("#current_page_tag").html("Test Execution Reports Per Test Cycle (List)");
+            $("#submit-testexecution-dialog-confirm-btn").attr("onclick","submitTestExecutionReport1Data()");
+            $(".single_test_cycle_select").css('display', 'block');
+            $(".multi_test_cycle_select").css('display', 'none');
+        } 
+        else if(type == 2) 
+        {
+            $("#report-test-executions-div-1").css("display", "block");
+            $("#current_page_tag").html("Test Execution Reports Per Test Cycle (Detail)");
+            $("#submit-testexecution-dialog-confirm-btn").attr("onclick","submitTestExecutionReport2Data()");
+            $(".single_test_cycle_select").css('display', 'block');
+            $(".multi_test_cycle_select").css('display', 'none');
+        }
+        else if(type == 3) 
+        {
+            $("#report-test-executions-div-1").css("display", "block");
+            $("#current_page_tag").html("Tracebility : - Defect distribution per Components");
+            $("#submit-testexecution-dialog-confirm-btn").attr("onclick","submitTestExecutionReport3Data()");
+            $(".single_test_cycle_select").css('display', 'none');
+            $(".multi_test_cycle_select").css('display', 'block');
+        }
+        else if(type == 5) 
+        {
+            $("#current_page_tag").html("Test Case Report : Most Executed Test Case/ Most Failed Test Case");            
+        }
+
+        $('#report-go-back-btn').css('display', 'block');
+    }
+
+
+
+
+
+
+    function updateProjectSelectBox(id) 
+    {
+        AP.request('/rest/api/2/project', {
+            success: function (responceProjectList) {
+
+                project_list = JSON.parse(responceProjectList);
+                let projectList = JSON.parse(responceProjectList);
+
+                $(`#${id}`).html('<option value="">Select Project</option>');
+
+                for (let j = 0; j < projectList.length; j++) {
+                    $(`#${id}`).append('<option value="' + projectList[j].id + '">' + projectList[j].name + '</option>');
+                }
+
+            }
+        });
+    } 
+
+
+
+
+
+
+    function getTestExecutionEnvironmentData() 
+    {
+        let project_id = $('#testexecution_project_select').val();
+
+        if(project_id !== "")
+        {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/environment/allList?project_id=" + project_id + "&user={{userAccountId}}&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        $("#testexecution_environment_select").attr("disabled", false);
+                        $("#testexecution_start_date").attr("disabled", false);
+                        $("#submit-testexecution-dialog-confirm-btn").attr("disabled", true);
+                        $("#submit-testcase-dialog-confirm-btn").attr("disabled", false);
+                        $("#testexecution_end_date").attr("disabled", false);
+                        $('#testexecution_environment_select').html('<option value="">Select Environment</option>');
+
+                        $("#testexecution_start_date").val(new Date().toISOString().substr(0, 10));
+                        $("#testexecution_end_date").val(new Date().toISOString().substr(0, 10));
+
+                        let data_list = data.res.data.environment;
+
+                        for (let j = 0; j < data_list.length; j++) {
+                            $('#testexecution_environment_select').append('<option value="' + data_list[j].ec_name + '">' + data_list[j].ec_name + '</option>');
+                        }
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+        else
+        {
+            $("#submit-testexecution-dialog-confirm-btn").attr("disabled", true);
+            $("#submit-testcase-dialog-confirm-btn").attr("disabled", true);
+        }
+    } 
+
+
+
+
+
+
+    function getTestCaseProjectChange() 
+    {
+        let project_id = $('#test_case_project_select').val();
+
+        if(project_id !== "")
+        {
+            $("#submit-testcase-dialog-confirm-btn").attr("disabled", false);
+        }
+        else
+        {
+            $("#submit-testcase-dialog-confirm-btn").attr("disabled", true);
+        }
+    }
+
+
+
+
+    function getTestExecutionCycleData()
+    {
+        let project_id = $('#testexecution_project_select').val();
+        let environment = $('#testexecution_environment_select').val();
+        let start_date = $('#testexecution_start_date').val();
+        let end_date = $('#testexecution_end_date').val();
+
+        if(project_id !== "" && environment !== "" && start_date !== "" && end_date !== "")
+        {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/report/testCycleList?project_id="+project_id+"&user={{userAccountId}}&domain_id="+domain_id+"&environment="+environment+"&start_date="+start_date+"&end_date="+end_date,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        $('#testCaseMultiSelectSpan').html('<select id="testexecution_testcycle_multi_select" class="multi-selector-dropdown" name="cycle" multiple disabled data-aui-validation-field style="width: 426px;" class="form-control select customFieldTypeSelect" onchange="getTestExecutionCycleSelect()" required="required"></select>');
+
+                        $("#testexecution_testcycle_select").attr("disabled", false);
+                        $("#testexecution_testcycle_multi_select").attr("disabled", false);
+                        $("#submit-testexecution-dialog-confirm-btn").attr("disabled", true);
+                        $('#testexecution_testcycle_select').html('<option value="">Select Test Cycle</option>');
+                       
+                        test_cycle_list = data.res.data;
+                        let data_list = data.res.data;
+
+                        for (let j = 0; j < data_list.length; j++) {
+                            $('#testexecution_testcycle_select').append('<option value="' + data_list[j]._id + '">' + data_list[j].name + '</option>');
+                            $('#testexecution_testcycle_multi_select').append('<option class="testcase-icon" value="' + data_list[j]._id + '">' + data_list[j].name + '</option>');
+                        }
+
+                        AJS.$('#testexecution_testcycle_multi_select').auiSelect2();
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+        else
+        {
+            $("#submit-testexecution-dialog-confirm-btn").attr("disabled", true);
+        }
+    }
+
+
+
+
+
+    function getTestExecutionCycleSelect() 
+    {
+        let testcycle_id = $('#testexecution_testcycle_select').val();
+        let testcycle_multi_id = $('#testexecution_testcycle_multi_select').val();
+
+        if(testcycle_id !== "")
+        {
+            $("#submit-testexecution-dialog-confirm-btn").attr("disabled", false);
+        }
+
+        if(testcycle_multi_id !== "")
+        {
+            $("#submit-testexecution-dialog-confirm-btn").attr("disabled", false);
+        }
+    }
+
+
+
+
+
+
+    function formatAMPM(date) 
+    {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
+
+
+    function getFormattedDate(date) {
+        if (date <= 9) {
+            return "0" + date;
+        } else {
+            return date;
+        }
+    }
+
+
+
+    function getFormateDateForHistory(date) {
+        let test_date = new Date(date);
+        let formated_date = getFormattedDate(test_date.getDate()) + ' ' + months[test_date.getMonth()] + ' ' + test_date.getFullYear();
+        return formated_date;
+    }
+
+
+
+    testExecutionReport1={
+        statusList:[],
+        testcaseList:[],
+        testCycleId: null,
+        projectId: null
+    }
+
+    function submitTestExecutionReport1Data()
+    {
+        let project_id = testExecutionReport1.projectId= $('#testexecution_project_select').val();
+        let testcycle_id = testExecutionReport1.testCycleId= $('#testexecution_testcycle_select').val();
+        let environment = $('#testexecution_environment_select').val();
+        let start_date = $('#testexecution_start_date').val();
+        let end_date = $('#testexecution_end_date').val();
+
+        if(project_id !== "" && testcycle_id !== "" && Date.parse(start_date) <= Date.parse(end_date))
+        {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/report/list?project_id="+project_id+"&user={{userAccountId}}&domain_id="+domain_id+"&testcycle_id="+testcycle_id+"&project_id="+project_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        $('#report-test-executions-div-1').css('display', 'none');
+                        $('#report-test-executions-data-1').css('display', 'block');
+
+                        let status_list= testExecutionReport1.statusList= data.res.data.statusCount;
+                        let testcase_list = testExecutionReport1.testcaseList = data.res.data.testcaseData;
+
+                        $('#testexecution_status_report_table_head_data_1').html('<tr style="background: #344563; height: 32.25px;">'+
+                            '<th colspan="6"><b>Test Case Execution</b></th>'+
+                        '</tr>');
+                        if (status_list.length > 0) 
+                        {
+
+                            $('#testexecution_status_report_table_body_data_1').html("");
+                            
+                            var k, j, chunk = 6;
+
+                            for (k = 0, j = status_list.length; k < j; k += chunk) 
+                            {
+                                let temparray = status_list.slice(k, k+chunk);
+
+                                let htmlData = '<tr class="header-class" style="background: #b2bed447; height: 32.25px;">';
+                                let htmlData2 = '<tr style="height: 32.25px;">';
+
+                                for (let i = 0; i < temparray.length; i++) 
+                                {  
+                                    if(temparray[i].sc_name !== "Total Testcase") {                      
+                                        htmlData += '<th style="text-align: center;"><b>'+temparray[i].sc_name+'</b></th>';
+                                        htmlData2 += '<th style="text-align: center;"><b>'+temparray[i].count+'</b></th>';
+                                    }
+                                }
+
+                                $('#testexecution_status_report_table_body_data_1').append(htmlData+"</tr>");
+                                $('#testexecution_status_report_table_body_data_1').append(htmlData2+"</tr>");
+                            }
+                        }
+                        else{
+                            $('#testexecution_status_report_table_body_data_1').html('<tr style="background: #b2bed447; height: 32.25px;">'+
+                                '<th colspan="6" class="text-center">No record present</th>'+
+                            '</tr>');
+                        }
+
+                        if (testcase_list.length > 0) 
+                        {
+                            $('#testexecution_testcase_report_table_body_data_1').html("");
+
+                            for (let i = 0; i < testcase_list.length; i++) 
+                            {
+                                let htmlData3 = '<tr style="background: #b2bed447; height: 33.75px;">' +
+                                    '<td>' + testcase_list[i].name + '</td>' +
+                                    '<td>' + testcase_list[i].version + '</td>' +
+                                    '<td>' + testcase_list[i].execution_status + '</td>' +
+                                    '<td>' + testcase_list[i].priority + '</td>' +
+                                    '</tr>';
+
+                                $('#testexecution_testcase_report_table_body_data_1').append(htmlData3);
+                            }
+                        }   
+                        else{
+                            $('#testexecution_testcase_report_table_body_data_1').html('<tr style="background: #b2bed447; height: 32.25px;">'+
+                                '<th colspan="6" class="text-center">No record present</th>'+
+                            '</tr>');
+                        }                     
+
+                        $("#testexecution_testcycle_select").attr("disabled", false);
+                        $('#testexecution_testcycle_select').html('<option value="">Select Test Cycle</option>');
+
+
+                        let project_data = project_list.filter(p => p.id == project_id);
+                        let testcycle_data = test_cycle_list.filter(t => t._id == testcycle_id);
+
+                        $('#selected_report_project_name_1').html(project_data[0].name);
+                        $('#selected_report_project_name_2').html(project_data[0].name);
+                        $('#selected_report_evn_name').html(environment);
+                        $('#selected_report_date_range').html(getFormateDateForHistory(start_date) + " <b>-</b> " + getFormateDateForHistory(end_date));
+                        $('#selected_report_test_cycle_name').html(testcycle_data[0].name);
+                        $('#selected_report_total_number_of_test_case').html(testcase_list.length);
+
+                        let data_list = data.res.data;
+
+                        for (let j = 0; j < data_list.length; j++) {
+                            $('#testexecution_testcycle_select').append('<option value="' + data_list[j]._id + '">' + data_list[j].name + '</option>');
+                        }
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+        }
+        else
+        {
+            if(Date.parse(start_date) <= Date.parse(end_date)) {
+            } else {
+                toaster('From date should be less than or equal to To date ', 'warning');
+            }
+        }
+    }
+
+
+    testExecutionReport2={
+        chart1:null,
+        chart2:null,
+        executionDetail:[],
+        projectId:null,
+        testCycleId:null
+    }
+
+
+    function submitTestExecutionReport2Data()
+    {
+        let project_id =  testExecutionReport2.projectId = $('#testexecution_project_select').val();
+        let testcycle_id = testExecutionReport2.testCycleId = $('#testexecution_testcycle_select').val();
+
+        if(project_id !== "" && testcycle_id !== "")
+        {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/report/detail?project_id="+project_id+"&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id="+domain_id+"&testcycle_id="+testcycle_id+"&project_id="+project_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+        
+                        $('#report-test-executions-div-1').css('display', 'none');
+                        $('#report-test-executions-data-2').css('display', 'block');  
+
+                        let testexecution = testExecutionReport2.executionDetail = data.res.data;
+
+                        let pieChartData = []; 
+                        let pieChartData2 = []; 
+                        
+                        let total_highest = 0; 
+                        let total_high = 0; 
+                        let total_midium = 0; 
+                        let total_low = 0; 
+                        let total_lowest = 0;                           
+                                
+                        $('#testexecution_testcase_report_table_body_data_2').html("");
+                        if (testexecution.length > 0) 
+                        {
+                            $('#testexecution_testcase_report_pie_chart').css('display', 'block')
+                            for (let i = 0; i < testexecution.length; i++) 
+                            {
+                                pieChartData.push({
+                                    "status": testexecution[i].issue_type,
+                                    "count": testexecution[i].total
+                                });
+
+                                total_highest += testexecution[i].issue_priority_count.Highest; 
+                                total_high += testexecution[i].issue_priority_count.High; 
+                                total_midium += testexecution[i].issue_priority_count.Medium; 
+                                total_low += testexecution[i].issue_priority_count.Low; 
+                                total_lowest += testexecution[i].issue_priority_count.Lowest;
+
+                                let htmlData = '<tr style="background: #b2bed447; height: 33.75px;">' +
+                                    '<td style="text-align: left !important;">' + testexecution[i].issue_type + '</td>' +
+                                    '<td>' + testexecution[i].issue_priority_count.Highest + '</td>' +
+                                    '<td>' + testexecution[i].issue_priority_count.High + '</td>' +
+                                    '<td>' + testexecution[i].issue_priority_count.Medium + '</td>' +
+                                    '<td>' + testexecution[i].issue_priority_count.Low + '</td>' +
+                                    '<td>' + testexecution[i].issue_priority_count.Lowest + '</td>' +
+                                    '<td>' + testexecution[i].total + '</td>' +
+                                    '</tr>';
+
+                                $('#testexecution_testcase_report_table_body_data_2').append(htmlData);
+                            }
+
+                            pieChartData2.push({
+                                "status": "Highest",
+                                "count": total_highest
+                            },{
+                                "status": "High",
+                                "count": total_high
+                            },{
+                                "status": "Medium",
+                                "count": total_midium
+                            },{
+                                "status": "Low",
+                                "count": total_low
+                            },{
+                                "status": "Lowest",
+                                "count": total_lowest
+                            });                     
+
+                            am4core.ready(function() {
+                                am4core.useTheme(am4themes_kelly);
+                                am4core.useTheme(am4themes_animated);
+                                var chart = testExecutionReport2.chart1 = am4core.create("testexecution_testcase_report_pie_chart_by_issue_type", am4charts.PieChart);
+
+                                chart.data = pieChartData;
+                                var pieSeries = chart.series.push(new am4charts.PieSeries());
+                                pieSeries.dataFields.value = "count";
+                                pieSeries.dataFields.category = "status";
+                                pieSeries.slices.template.stroke = am4core.color("#fff");
+                                pieSeries.slices.template.strokeOpacity = 1;
+
+                                pieSeries.hiddenState.properties.opacity = 1;
+                                pieSeries.hiddenState.properties.endAngle = -90;
+                                pieSeries.hiddenState.properties.startAngle = -90;
+
+                                {{!-- chart.exporting.menu = new am4core.ExportMenu();
+                                chart.exporting.menu.align = "left";
+                                chart.exporting.menu.verticalAlign = "top"; --}}
+
+                                chart.hiddenState.properties.radius = am4core.percent(0);
+                            });
+
+                            am4core.ready(function() {
+                                am4core.useTheme(am4themes_kelly);
+                                am4core.useTheme(am4themes_animated);
+                                var chart2 = testExecutionReport2.chart2 = am4core.create("testexecution_testcase_report_pie_chart_by_issue_priority", am4charts.PieChart);
+
+                                chart2.data = pieChartData2;
+                                var pieSeries = chart2.series.push(new am4charts.PieSeries());
+                                pieSeries.dataFields.value = "count";
+                                pieSeries.dataFields.category = "status";
+                                pieSeries.slices.template.stroke = am4core.color("#fff");
+                                pieSeries.slices.template.strokeOpacity = 1;
+
+                                pieSeries.hiddenState.properties.opacity = 1;
+                                pieSeries.hiddenState.properties.endAngle = -90;
+                                pieSeries.hiddenState.properties.startAngle = -90;
+
+                                {{!-- chart2.exporting.menu = new am4core.ExportMenu();
+                                chart2.exporting.menu.align = "left";
+                                chart2.exporting.menu.verticalAlign = "top"; --}}
+                                
+                                chart2.hiddenState.properties.radius = am4core.percent(0);
+                            });                   
+                        }
+                        else{
+                            $('#testexecution_testcase_report_pie_chart').css('display', 'none')
+                            
+                            let htmlData = `<tr style="height: 32.25px;">
+                                                 <td style="background-color: #F4F5F7;" colspan="7" class="text-center"> No record present</td>
+                                           </tr>`;
+
+                            $('#testexecution_testcase_report_table_body_data_2').append(htmlData);
+                        }
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });   
+        }                
+    }
+
+
+    testExecutionReport3={
+        chart: null,
+        reportType:'both',
+        issueCountList: [],
+        projectId:null,
+        testCycleIds:null
+    }
+
+
+    function submitTestExecutionReport3Data()
+    {
+        testExecutionReport3.chart = null;
+
+        let testcycleid = "";
+
+        let project_id = testExecutionReport3.projectId = $('#testexecution_project_select').val();
+        let testcycle_multi_id = $('#testexecution_testcycle_multi_select').val();
+        let report_type = $("input[name=first_second_report_type]:checked").val();
+        testExecutionReport3.reportType = report_type;
+
+        for (let j = 0; j < testcycle_multi_id.length; j++) {
+            testcycleid += testcycle_multi_id[j]+",";
+        }
+
+        testExecutionReport3.testCycleIds = testcycleid;
+
+        if(project_id !== "" && testcycleid !== "")
+        {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/report/defectDistribution?project_id="+project_id+"&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id="+domain_id+"&testcycle_ids="+testcycleid+"&project_id="+project_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+        
+                        $('#report-test-executions-div-1').css('display', 'none'); 
+                        $('#report-traceability-div-3').css('display', 'block'); 
+                        $('#report-go-back-btn').css('display', 'block');
+
+                        let traceability = testExecutionReport3.issueCountList = data.res.data;
+
+                        let graphChartData = [];                      
+
+                        $('#traceability_report_table_body_data_2').html("");
+                        if (traceability.length > 0) 
+                        {
+                            if(report_type == "table" || report_type == "both")
+                            {
+                                if(report_type != "both")
+                                {
+                                    $("#traceability_report_table_heading").css('display', 'block');
+                                    $("#traceability_report_table_div").css('display', 'block');
+                                    $("#tracebility_report_graph_by_testcycle_component").css('display', 'none');
+                                }
+
+                                $('#traceability_report_table_body_data_2').html("");
+    
+                                let total_highest = 0; 
+                                let total_high = 0; 
+                                let total_midium = 0; 
+                                let total_low = 0; 
+                                let total_lowest = 0;
+
+                                let total_all = 0; 
+
+                                for (let i = 0; i < traceability.length; i++) 
+                                {
+                                    let total = traceability[i].issue_priority_count.Highest + traceability[i].issue_priority_count.High + traceability[i].issue_priority_count.Medium + traceability[i].issue_priority_count.Lowest + traceability[i].issue_priority_count.Low;
+                                
+                                    total_highest += traceability[i].issue_priority_count.Highest; 
+                                    total_high += traceability[i].issue_priority_count.High; 
+                                    total_midium += traceability[i].issue_priority_count.Medium; 
+                                    total_low += traceability[i].issue_priority_count.Low; 
+                                    total_lowest += traceability[i].issue_priority_count.Lowest; 
+
+                                    total_all += total;
+
+                                    let htmlData = '<tr style="height: 32.25px;">'+
+                                            '<td style="background: #344563;color: white !important;text-align: left !important;"><b>' + traceability[i].component_name + '</b></td>'+
+                                            '<td>' + traceability[i].issue_priority_count.Highest + '</td>'+
+                                            '<td>' + traceability[i].issue_priority_count.High + '</td>'+
+                                            '<td>' + traceability[i].issue_priority_count.Medium + '</td>'+
+                                            '<td>' + traceability[i].issue_priority_count.Low + '</td>'+
+                                            '<td>' + traceability[i].issue_priority_count.Lowest + '</td>'+
+                                            '<td style="background-color: #F4F5F7;"><b>' + total + '</b></td>'+
+                                        '</tr>';
+
+                                    $('#traceability_report_table_body_data_2').append(htmlData);
+                                }
+
+                                let htmlData = '<tr style="height: 32.25px;">'+
+                                        '<td style="background: #344563;color: white !important;text-align: left !important;"><b>Total</b></td>'+
+                                        '<td style="background-color: #F4F5F7;">' + total_highest + '</td>'+
+                                        '<td style="background-color: #F4F5F7;">' + total_high + '</td>'+
+                                        '<td style="background-color: #F4F5F7;">' + total_midium + '</td>'+
+                                        '<td style="background-color: #F4F5F7;">' + total_low + '</td>'+
+                                        '<td style="background-color: #F4F5F7;">' + total_lowest + '</td>'+
+                                        '<td style="background-color: #344563;color: white !important;"><b>' + total_all + '</b></td>'+
+                                    '</tr>';
+
+                                $('#traceability_report_table_body_data_2').append(htmlData);
+
+                            } 
+                            
+                            if(report_type == "graph" || report_type == "both")
+                            {
+                                if(report_type != "both")
+                                {
+                                    $("#traceability_report_table_div").css('display', 'none');
+                                    $("#traceability_report_table_heading").css('display', 'none');
+                                    $("#tracebility_report_graph_by_testcycle_component").css('display', 'block');
+                                }
+
+                                let total_highest = 0; 
+                                let total_high = 0; 
+                                let total_midium = 0; 
+                                let total_low = 0; 
+                                let total_lowest = 0;
+
+                                let total_all = 0; 
+
+                                for (let i = 0; i < traceability.length; i++) 
+                                {
+                                    graphChartData.push({
+                                        category: traceability[i].component_name,
+                                        value1: traceability[i].issue_priority_count.Highest,
+                                        value2: traceability[i].issue_priority_count.High,
+                                        value3: traceability[i].issue_priority_count.Medium,
+                                        value4: traceability[i].issue_priority_count.Low,
+                                        value5: traceability[i].issue_priority_count.Lowest
+                                    });
+                                }
+
+                                am4core.ready(function() {
+
+                                    // Themes begin
+                                    am4core.useTheme(am4themes_kelly);
+                                    am4core.useTheme(am4themes_animated);
+                                    // Themes end
+
+                                    // Create chart instance
+                                    var chart = testExecutionReport3.chart = am4core.create("tracebility_report_graph_by_testcycle_component", am4charts.XYChart);
+
+                                    // Add percent sign to all numbers
+                                    chart.numberFormatter.numberFormat = "#.#";
+
+                                    // Add data
+                                    chart.data = graphChartData;
+                                    
+                                    {{!-- chart.scrollbarX = new am4core.Scrollbar(); --}}
+
+                                    // Create axes
+                                    var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+                                    categoryAxis.dataFields.category = "category";
+                                    categoryAxis.renderer.grid.template.location = 0;
+                                    categoryAxis.renderer.minGridDistance = 30;
+
+                                    var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                                    valueAxis.title.text = "Number of Issues";
+                                    valueAxis.title.fontWeight = 800;
+
+                                    // Create series
+                                    var series = chart.series.push(new am4charts.ColumnSeries());
+                                    series.dataFields.valueY = "value1";
+                                    series.dataFields.categoryX = "category";
+                                    series.stacked = true;
+                                    series.name = "Highest";
+                                    series.fill = "#ce0001";
+                                    series.stroke = "#ce0001";
+                                    series.tooltipText = "[bold]Highest: {valueY}";
+
+                                    var series2 = chart.series.push(new am4charts.ColumnSeries());
+                                    series2.dataFields.valueY = "value2";
+                                    series2.dataFields.categoryX = "category";
+                                    series2.stacked = true;
+                                    series2.name = "High";
+                                    series2.fill = "#ea4444";
+                                    series2.stroke = "#ea4444";
+                                    series2.tooltipText = "[bold]High: {valueY}";
+
+                                    var series3 = chart.series.push(new am4charts.ColumnSeries());
+                                    series3.dataFields.valueY = "value3";
+                                    series3.dataFields.categoryX = "category";
+                                    series3.stacked = true;
+                                    series3.name = "Medium";
+                                    series3.fill = "#ea7d24";
+                                    series3.stroke = "#ea7d24";
+                                    series3.tooltipText = "[bold]Medium: {valueY}";
+
+                                    var series4 = chart.series.push(new am4charts.ColumnSeries());
+                                    series4.dataFields.valueY = "value4";
+                                    series4.dataFields.categoryX = "category";
+                                    series4.stacked = true;
+                                    series4.fill = "#2a8735";
+                                    series4.stroke = "#2a8735";
+                                    series4.name = "Low";
+                                    series4.tooltipText = "[bold]Low: {valueY}";
+
+                                    var series5 = chart.series.push(new am4charts.ColumnSeries());
+                                    series5.dataFields.valueY = "value5";
+                                    series5.dataFields.categoryX = "category";
+                                    series5.stacked = true;
+                                    series5.fill = "#55a557";
+                                    series5.stroke = "#55a557";
+                                    series5.name = "Lowest";
+                                    series5.tooltipText = "[bold]Lowest: {valueY}";
+
+                                    {{!-- chart.exporting.menu = new am4core.ExportMenu();
+                                    chart.exporting.menu.align = "left";
+                                    chart.exporting.menu.verticalAlign = "top"; --}}
+
+                                    chart.cursor = new am4charts.XYCursor();
+                                    chart.cursor.lineX.disabled = true;
+                                    chart.cursor.lineY.disabled = true;
+
+                                    chart.legend = new am4charts.Legend();
+
+                                });
+                            }
+                            else if(report_type != "both")
+                            {
+                                if(report_type == "table")
+                                {
+                                    $("#traceability_report_table_div").css('display', 'block');
+                                    $("#traceability_report_table_heading").css('display', 'block');
+                                    $("#tracebility_report_graph_by_testcycle_component").css('display', 'none');
+                                }
+                                else 
+                                {
+                                    $("#traceability_report_table_div").css('display', 'none');
+                                    $("#traceability_report_table_heading").css('display', 'none');
+                                    $("#tracebility_report_graph_by_testcycle_component").css('display', 'block');
+                                }
+                            }
+                        }
+                        else{
+                             $("#tracebility_report_graph_by_testcycle_component").css('display', 'none');
+                             $("#traceability_report_table_body_data_2").html('');
+                             let htmlData = '<tr style="height: 32.25px;">'+
+                                        '<td style="background-color: #F4F5F7;" colspan="7" class="text-center"> No record present</td>'+
+                                    '</tr>';
+
+                                $('#traceability_report_table_body_data_2').append(htmlData);
+                        }
+                        
+
+                        let project_data = project_list.filter(p => p.id == project_id);
+                        $('#selected_report_project_name_2').html(project_data[0].name);
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });   
+        }                
+    }
+    
+
+
+
+    var testExecutionReport5={
+        chart: null,
+        searchType:null,
+        projectId:null,
+        count:null,
+        testcaseData:[]
+    }
+
+    function generateTestExecutionReport5(){
+       
+        submitTestExecutionReport5Data(10);
+    }
+
+    function submitTestExecutionReport5Data(countVal=false)
+    {
+        testExecutionReport5.chart=null;
+        let test_case_project = testExecutionReport5.projectId = $("#test_case_project_select").val();
+        let count = testExecutionReport5.count =  !countVal?$("#test_case_count_drop_down").val():countVal;
+        let type = testExecutionReport5.searchType = $("input[name=type]:checked").val();
+
+        if(type !== "" && count !== "")
+        {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/report/testcaseReport?project_id="+test_case_project+"&user={{userAccountId}}&domain_id="+domain_id+"&search_type="+type+"&count="+count,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+        
+                        $('#report-test-case-report-div').css('display', 'none'); 
+                        $('#report-test-case-report-div-3').css('display', 'block'); 
+                        $(`#test_case_count_drop_down`).val(`${count}`);
+                        
+                        $('#report-go-back-btn').css('display', 'block');
+
+                        let testcase =  testExecutionReport5.testcaseData = data.res.data;
+                        let ChartData = [];
+                        let graph_color = "";
+
+                        if(type == "executed") {
+                            graph_color = "#84c659";
+                            $('#selected_report_Type_name').html('Most Executed Test Case');
+                        } else {
+                            graph_color = "#ec6953";
+                            $('#selected_report_Type_name').html('Most Failed Test Case');
+                        }                   
+                                
+                        if (testcase.length > 0) 
+                        {
+                            for (let i = 0; i < testcase.length; i++) 
+                            {
+                                ChartData.push({
+                                    "testcase_id": testcase[i].name,
+                                    "count": testcase[i].total_no
+                                });
+                            }
+
+                            am4core.ready(function() {
+
+                                // Themes begin
+                                am4core.useTheme(am4themes_animated);
+                                // Themes end
+
+                                // Create chart instance
+                                var chart = testExecutionReport5.chart = am4core.create("test_case_report_graph", am4charts.XYChart);
+
+                                // Add data
+                                chart.data = ChartData;
+
+                                // Create axes
+                                var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+                                categoryAxis.dataFields.category = "testcase_id";
+                                categoryAxis.renderer.grid.template.location = 0;
+                                categoryAxis.renderer.labels.template.truncate = true;
+                                categoryAxis.renderer.labels.template.maxWidth = 100;
+                                categoryAxis.renderer.minGridDistance = 30;
+                                categoryAxis.title.text = "Test Case";
+                                categoryAxis.title.fontWeight = 800;
+
+                                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                                valueAxis.title.text = "Count";
+                                valueAxis.title.fontWeight = 800;
+
+                                // Create series
+                                var series = chart.series.push(new am4charts.ColumnSeries());
+                                series.dataFields.valueY = "count";
+                                series.dataFields.categoryX = "testcase_id";
+                                series.name = "count";
+                                series.fill = graph_color;
+                                series.stroke = graph_color;
+                                series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+
+                                var columnTemplate = series.columns.template;
+                                columnTemplate.strokeWidth = 2;
+                                columnTemplate.strokeOpacity = 1;
+
+                            });
+                        }
+                    }
+                    else if(data.res.status === 401){
+                        toaster(data.res.message, 'error');
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });   
+        }                
+    }
+
+
+
+
+
+
+
+    /*
+        ====================================
+        ========Live statics chart==========
+        ====================================
+    */
+    liveStaticsGraph=null;
+    var configStatusList=[];
+    getCommonConfigStatusData('testexecution');
+    function getCommonConfigStatusData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/configuration/statusList?project_id={{projectId}}&user={{userAccountId}}&sc_type=" + type + "&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    configStatusList = data.res.data;
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+    activityLogs={
+        totalLength:0,
+        dayFilter:7,
+        projectFilter:null,
+        startDate:null,
+        endDate:null
+    }
+
+    // on change of value from dropdown of project and day filter
+    function callLiveStaticsOnChange(){
+        activityLogs.dayFilter = $('#live_statistics_day_filter').val();
+        activityLogs.projectFilter = $('#testexecution_project_select_live').val();
+        activityLogs.startDate=null;
+        activityLogs.endDate=null;
+        if(!activityLogs.projectFilter)
+        {
+            $("#report-live-statistics-chart-table").hide();
+            toaster('Please select the project', 'error');
+            return false;
+        }
+        if(!activityLogs.dayFilter)
+        {
+            return false;
+        }
+        if (activityLogs.dayFilter == 'custom'){
+           $("#live_statistics_start_date").attr("disabled", false);
+           $("#live_statistics_end_date").attr("disabled", false);
+           activityLogs.startDate = $('#live_statistics_start_date').val();
+           activityLogs.endDate = $('#live_statistics_end_date').val();
+           if(!activityLogs.startDate || !activityLogs.endDate){
+               $("#liveStatisticsChartdiv").hide();
+               $("#liveStatisticsTablediv").hide();
+               $("#liveStatisticsTablediv_heading").hide();
+               liveStaticsGraph = null;
+               return false;
+           }
+        }
+        else{
+           $("#live_statistics_start_date").attr("disabled", true);
+           $("#live_statistics_end_date").attr("disabled", true); 
+           $('#live_statistics_start_date').val(null);
+           $('#live_statistics_end_date').val(null);           
+        }
+        $("#report-live-statistics-chart-table").show();
+
+        if(activityLogs.dayFilter == 'custom')
+        {
+            if(Date.parse(activityLogs.startDate) <= Date.parse(activityLogs.endDate)) 
+            {
+                liveStaticsChart(activityLogs.dayFilter, activityLogs.projectFilter, activityLogs.startDate, activityLogs.endDate);
+                getActivityLogsTableList(0, activityLogs.dayFilter, activityLogs.projectFilter, activityLogs.startDate, activityLogs.endDate);
+            }
+            else 
+            {
+                toaster('From date should be less than or equal to To date ', 'warning');
+            }
+        }
+        else
+        {
+            liveStaticsChart(activityLogs.dayFilter, activityLogs.projectFilter, activityLogs.startDate, activityLogs.endDate);
+            getActivityLogsTableList(0, activityLogs.dayFilter, activityLogs.projectFilter, activityLogs.startDate, activityLogs.endDate);
+        }
+        
+    }
+    
+    //call live statics chart data
+    function liveStaticsChart(lastDays, projectFilter, startDate, endDate)
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/report/executionStatus?project_id="+projectFilter+"&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id="+domain_id+"&last_days="+lastDays+"&start_date="+startDate+"&end_date="+endDate, 
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    let resData = data.res.data;
+                    if(resData.length > 0){
+                        $("#liveStatisticsChartdiv").show();           
+                        am4core.ready(function() {
+                            let chart = liveStaticsGraph = am4core.create("liveStatisticsChartdiv", am4charts.XYChart);
+                            chart.data=[];
+                            resData.forEach(x=>{
+                                let dt = x.execution_date.split('-');
+                                if(dt.length>=2){
+                                    dt = dt[1]+"-"+dt[2];
+                                    x.issue_count['date'] = dt;
+                                    chart.data.push(x.issue_count);
+                                }
+                            });
+
+                            // Create category axis
+                            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+                            categoryAxis.dataFields.category = "date";
+
+                            // Create value axis
+                            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                            valueAxis.title.text = "Execution Count";
+                            valueAxis.renderer.minLabelPosition = 0;
+
+                            // Create series
+                            configStatusList.forEach(c=>{
+                                let series = chart.series.push(new am4charts.LineSeries());
+                                series.dataFields.valueY = c.sc_name.replace(/ /g, '_');
+                                series.dataFields.categoryX = "date";
+                                series.name = c.sc_name;
+                                series.bullets.push(new am4charts.CircleBullet());
+                                series.legendSettings.valueText = "{valueY}";
+                                series.visible  = true;
+                                series.fill = am4core.color(c.sc_color);
+                                series.stroke = am4core.color(c.sc_color);
+
+                                let hs = series.segments.template.states.create("hover")
+                                hs.properties.strokeWidth = 4;
+                                series.segments.template.strokeWidth = 2;
+                            });
+
+                            // Add chart cursor
+                            chart.cursor = new am4charts.XYCursor();
+                            chart.cursor.behavior = "zoomY";
+
+                            // Add legend
+                            chart.legend = new am4charts.Legend();
+                            chart.legend.itemContainers.template.events.on("over", function(event){
+                            var segments = event.target.dataItem.dataContext.segments;
+                                segments.each(function(segment){
+                                    segment.isHover = true;
+                                })
+                            });
+
+                            chart.legend.itemContainers.template.events.on("out", function(event){
+                            var segments = event.target.dataItem.dataContext.segments;
+                                segments.each(function(segment){
+                                    segment.isHover = false;
+                                })
+                            });  
+                            
+                        })
+                    }
+                    else{
+                        $("#liveStatisticsChartdiv").hide();
+                    }                       
+                    
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+    //get activity logs list for table -------------------------
+    
+    function getActivityLogsTableList(pageNo, lastDays, projectFilter, startDate, endDate){
+        activityLogs.totalLength=0;
+        $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/report/activityLogs?project_id="+projectFilter+"&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id="+domain_id+"&count="+pageNo+"&last_days="+lastDays+"&start_date="+startDate+"&end_date="+endDate,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        $("#liveStatisticsTablediv").show();
+                        $("#liveStatisticsTablediv_heading").show();
+                        let resActivityLogs = data.res.data.activity_data;
+                        let totalLength = activityLogs.totalLength = data.res.data.total_record;
+
+                        var weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+                        var  months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+
+                        $('#activity_logs_table_live_report').html("");
+                        if (resActivityLogs.length > 0) 
+                        {
+                            let groubedByTeam=groupBy(resActivityLogs, 'created_at');
+                            let newFormatData=formatArray(groubedByTeam);
+                            
+                            newFormatData.forEach(groupData=>{
+                                let date = new Date(groupData[0].created_at);
+                                let htmlData=
+                                    `<tr>
+                                        <th colspan="3">${weekday[date.getDay()]+', '+getFormattedDate(date.getDate())+' '+months[date.getMonth()]+' '+ date.getFullYear() }</th>
+                                    </tr>`;
+                                groupData.forEach(elem=>{
+                                    htmlData += 
+                                        `<tr>
+                                            <td><span class="chip_status" style="background-color: ${elem.status_color};">${elem.status}</span></td>
+                                            <td>${elem.detail}</td>
+                                            <td>${elem.tested_by}</td>
+                                        </tr>`;
+                                });
+                                $('#activity_logs_table_live_report').append(htmlData);
+                            });                
+                        }
+                        else{
+                            let htmlData=`<tr>
+                                        <th colspan="3" class="text-center">No record present</th>
+                                </tr>`;
+                            $('#activity_logs_table_live_report').append(htmlData);
+                        }
+
+                        
+                        let totalPages = Math.ceil(totalLength/10);
+                        let pNo = parseInt(pageNo);
+                        
+                        $('#activity_logs_pagination').html("");
+                        let paginateHtml='';
+                        if(totalPages>0){
+                            if(pNo==0){
+                                paginateHtml+= `<li class="page-item disabled">`;
+                            }
+                            else{
+                                paginateHtml+= `<li class="page-item cursor-pointer" onclick="getActivityLogsTableList('${pNo-1}', '${lastDays}', '${projectFilter}', '${startDate}', '${endDate}')">`;
+                            }
+                            paginateHtml += `                            
+                                <span class="page-link">
+                                    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="10px"
+                                    height="10px" fill="#42526E" viewBox="0 0 444.531 444.531" style="enable-background:new 0 0 444.531 444.531;" xml:space="preserve">
+                                        <g>
+                                        <path d="M213.13,222.409L351.88,83.653c7.05-7.043,10.567-15.657,10.567-25.841c0-10.183-3.518-18.793-10.567-25.835
+                                            l-21.409-21.416C323.432,3.521,314.817,0,304.637,0s-18.791,3.521-25.841,10.561L92.649,196.425
+                                            c-7.044,7.043-10.566,15.656-10.566,25.841s3.521,18.791,10.566,25.837l186.146,185.864c7.05,7.043,15.66,10.564,25.841,10.564
+                                            s18.795-3.521,25.834-10.564l21.409-21.412c7.05-7.039,10.567-15.604,10.567-25.697c0-10.085-3.518-18.746-10.567-25.978
+                                            L213.13,222.409z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                            </li>`;
+                        }
+                        for (i=0; i<totalPages; i++){
+                            if(pNo == i){
+                                paginateHtml += 
+                                  `<li class="page-item active">
+                                    <span class="page-link">${i+1}<span class="sr-only">(current)</span></span>
+                                  </li>`;
+                            }
+                            else{
+                                paginateHtml += `<li class="page-item" onclick="getActivityLogsTableList('${i}', '${lastDays}', '${projectFilter}', '${startDate}', '${endDate}')"><a class="page-link" href="javascript:void()">${i+1}</a></li>`;
+                            }
+                        }
+                        //next button
+                        if(totalPages>0){
+                            if(pNo == totalPages-1){
+                                paginateHtml+= `<li class="page-item disabled">`;
+                            }
+                            else{
+                                paginateHtml+= `<li class="page-item cursor-pointer" onclick="getActivityLogsTableList('${pNo+1}', '${lastDays}', '${projectFilter}', '${startDate}', '${endDate}')">`;
+                            }
+                            paginateHtml += `
+                                <span class="page-link">
+                                   <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                        width="10px" height="10px" fill="#42526E" viewBox="0 0 444.819 444.819" style="enable-background:new 0 0 444.819 444.819;"
+                                        xml:space="preserve">
+                                        <g>
+                                            <path d="M352.025,196.712L165.884,10.848C159.029,3.615,150.469,0,140.187,0c-10.282,0-18.842,3.619-25.697,10.848L92.792,32.264
+                                            c-7.044,7.043-10.566,15.604-10.566,25.692c0,9.897,3.521,18.56,10.566,25.981l138.753,138.473L92.786,361.168
+                                            c-7.042,7.043-10.564,15.604-10.564,25.693c0,9.896,3.521,18.562,10.564,25.98l21.7,21.413
+                                            c7.043,7.043,15.612,10.564,25.697,10.564c10.089,0,18.656-3.521,25.697-10.564l186.145-185.864
+                                            c7.046-7.423,10.571-16.084,10.571-25.981C362.597,212.321,359.071,203.755,352.025,196.712z"/>
+                                        </g>
+                                    </svg>
+                                </span>
+                            </li>`;
+                        }
+                        $('#activity_logs_pagination').append(paginateHtml);
+                    }
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            });
+    }
+
+    
+    function groupBy(xs, key) {
+        return xs.reduce(function(rv, x, id) {
+            (rv[x[key]] = rv[x[key]] || []).push(x);
+            return rv;
+        }, {});
+    };
+
+    function formatArray(xs){
+        // create the keys array
+        let oldGroupedArr = Object.keys(xs);
+        //Empty array.
+        let newGroupedArr = [];
+        // pushed the grouped JSON object into new array
+        for (let obj of oldGroupedArr) { 
+            newGroupedArr.push(xs[obj]);
+        }
+        return newGroupedArr;
+    }
+
+
+    /*
+        ====================================
+        ====End of Live statics chart=======
+        ====================================
+    */
+
+
+    /*
+     ------------------------------
+        Html to pdf generation
+     ----------------------------
+    */
+    function generatePdfLiveStatistics(){        
+            let promiseElem = [];
+           
+            if(!!liveStaticsGraph){
+                promiseElem.push(liveStaticsGraph.exporting.pdfmake);
+                promiseElem.push(liveStaticsGraph.exporting.getImage("png"));
+            }
+            else{
+                let chart = am4core.create("liveStatisticsChartdiv", am4charts.XYChart);
+                promiseElem.push(chart.exporting.pdfmake);
+            }
+            Promise.all(promiseElem).then((res) => {
+                // pdfmake and chart snapshots are ready
+                // res[0] contains pdfmake instance
+                // res[1] contains shapshot of chart 1
+                if(!!res[0]){
+                    var pdfMake = res[0];
+                }
+                var doc = {
+                    pageSize: "A4",
+                    pageOrientation: "portrait",
+                    pageMargins: [30, 30, 30, 30],
+                    content: [],
+                    styles: {
+                        header: {
+                            fontSize: 11,
+                            bold: true,
+                            color:'#ffffff',
+                            fillColor: '#42526E',
+                            margin: [6, 6, 6, 6]
+                        },
+                        parentRow: {
+                            fontSize: 11,
+                            color:'#42526E',
+                            fillColor: '#EBECF0',
+                            margin: [6, 6, 6, 6]
+                        },
+                        childRow: {
+                            fontSize: 11,
+                            color:'#42526E',
+                            margin: [6, 6, 6, 6]
+                        }
+                    }
+                };
+                doc.content.push({
+                    text: 'Test Execution Summary',
+                    fontSize:16,
+                    bold:true,
+                    margin: [ 10,20,0,0 ] 
+                });
+                
+                let projectName= $('#testexecution_project_select_live option:selected').text();
+
+                doc.content.push({
+                    text: 'Project: '+ projectName,
+                    fontSize:13,
+                    color:'#42526E',
+                    bold:true,
+                    margin: [ 20,20,0,0 ] 
+                });
+
+                
+
+                if (activityLogs.dayFilter == 'custom'){
+                    doc.content.push({
+                        text: 'Start Date : '+ activityLogs.startDate,
+                        fontSize:13,
+                        color:'#42526E',
+                        bold:true,
+                        margin: [ 20,10,0,0 ] 
+                    });
+                    doc.content.push({
+                        text: 'End Date : '+ activityLogs.endDate,
+                        fontSize:13,
+                        color:'#42526E',
+                        bold:true,
+                        margin: [ 20,10,0,0 ] 
+                    });
+                }
+                else{
+                    doc.content.push({
+                        text: 'Last no. of days records : '+ activityLogs.dayFilter,
+                        fontSize:13,
+                        color:'#42526E',
+                        bold:true,
+                        margin: [ 20,10,0,0 ] 
+                    });
+                }
+
+                //Push Image-----------
+                if(!!res[1]){
+                    doc.content.push({
+                        image: res[1],
+                        width: 530,
+                        margin: [ 0,30,0,0 ] 
+                    });
+                }
+                
+                //Push table content-----
+                var tableData=[[
+                    { text: "Action", style: 'header' },
+                    { text: "Test Case Name", style: 'header' },
+                    { text: "Action By", style: 'header' }
+                ]];
+
+                if(activityLogPdfDetail.formatedData.length == 0){
+                    tableData.push([
+                        {text: 'No record present', style:'parentRow', alignment: 'center', colSpan: 3 }
+                    ]);
+                }
+
+                activityLogPdfDetail.formatedData.forEach(parent=>{
+                    tableData.push([
+                        {text: parent[0].created_at, style: 'parentRow', colSpan: 3 }
+                    ]);
+                    parent.forEach(child=>{
+                        tableData.push([
+                            {text: child.status, color: child.status_color,  style: 'childRow'},
+                            {text:child.detail, style: 'childRow'},
+                            {text:child.tested_by, style: 'childRow'}
+                        ]);
+                    });
+                });
+
+                doc.content.push({
+                    layout: {
+                        hLineWidth: function (i, node) {
+                            return (i === 0 || i === node.table.body.length) ? 0 : 1;
+                        },
+                        vLineWidth: function (i, node) {
+                            return 0;
+                        },
+                        hLineColor: function (i, node) {
+                                return '#dee2e6';
+                            },
+                            paddingLeft: function(i, node) { return 4; },
+                            paddingRight: function(i, node) { return 4; },
+                            paddingTop: function(i, node) { return 2; },
+                            paddingBottom: function(i, node) { return 2; }
+                        },
+                        table: {
+                            headerRows: 1,
+                            widths: [ "20%", "*", "*" ],
+                            body: tableData
+                        },
+                        margin: [15, 30, 0, 0]
+                    });
+
+                pdfMake.createPdf(doc).download("test-execution-summary.pdf");
+                $('#action-loader-wrapper').css('display', 'none');
+            });
+        
+    }
+
+    activityLogPdfDetail={
+        data:[],
+        formatedData:[]
+    }
+
+    function generateActivityLogPdf(){
+        activityLogPdfDetail.data=[];
+        activityLogPdfDetail.formatedData=[];
+        getActivityLogsPdfData(0, activityLogs.dayFilter, activityLogs.projectFilter, activityLogs.startDate, activityLogs.endDate);
+    }
+
+    function getActivityLogsPdfData(pageNo, lastDays, projectFilter, startDate, endDate){
+        
+        $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "GET",
+                "url": "/report/activityLogs?project_id="+projectFilter+"&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id="+domain_id+"&count="+pageNo+"&last_days="+lastDays+"&record_limit=100"+"&start_date="+startDate+"&end_date="+endDate,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while generating pdf.', 'error');
+                    $('#loader-wrapper').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        
+                        let resActivityLogs = data.res.data.activity_data;
+                        let totalLength = data.res.data.total_record;
+                        var weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+                        var  months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                        if (resActivityLogs.length > 0) 
+                        {
+                            activityLogPdfDetail.data.push(...resActivityLogs);
+                            getActivityLogsPdfData(pageNo+1, lastDays, projectFilter, startDate, endDate);
+                        }
+                        else{
+                            let groubedByTeam=groupBy(activityLogPdfDetail.data, 'created_at');
+                            let newFormatData=formatArray(groubedByTeam);
+                            activityLogPdfDetail.formatedData = newFormatData;
+                            generatePdfLiveStatistics()
+                        }  
+                                             
+                    }
+                }
+            });
+    }
+
+    //test case execution report 5 data
+    function generatePdfTestExecutionReport5(){
+        //testExecutionReport5
+        $('#action-loader-wrapper').css('display', 'flex');
+
+         let promiseElem = [];
+           
+            if(!!testExecutionReport5.chart){
+                promiseElem.push(testExecutionReport5.chart.exporting.pdfmake);
+                promiseElem.push(testExecutionReport5.chart.exporting.getImage("png"));
+            }
+            else{
+                let chart = am4core.create("liveStatisticsChartdiv", am4charts.XYChart);
+                promiseElem.push(chart.exporting.pdfmake);
+            }
+            Promise.all(promiseElem).then((res) => {
+                // pdfmake and chart snapshots are ready
+                // res[0] contains pdfmake instance
+                // res[1] contains shapshot of chart 1
+                if(!!res[0]){
+                    var pdfMake = res[0];
+                }
+                else{
+                    toaster('No data present to generate pdf', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                    return false;
+                }
+                var doc = {
+                    pageSize: "A4",
+                    pageOrientation: "portrait",
+                    pageMargins: [30, 30, 30, 30],
+                    content: []
+                };
+                doc.content.push({
+                    text:  $('#selected_report_Type_name').text(),
+                    fontSize:16,
+                    bold:true,
+                    margin: [ 10,20,0,0 ] 
+                });
+                                
+                doc.content.push({
+                    text: 'No. of test case displayed: '+ $('#test_case_count_drop_down option:selected').val(),
+                    fontSize:12,
+                    color:'#42526E',
+                    bold:true,
+                    margin: [ 10,20,0,0 ] 
+                });
+
+                //Push Image-----------
+                if(!!res[1]){
+                    doc.content.push({
+                        image: res[1],
+                        width: 530,
+                        margin: [ 0,30,0,0 ] 
+                    });
+                }              
+                
+                pdfMake.createPdf(doc).download("test-case-report-summary.pdf");
+                $('#action-loader-wrapper').css('display', 'none');
+            });
+    }
+
+    //pdf generation of report 1---------------------
+    function generatePdfTestExecutionReport1(){
+        let promiseElem = [];           
+        
+        let chart = am4core.create("liveStatisticsChartdiv", am4charts.XYChart);
+        promiseElem.push(chart.exporting.pdfmake);
+        Promise.all(promiseElem).then((res) => {
+            // pdfmake and chart snapshots are ready
+            if(!!res[0]){
+                var pdfMake = res[0];
+            }
+            else{
+                toaster('No data present to generate pdf', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+                return false;
+            }
+            var doc = {
+                pageSize: "A4",
+                pageOrientation: "portrait",
+                pageMargins: [30, 30, 30, 30],
+                content: [],
+                styles: {
+                    header: {
+                        fontSize: 11,
+                        bold: true,
+                        color:'#ffffff',
+                        fillColor: '#42526E',
+                        margin: [6, 6, 6, 6]
+                    },
+                    parentRow: {
+                        fontSize: 11,
+                        color:'#42526E',
+                        fillColor: '#EBECF0',
+                        margin: [6, 6, 6, 6]
+                    },
+                    childRow: {
+                        fontSize: 11,
+                        color:'#42526E',
+                        margin: [6, 6, 6, 6]
+                    }
+                }
+            };
+            doc.content.push({
+                text: 'Test Execution Report Per Test Cycle(List)',
+                fontSize:16,
+                bold:true,
+                margin: [ 15,20,0,0 ] 
+            });
+            
+            doc.content.push({
+                text: 'Project Name: '+ $('#selected_report_project_name_1').text(),
+                fontSize:12,
+                color:'#42526E',
+                bold:true,
+                margin: [ 25,10,0,0 ] 
+            });
+            doc.content.push({
+                text: 'Env: '+ $('#selected_report_evn_name').text(),
+                fontSize:12,
+                color:'#42526E',
+                bold:true,
+                margin: [ 25,2,0,0 ]
+            });
+            doc.content.push({
+                text: 'Date Range: '+ $('#selected_report_date_range').text(),
+                fontSize:12,
+                color:'#42526E',
+                bold:true,
+                margin: [ 25,2,0,0 ]
+            });
+            doc.content.push({
+                text: 'TC Name: '+ $('#selected_report_test_cycle_name').text(),
+                fontSize:12,
+                color:'#42526E',
+                bold:true,
+                margin: [ 25,2,0,0 ]
+            });
+            doc.content.push({
+                text: 'Total Number Test Case: '+ $('#selected_report_total_number_of_test_case').text(),
+                fontSize:12,
+                color:'#42526E',
+                bold:true,
+                margin: [ 25,2,0,0 ]
+            });   
+
+             doc.content.push({
+                text: 'Test Case Execution Count',
+                fontSize:13,
+                color:'#42526E',
+                bold:true,
+                margin: [ 15,30,0,0 ] 
+            });         
+            
+            //Push status list table content-----
+            let colSpanLength = testExecutionReport1.statusList.length===0?1:testExecutionReport1.statusList.length-1;
+            var tableData=[];
+            let tableWidthArray=[];
+            if(testExecutionReport1.statusList.length == 0){
+                tableData.push([
+                    {text: 'No record present', style:'parentRow', alignment: 'center', colSpan: colSpanLength}
+                ]);
+                tableWidthArray=["*"];
+            }
+            else{
+                let h1=[];
+                let row1=[];
+                let row2=[];
+                testExecutionReport1.statusList.forEach((elem, index)=>{
+                    if(elem.sc_name != "Total Testcase"){
+                        h1.push({text: index==0?"Test Case Execution":"", style: 'header' });
+                        row1.push({text: elem.sc_name, style: 'parentRow' });
+                        row2.push({text: elem.count, style: 'parentRow' });
+                        tableWidthArray.push(index==0?"30%":"*");
+                    }
+                });
+                tableData.push(h1);
+                tableData.push(row1);
+                tableData.push(row2);
+                
+            }
+
+
+            doc.content.push({
+                layout: {
+                    hLineWidth: function (i, node) {
+                        return (i === 0 || i === node.table.body.length) ? 0 : 1;
+                    },
+                    vLineWidth: function (i, node) {
+                        return 0;
+                    },
+                    hLineColor: function (i, node) {
+                            return '#dee2e6';
+                        },
+                        paddingLeft: function(i, node) { return 4; },
+                        paddingRight: function(i, node) { return 4; },
+                        paddingTop: function(i, node) { return 2; },
+                        paddingBottom: function(i, node) { return 2; }
+                    },
+                    table: {
+                        headerRows: 1,
+                        widths: tableWidthArray,
+                        body: tableData
+                    },
+                    margin: [15, 10, 0, 0]
+            });
+
+            //Push testcase list table content-----
+            doc.content.push({
+                text: 'Test Case Status',
+                fontSize:13,
+                color:'#42526E',
+                bold:true,
+                margin: [ 15,30,0,0 ] 
+            }); 
+            var tableData1=[[
+                { text: "Name", style: 'header'},
+                { text: "Version", style: 'header'},
+                { text: "Status", style: 'header'},
+                { text: "Priority", style: 'header'}
+            ]];
+            if(testExecutionReport1.testcaseList.length == 0){
+                tableData1.push([
+                    {text: 'No record present', style:'parentRow', alignment: 'center', colSpan: 4}
+                ]);
+            }
+            else{
+                testExecutionReport1.testcaseList.forEach(elem=>{
+                    tableData1.push([
+                        {text: elem.name,  style: 'parentRow'},
+                        {text:elem.version, style: 'parentRow'},
+                        {text:elem.name, style: 'parentRow'},
+                        {text:elem.priority, style: 'parentRow'}
+                    ]);
+                });
+            }
+
+
+            doc.content.push({
+                layout: {
+                    hLineWidth: function (i, node) {
+                        return (i === 0 || i === node.table.body.length) ? 0 : 1;
+                    },
+                    vLineWidth: function (i, node) {
+                        return 0;
+                    },
+                    hLineColor: function (i, node) {
+                            return '#dee2e6';
+                        },
+                        paddingLeft: function(i, node) { return 4; },
+                        paddingRight: function(i, node) { return 4; },
+                        paddingTop: function(i, node) { return 2; },
+                        paddingBottom: function(i, node) { return 2; }
+                    },
+                    table: {
+                        headerRows: 1,
+                        widths: ["*", "*", "*", "*"],
+                        body: tableData1
+                    },
+                    margin: [15, 10, 0, 0]
+            });
+
+            pdfMake.createPdf(doc).download("test-execution-report-per-testcycle.pdf");
+            $('#action-loader-wrapper').css('display', 'none');
+        });
+    }
+
+    //test case execution report 2 data
+    function generatePdfTestExecutionReport2(){
+        //testExecutionReport2
+        $('#action-loader-wrapper').css('display', 'flex');
+
+         let promiseElem = [];
+           
+            //promiseElem.push(testExecutionReport5.chart1.exporting.pdfmake);
+            let chart = am4core.create("liveStatisticsChartdiv", am4charts.XYChart);
+            promiseElem.push(chart.exporting.pdfmake);
+            if(!!testExecutionReport2.chart1){
+                promiseElem.push(testExecutionReport2.chart1.exporting.getImage("png"));
+            }
+            if(!!testExecutionReport2.chart2){
+                promiseElem.push(testExecutionReport2.chart2.exporting.getImage("png"));
+            }
+            
+            Promise.all(promiseElem).then((res) => {
+                // pdfmake and chart snapshots are ready
+                // res[0] contains pdfmake instance
+                // res[1] contains shapshot of chart 1
+                if(!!res[0]){
+                    var pdfMake = res[0];
+                }
+                else{
+                    toaster('No data present to generate pdf', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                    return false;
+                }
+
+                var doc = {
+                    pageSize: "A4",
+                    pageOrientation: "portrait",
+                    pageMargins: [30, 30, 30, 30],
+                    content: [],
+                    styles: {
+                        header: {
+                            fontSize: 11,
+                            bold: true,
+                            color:'#ffffff',
+                            fillColor: '#42526E',
+                            margin: [6, 6, 6, 6]
+                        },
+                        parentRow: {
+                            fontSize: 11,
+                            color:'#42526E',
+                            fillColor: '#EBECF0',
+                            margin: [6, 6, 6, 6]
+                        },
+                        childRow: {
+                            fontSize: 11,
+                            color:'#42526E',
+                            margin: [6, 6, 6, 6]
+                        }
+                    }
+                };
+                doc.content.push({
+                    text: 'Test Execution Report Per Test Cycle(Detail)',
+                    fontSize:16,
+                    bold:true,
+                    margin: [ 15,20,0,0 ] 
+                });
+                               
+
+                //Push Image 1st-----------
+                let colHeading=[];
+                let colImage=[]
+                if(!!res[1]){
+                    colHeading.push({
+                        text: `Detailed Test Report By Issue ${!testExecutionReport2.chart1?'Priority':'Type'} (Pie Chart)`,
+                        fontSize:12,
+                        color:'#42526E',
+                        bold:true,
+                        alignment: 'center',
+                        margin: [ 25,30,0,0 ] 
+                    });
+                    colImage.push({
+                        image: res[1],
+                        width: 235,
+                        margin: [ 0,30,0,0 ] 
+                    });
+                } 
+                //Push Image 2nd-----------
+                if(!!res[2]){
+                    colHeading.push({
+                        text: 'Detailed Test Report By Issue Priority Type (Pie Chart)',
+                        fontSize:12,
+                        color:'#42526E',
+                        bold:true,
+                        alignment: 'center',
+                        margin: [ 25,30,0,0 ] 
+                    });
+                    colImage.push({
+                        image: res[2],
+                        width: 235,
+                        margin: [ 0,30,0,0 ] 
+                    });
+                }
+
+                doc.content.push({
+                    columns: colHeading,
+                    columnGap: 30
+                });
+                doc.content.push({
+                    columns: colImage,
+                    columnGap: 30
+                });
+            
+                //Push issue type list table content-----
+                doc.content.push({
+                    text: 'Detailed Test Report By Issue Type (table)',
+                    fontSize:13,
+                    color:'#42526E',
+                    bold:true,
+                    margin: [ 15,30,0,0 ] 
+                }); 
+                var tableData1=[[
+                    { text: "Issue Type", style: 'header'},
+                    { text: "Highest", style: 'header'},
+                    { text: "High", style: 'header'},
+                    { text: "Medium", style: 'header'},
+                    { text: "Low", style: 'header'},
+                    { text: "Lowest", style: 'header'},
+                    { text: "Total", style: 'header'}
+                ]];
+                if(testExecutionReport2.executionDetail.length == 0){
+                    tableData1.push([
+                        {text: 'No record present', style:'parentRow', alignment: 'center', colSpan: 7}
+                    ]);
+                }
+                else{
+                    testExecutionReport2.executionDetail.forEach(elem=>{
+                        tableData1.push([
+                            {text: elem.issue_type,  style: 'parentRow'},
+                            {text:elem.issue_priority_count.Highest, style: 'parentRow'},
+                            {text:elem.issue_priority_count.High, style: 'parentRow'},
+                            {text:elem.issue_priority_count.Medium, style: 'parentRow'},
+                            {text:elem.issue_priority_count.Low, style: 'parentRow'},
+                            {text:elem.issue_priority_count.Lowest, style: 'parentRow'},
+                            {text:elem.total, style: 'parentRow'}
+                        ]);
+                    });
+                }
+
+
+                doc.content.push({
+                    layout: {
+                        hLineWidth: function (i, node) {
+                            return (i === 0 || i === node.table.body.length) ? 0 : 1;
+                        },
+                        vLineWidth: function (i, node) {
+                            return 0;
+                        },
+                        hLineColor: function (i, node) {
+                                return '#dee2e6';
+                            },
+                            paddingLeft: function(i, node) { return 4; },
+                            paddingRight: function(i, node) { return 4; },
+                            paddingTop: function(i, node) { return 2; },
+                            paddingBottom: function(i, node) { return 2; }
+                        },
+                        table: {
+                            headerRows: 1,
+                            widths: ["20%", "*", "*", "*", "*", "*", "*"],
+                            body: tableData1
+                        },
+                        margin: [15, 10, 0, 0]
+                });            
+                
+                pdfMake.createPdf(doc).download("test-execution-report-per-testcycle (Detail).pdf");
+                $('#action-loader-wrapper').css('display', 'none');
+            });
+    }
+
+  
+    //test case execution report 3 data
+    function generatePdfTestExecutionReport3(){
+        $('#action-loader-wrapper').css('display', 'flex');
+
+         let promiseElem = [];
+           
+            //promiseElem.push(testExecutionReport5.chart1.exporting.pdfmake);
+            let chart = am4core.create("liveStatisticsChartdiv", am4charts.XYChart);
+            promiseElem.push(chart.exporting.pdfmake);
+            if(!!testExecutionReport3.chart){
+                promiseElem.push(testExecutionReport3.chart.exporting.getImage("png"));
+            }
+            
+            Promise.all(promiseElem).then((res) => {
+                // pdfmake and chart snapshots are ready
+                // res[0] contains pdfmake instance
+                // res[1] contains shapshot of chart 1
+                if(!!res[0]){
+                    var pdfMake = res[0];
+                }
+                else{
+                    toaster('No data present to generate pdf', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                    return false;
+                }
+
+                var doc = {
+                    pageSize: "A4",
+                    pageOrientation: "portrait",
+                    pageMargins: [30, 30, 30, 30],
+                    content: [],
+                    styles: {
+                        header: {
+                            fontSize: 11,
+                            bold: true,
+                            color:'#ffffff',
+                            fillColor: '#42526E',
+                            margin: [6, 6, 6, 6]
+                        },
+                        parentRow: {
+                            fontSize: 11,
+                            color:'#42526E',
+                            fillColor: '#EBECF0',
+                            margin: [6, 6, 6, 6]
+                        },
+                        childRow: {
+                            fontSize: 11,
+                            color:'#42526E',
+                            margin: [6, 6, 6, 6]
+                        }
+                    }
+                };
+                doc.content.push({
+                    text: 'Tracebility :- Defect distribution per components',
+                    fontSize:16,
+                    bold:true,
+                    margin: [ 15,20,0,0 ] 
+                });
+                               
+
+                //Push Image 1st-----------
+                if(!!res[1]){
+                    doc.content.push({
+                        text: `Test Execution Status by Cycle (graph)`,
+                        fontSize:13,
+                        color:'#42526E',
+                        bold:true,
+                        margin: [ 25,30,0,0 ] 
+                    });
+                    doc.content.push({
+                        image: res[1],
+                        width: 530,
+                        margin: [ 0,30,0,0 ] 
+                    });
+                } 
+            
+                //Push issue type list table content-----
+                if(testExecutionReport3.reportType == "both" || testExecutionReport3.reportType == "table"){
+                    doc.content.push({
+                        text: 'Detailed Component Distribution Report',
+                        fontSize:13,
+                        color:'#42526E',
+                        bold:true,
+                        margin: [ 15,30,0,0 ] 
+                    }); 
+                    var tableData1=[[
+                        { text: "Component/Priority", style: 'header'},
+                        { text: "Highest", style: 'header'},
+                        { text: "High", style: 'header'},
+                        { text: "Medium", style: 'header'},
+                        { text: "Low", style: 'header'},
+                        { text: "Lowest", style: 'header'},
+                        { text: "Total", style: 'header'}
+                    ]];
+                    if(testExecutionReport3.issueCountList.length == 0){
+                        tableData1.push([
+                            {text: 'No record present', style:'parentRow', alignment: 'center', colSpan: 7}
+                        ]);
+                    }
+                    else{
+                        let total_highest = 0; 
+                        let total_high = 0; 
+                        let total_midium = 0; 
+                        let total_low = 0; 
+                        let total_lowest = 0;
+                        let total_all = 0;    
+        
+                        testExecutionReport3.issueCountList.forEach(elem=>{
+                            let total = elem.issue_priority_count.Highest + elem.issue_priority_count.High + elem.issue_priority_count.Medium + elem.issue_priority_count.Lowest + elem.issue_priority_count.Low;
+        
+                            total_highest += elem.issue_priority_count.Highest; 
+                            total_high += elem.issue_priority_count.High; 
+                            total_midium += elem.issue_priority_count.Medium; 
+                            total_low += elem.issue_priority_count.Low; 
+                            total_lowest += elem.issue_priority_count.Lowest; 
+
+                            total_all += total;
+
+                            tableData1.push([
+                                {text: elem.component_name,  style: 'header'},
+                                {text:elem.issue_priority_count.Highest, style: 'parentRow'},
+                                {text:elem.issue_priority_count.High, style: 'parentRow'},
+                                {text:elem.issue_priority_count.Medium, style: 'parentRow'},
+                                {text:elem.issue_priority_count.Low, style: 'parentRow'},
+                                {text:elem.issue_priority_count.Lowest, style: 'parentRow'},
+                                {text:elem.total, style: 'parentRow'}
+                            ]);
+                        });
+
+                        tableData1.push([
+                            {text: 'Total',  style: 'header'},
+                            {text:total_highest, style: 'parentRow'},
+                            {text:total_high, style: 'parentRow'},
+                            {text:total_midium, style: 'parentRow'},
+                            {text:total_low, style: 'parentRow'},
+                            {text:total_lowest, style: 'parentRow'},
+                            {text:total_all, style: 'header'}
+                        ]);
+                    }
+
+                    doc.content.push({
+                        layout: {
+                            hLineWidth: function (i, node) {
+                                return (i === 0 || i === node.table.body.length) ? 0 : 1;
+                            },
+                            vLineWidth: function (i, node) {
+                                return 0;
+                            },
+                            hLineColor: function (i, node) {
+                                    return '#dee2e6';
+                                },
+                                paddingLeft: function(i, node) { return 4; },
+                                paddingRight: function(i, node) { return 4; },
+                                paddingTop: function(i, node) { return 2; },
+                                paddingBottom: function(i, node) { return 2; }
+                            },
+                            table: {
+                                headerRows: 1,
+                                widths: ["20%", "*", "*", "*", "*", "*", "*"],
+                                body: tableData1
+                            },
+                            margin: [15, 10, 0, 0]
+                    });            
+                }
+                
+                pdfMake.createPdf(doc).download("test-execution-report-per-testcycle (Detail).pdf");
+                $('#action-loader-wrapper').css('display', 'none');
+            });
+    }
+
+
+    /*
+        ===================================
+        =============Export CSV============
+        =================================== 
+    */
+
+    // format url for download csv in activity log
+    function exportCsvActivityLog(){
+        if(activityLogs.totalLength == 0){
+            toaster('No record present to generate CSV.', 'error');
+            return false;
+        }
+
+        url = "/report/exportLiveStatistics";
+        data = {
+                'project_id': activityLogs.projectFilter,
+                'domain_id': domain_id,
+                'user': "{{userAccountId}}",
+                'last_days': activityLogs.dayFilter,
+                'start_date':activityLogs.startDate,
+                'end_date':activityLogs.endDate
+            };
+        fileName = 'activity-log-report.csv';
+        exportReportCsv(url, data, fileName);
+    }
+
+    // format url for download csv in report-1 (execution status)
+    function exportCsvReport1StatusCount(){
+        url = "/report/exportExecutionStatus";
+        data = {
+                'project_id': testExecutionReport1.projectId,
+                'domain_id': domain_id,
+                'user': "{{userAccountId}}",
+                'testcycle_id': testExecutionReport1.testCycleId
+            };
+        fileName = 'test-execution-status-count-report.csv';
+        exportReportCsv(url, data, fileName);
+    }
+
+    // format url for download csv in report-1 (execution list)
+    function exportCsvReport1List(){
+        if(testExecutionReport1.testcaseList.length == 0){
+            toaster('No record present to generate CSV.', 'error');
+            return false;
+        }
+
+        url = "/report/exportExecutionList";
+        data = {
+                'project_id': testExecutionReport1.projectId,
+                'domain_id': domain_id,
+                'user': "{{userAccountId}}",
+                'testcycle_id': testExecutionReport1.testCycleId
+            };
+        fileName = 'test-execution-list-report.csv';
+        exportReportCsv(url, data, fileName);
+    }
+
+    // format url for download csv in report-2 (status priority list)
+    function exportCsvReport2(){
+        if(testExecutionReport2.executionDetail.length == 0){
+            toaster('No record present to generate CSV.', 'error');
+            return false;
+        }
+        url = "/report/exportExecutionDetail";
+        data = {
+                'project_id': testExecutionReport2.projectId,
+                'domain_id': domain_id,
+                'user': "{{userAccountId}}",
+                'testcycle_id': testExecutionReport2.testCycleId
+            };
+        fileName = 'detailed-test-execution-report-by-issue-type.csv';
+        exportReportCsv(url, data, fileName);
+    }
+
+    // format url for download csv in report-3 (tracebility-component)
+    function exportCsvReport3(){
+        if(testExecutionReport3.issueCountList.length == 0){
+            toaster('No record present to generate CSV.', 'error');
+            return false;
+        }
+        url = "/report/exportTraceabilityReport";
+        data = {
+                'project_id': testExecutionReport3.projectId,
+                'domain_id': domain_id,
+                'user': "{{userAccountId}}",
+                'testcycle_ids': testExecutionReport3.testCycleIds
+            };
+        fileName = 'detailed-test-execution-report-by-issue-type.csv';
+        exportReportCsv(url, data, fileName);
+    }
+
+    function generateCsvReport5(){
+        if(testExecutionReport5.testcaseData.length == 0){
+            toaster('No record present to generate CSV.', 'error');
+            return false;
+        }
+
+        url = "/report/exportMostExecuted";
+        data = {
+                'project_id': testExecutionReport5.projectId,
+                'domain_id': domain_id,
+                'user': "{{userAccountId}}",
+                'search_type': testExecutionReport5.searchType,
+                "count": testExecutionReport5.count
+            };
+        fileName = 'test-case-report.csv';
+        exportReportCsv(url, data, fileName);
+    }
+
+    //download csv file for all the reports
+    function exportReportCsv(url, data, fileName) {     
+        $('#action-loader-wrapper').css('display', 'flex');
+        
+        $.ajax({
+            "type": "GET",
+            "url": url,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": data,
+            'xhrFields':{
+                responseType: 'blob'
+            },
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while export csv file.', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if(!!data['res'] && data['res']['status']==401){
+                    toaster('Error while downloading the csv file.', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+                else {
+                    $('#action-loader-wrapper').css('display', 'none');
+                    var blob = data;
+                    var objectURL = URL.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    document.body.appendChild(a);
+                    
+                    a.href = objectURL;
+                    a.download = fileName;
+                    
+                    a.click();
+                    window.URL.revokeObjectURL(objectURL);
+                }
+            }
+        });
+    }
+</script>

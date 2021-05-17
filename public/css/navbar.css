@@ -1,0 +1,29 @@
+/* =================================== */
+
+#page-content-wrapper .navbar {
+    height: 67.5px;
+}
+
+#page-content-wrapper .navbar .menu-toggle {
+    display: flex;
+    align-items: center;
+}
+
+#page-content-wrapper .navbar .main-title {
+    color: #344563;
+    font-size: 16.5px;
+    font-weight: bold;
+    line-height: 15px;
+    margin-left: 11.25px;
+    /* margin-top: 3.75px; */
+    margin-bottom: 0;
+}
+
+#page-content-wrapper .navbar #menu-toggle svg {
+    margin-top: -6px;
+}
+
+#page-content-wrapper .navbar .cancel-go-back-btn {
+    background: #F0F1F2 0% 0% no-repeat padding-box;
+    color: #A5ADBA;
+}

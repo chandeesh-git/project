@@ -1,0 +1,580 @@
+<div style="display: block;">
+    <div id="parent_step_by_step_type_selection_top" style="float: left;">
+        <button class="aui-button add-step-btn" id="smallspinnerbutton" onclick="addTestCyclePopup()"> 
+            + Add Cycles
+        </button>
+        <button class="aui-button add-step-btn" id="smallspinnerbutton" onclick="addWebLinks()">
+            + Add Weblinks
+        </button>
+    </div>
+</div>
+
+
+
+<section class="aui-page-panel-content" style="display: flow-root;width: 100%;padding: 0;">
+    <div class="container-section">
+        <span class="main-heading">
+            <h4 class="add-issue">Test Cycles</h4>
+            <hr class="cycle-head-line">
+        </span>
+        <div id="testplan-testcycle-data-table-seaction" style="display: none;">
+            <table class="aui test-data-table" style="margin: 0 0 11.25px; width: 100%;">
+                <tbody id="testplan_testcycle_list_table_tbody"></tbody>
+            </table>
+        </div>
+        <p id="testplan-testcycle-data-add-link" class="inline-section" style="display: none;">No Test Cycles. <a href="javascript:void(0);" onclick="addTestCyclePopup()"> + Add Test Cycles</a></p>
+    </div>
+    <div class="container-section">
+        <span class="main-heading">
+            <h4 class="add-weblinks">Weblinks</h4>
+            <hr class="weblinks-head-line">
+        </span>
+        <div id="weblink-list-data-table-seaction" style="display: none;">
+            <table class="aui test-data-table" style="margin: 0 0 11.25px; width: 100%;">
+                <tbody id="weblink_list_table_tbody"></tbody>
+            </table>
+        </div>
+        <p id="weblink-list-data-add-link" class="inline-section" style="display: none;">No Weblink. <a href="javascript:void(0);" onclick="addWebLinks()"> + Add Weblinks</a></p>
+    </div>
+
+
+    <button type="btn" class="aui-button btn1" id="spinnerbutton" onclick="changeAddSubPages('basic-details')" style="margin-left: 0;">Prev: Basic Details</button>
+    <button type="btn" class="aui-button btn1" id="spinnerbutton" onclick="changeAddSubPages('attachments')">Next: Attachments</button>
+
+
+</section>
+
+
+
+
+<section id="action-weblinks-dialog" style="width: 450px; height: auto;" class="aui-dialog2 aui-dialog2-large-history aui-layer" role="dialog" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h3 class="aui-dialog2-header-main">Web links</h3>
+        <button class="aui-close-button" type="button" aria-label="close" onclick="closeWebLinks()"></button>
+    </header>
+    <form class="aui" name="myForm" method="post" onsubmit="submitWebLinkCreation()" action="javascript:void(0);" style="margin-top: 0;">
+        <div class="aui-dialog2-content">
+            <div class="form-group">
+                <label class="label required-field">Url</label>
+                <input id="weblink_url" type="url" class="form-control text medium-field" placeholder="Please enter url - http or https is nescessary" name="weblink_url" required="required">
+            </div>
+            <div class="form-group">
+                <label class="label required-field">Description</label>
+                <textarea id="weblink_description" class="form-control textarea" rows="3" placeholder="Please enter description" name="weblink_description" style="padding: .28125rem .56.25rem !important;" required="required"></textarea>
+            </div>
+        </div>
+        <footer class="aui-dialog2-footer">
+            <div class="aui-dialog2-footer-actions">
+                <button type="submit" id="warning-dialog-confirm" class="aui-button">Add</button>
+                <button id="warning-dialog-cancel" class="aui-button" onclick="closeWebLinks()">Close</button>
+            </div>
+        </footer>
+    </form>
+</section> 
+
+
+
+
+<section id="action-cyclelinks-dialog" style="max-width: 900px; top: 45px;" class="aui-dialog2 aui-dialog2-large-history aui-layer" role="dialog" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h3 class="aui-dialog2-header-main">Add Existing Test Cycles</h3>
+        <button class="aui-close-button" type="button" aria-label="close" onclick="closeTestCyclePopup()"></button>
+    </header>
+    <form class="aui" onsubmit="submitTestCycleSearch()" action="javascript:void(0);" style="margin-top: 0;" autocomplete="off">
+        <div class="aui-dialog2-content" style="min-height: 450px;">
+
+            <div class="row" style="margin: 0;">
+                {{!-- <div style="width: 152px;">
+                    <div class="form-group">
+                        <button type="button" class="aui-button aui-dropdown2-trigger table-column-sort-icon" aria-controls="testplan-project-selection-checkbox-items" id="testplan-selected-project-name" style="width: 145px;height: 25.5px;overflow: hidden;text-overflow: ellipsis;text-align: left;">
+                            Project: All
+                        </button>
+                        <span id="testplanTestCycleTableCheckList"></span>
+                    </div>
+                </div> --}}
+                <div style="width: calc(100% - 36.25px);">
+                    <div class="form-group">
+                        <input id="testcycle_search_keyword" data-aui-validation-field type="text" class="form-control text medium-field" placeholder="Search by name" name="weblink_url" required="required">
+                    </div>
+                </div>
+                <div style="width: 36px; text-align: right;">
+                    <button type="submit" class="aui-button" id="button-spin-1" style="margin-left: 7.5px; height: 25.5px">
+                         <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.005 512.005" fill:"#3c3a3a" xml:space="preserve" width="15px" height="15px">
+                            <g>
+                                <g>
+                                    <path d="M505.749,475.587l-145.6-145.6c28.203-34.837,45.184-79.104,45.184-127.317c0-111.744-90.923-202.667-202.667-202.667
+                                        S0,90.925,0,202.669s90.923,202.667,202.667,202.667c48.213,0,92.48-16.981,127.317-45.184l145.6,145.6
+                                        c4.16,4.16,9.621,6.251,15.083,6.251s10.923-2.091,15.083-6.251C514.091,497.411,514.091,483.928,505.749,475.587z
+                                        M202.667,362.669c-88.235,0-160-71.765-160-160s71.765-160,160-160s160,71.765,160,160S290.901,362.669,202.667,362.669z"></path>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        
+            <div id="already_used_testcycle_warning" class="aui-message aui-message-warning" style="margin-top: 7.5px; display: none;">
+                <p style="margin-bottom: 0;">Some test cycles have already been added and cannot be added again</p>
+            </div>
+
+            <div style="height: 324.75px; overflow: auto; margin-top: 15px;">
+                <table class="aui">
+                    <tbody id="testplan_testcycle_table_body">
+                        <tr class="border-top-none middle-align">
+                            <td colspan="3" style="border: none;height: 322.5px;text-align: center;vertical-align: middle;">
+                                 <div class="no_data_test_cycle" >
+                                    <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                                        <h3>No test cycles</h3>
+                                        <h5>Search by name, and select some test cycles</h5>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            <button type="button" id="warning-dialog-confirm" class="aui-button" onclick="addSelectedTestCycleArray()">Add</button>
+            <button type="button" id="warning-dialog-cancel" class="aui-button" onclick="closeTestCyclePopup()">Close</button>
+        </div>
+    </footer>
+</section>  
+
+
+
+
+
+
+
+<script>
+
+
+    let testplanTestCycleSearchSelectedList = [];
+    let searchTestCycle = [];
+    let testplanTestCycleProjectList = ["{{projectId}}"];
+
+
+    function addWebLinks() {
+        AJS.dialog2("#action-weblinks-dialog").show();
+    }
+
+
+    function closeWebLinks() {
+        $('#weblink_url').val('');
+        $('#weblink_description').val('');
+        AJS.dialog2("#action-weblinks-dialog").hide();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    const uniqueArrayFilter = (value, index, self) => {
+        return self.indexOf(value) === index
+    }
+
+
+
+    function updateProjectListInDropDown() 
+    {
+        AP.request('/rest/api/2/project', {
+            success: function (responceProjectList) {
+
+                let projectList = JSON.parse(responceProjectList)
+
+                jiraProjectListArray = [];
+
+                for (let j = 0; j < projectList.length; j++) 
+                {
+                    jiraProjectListArray.push({
+                        name: projectList[j].name,
+                        id: projectList[j].id
+                    })
+                }
+
+
+                {{!-- let tableColumnSortHtml = '<aui-dropdown-menu id="testplan-project-selection-checkbox-items"><aui-section label="Select Project">';
+                for (let j = 0; j < jiraProjectListArray.length; j++) 
+                {
+                    let temp_index = testplanTestCycleProjectList.indexOf(jiraProjectListArray[j].id);
+
+                    if(temp_index !== -1) {
+                        tableColumnSortHtml += '<aui-item-checkbox interactive value="'+jiraProjectListArray[j].id+'" checked>'+jiraProjectListArray[j].name+'</aui-item-checkbox>';
+                    } else {
+                        tableColumnSortHtml += '<aui-item-checkbox interactive value="'+jiraProjectListArray[j].id+'">'+jiraProjectListArray[j].name+'</aui-item-checkbox>';
+                    }                
+                }
+                tableColumnSortHtml += '</aui-section></aui-dropdown-menu>';
+                
+                $('#testplanTestCycleTableCheckList').html(tableColumnSortHtml); --}}
+
+
+
+                var dropdown = document.getElementById('testplan-project-selection-checkbox-items');
+                dropdown.addEventListener('change', function (e) {        
+                    var isChecked = e.target.hasAttribute('checked');
+
+                    if (isChecked) {
+                        testplanTestCycleProjectList.push(e.target.attributes[1].value);
+                    } else {            
+                        let index = testplanTestCycleProjectList.indexOf(e.target.attributes[1].value)
+                        testplanTestCycleProjectList.splice(index, 1);
+                    }
+
+                    testplanTestCycleProjectList = testplanTestCycleProjectList.filter(uniqueArrayFilter);
+                    
+                    let temp_name = ""; 
+
+                    if(testplanTestCycleProjectList.length > 0)
+                    {
+                        for (let k = 0; k < testplanTestCycleProjectList.length; k++) 
+                        {  
+                            let temp_project_index = jiraProjectListArray.findIndex(x => x.id == testplanTestCycleProjectList[k]);
+
+                            temp_name += jiraProjectListArray[temp_project_index].name+", ";           
+                        }
+
+                        temp_name = temp_name.replace(/,\s*$/, "");
+
+                    }
+                    else
+                    {
+                        temp_name = "Projects: All"
+                    }
+
+                    $('#testplan-selected-project-name').html(temp_name);
+
+                });
+
+
+            }
+        });
+    } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function addTestCyclePopup() 
+    {
+        $('#testplan_testcycle_table_body').html
+        (
+            `<tr class="border-top-none middle-align">
+                <td colspan="3" style="border: none;height: 322.5px;text-align: center;vertical-align: middle;">
+                        <div class="no_data_test_cycle" >
+                        <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                            <h3>No test cycles</h3>
+                            <h5>Search by name, and select some test cycles</h5>
+                        </div>
+                    </div>
+                </td>
+            </tr>`
+        );   
+        $('#already_used_testcycle_warning').css('display', 'none'); 
+        AJS.dialog2('#action-cyclelinks-dialog').show()
+    }
+
+
+    function closeTestCyclePopup() 
+    {
+        $('#testplan_testcycle_table_body').html
+        (
+            `<tr class="border-top-none middle-align">
+                <td colspan="3" style="border: none;height: 322.5px;text-align: center;vertical-align: middle;">
+                        <div class="no_data_test_cycle" >
+                        <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                            <h3>No test cycles</h3>
+                            <h5>Search by name, and select some test cycles</h5>
+                        </div>
+                    </div>
+                </td>
+            </tr>`
+        );
+        AJS.dialog2('#action-cyclelinks-dialog').hide()
+    }
+
+
+    function submitTestCycleSearch() 
+    {     
+        let searchkeyword = $('#testcycle_search_keyword').val();
+
+        if(searchkeyword !== "")
+        {
+            testplanTestCycleSearchSelectedList = [];
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            $('#already_used_testcycle_warning').css('display', 'none');  
+
+            $.ajax({
+                "type": "GET",
+                {{!-- "url": "/testplan/cycleList/?project_id="+testplanTestCycleProjectList+"&acct_id={{userAccountId}}&domain_id=" + domain_id + "&cycle_name=" + searchkeyword, --}}
+                "url": "/testplan/cycleList/?project_id={{projectId}}&acct_id={{userAccountId}}&domain_id=" + domain_id + "&cycle_name=" + searchkeyword,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+
+                        searchTestCycle = data.res.data
+
+                        $('#testplan_testcycle_table_body').html('');
+            
+                        if(searchTestCycle.length > 0 ) 
+                        {
+                            for (let j = 0; j < searchTestCycle.length; j++) 
+                            { 
+                                let index = testplanTestCycleSelectedList.findIndex(x => x._id == searchTestCycle[j]._id);
+
+                                let searchTestCycleListHtml = "";
+
+                                if(index !== -1) {
+                                    $('#already_used_testcycle_warning').css('display', 'block');  
+                                    searchTestCycleListHtml += '<tr class="border-top-none middle-align already_used_tr">';
+                                } else {
+                                    searchTestCycleListHtml += '<tr class="border-top-none middle-align">';
+                                }
+
+                                searchTestCycleListHtml += '<td style="width: 1px;">'+
+                                            '<input class="checkbox" type="checkbox" style="width: 12px;height: 12px;position: relative;top: 2.25px;" onclick="actionOnTestCycle(`'+searchTestCycle[j]._id+'`)">'+
+                                        '</td>'+
+                                        '<td style="font-size: 10.5px;line-height: 20px;"><a href="javascript:void(0)">'+searchTestCycle[j].test_key+'</a> &nbsp; '+searchTestCycle[j].name+'</td>'+
+                                        '<td style="text-align: right;">'+
+                                            '<span class="issue-span-status testcycle_status">'+searchTestCycle[j].status+'</span>'+
+                                            '<span class="issue-span-status testcycle_date">'+getFormateDateForHistory(searchTestCycle[j].createdAt)+'</span>'+
+                                        '</td>'+
+                                    '</tr>';
+
+                                $('#testplan_testcycle_table_body').append(searchTestCycleListHtml);
+                            }
+                        } 
+                        else 
+                        {
+                            $('#testplan_testcycle_table_body').html
+                            (
+                                `<tr class="border-top-none middle-align">
+                                    <td colspan="3" style="border: none;height: 322.5px;text-align: center;vertical-align: middle;">
+                                            <div class="no_data_test_cycle" >
+                                            <div style="background-image: url({{furl "/images/copy_icon.png"}})">
+                                                <h3>No test cycles</h3>
+                                                <h5>Search by name, and select some test cycles</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>`
+                            );                  
+                        }
+
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                }
+            });
+        }
+    }
+
+
+    function actionOnTestCycle(id) 
+    {
+        let index = testplanTestCycleSearchSelectedList.findIndex(x => x._id == id);
+
+        if(index !== -1) {
+            testplanTestCycleSearchSelectedList.splice(index, 1);
+        } else {
+            let index_2 = searchTestCycle.findIndex(x => x._id == id);
+            testplanTestCycleSearchSelectedList.push(searchTestCycle[index_2]);
+        }
+    }
+
+
+    function deleteTracebilityCycleRowData(id)
+    {
+        let index = testplanTestCycleSelectedList.findIndex(x => x._id == id);
+
+        if(index !== -1) {
+            testplanTestCycleSelectedList.splice(index, 1);
+        }
+        appendTestPlanTestCycleRow();                                    
+    }
+
+
+    function addSelectedTestCycleArray()
+    {
+         testplanTestCycleSelectedList = [...testplanTestCycleSelectedList, ...testplanTestCycleSearchSelectedList]  
+         closeTestCyclePopup();
+         appendTestPlanTestCycleRow();
+    }
+
+
+    function appendTestPlanTestCycleRow() 
+    {
+        if(testplanTestCycleSelectedList.length > 0 ) 
+        {
+            $('#testplan-testcycle-data-table-seaction').css('display', 'block')
+            $('#testplan-testcycle-data-add-link').css('display', 'none')
+
+            $('#testplan_testcycle_list_table_tbody').html("");
+
+            for (let j = 0; j < testplanTestCycleSelectedList.length; j++) 
+            {   
+                $('#testplan_testcycle_list_table_tbody').append('<tr class="border-top-none middle-align">'+
+                            '<td><a href="javascript:void(0)">'+testplanTestCycleSelectedList[j].test_key+'</a> &nbsp; '+testplanTestCycleSelectedList[j].name+'</td>'+
+                            '<td style="text-align: right;">'+
+                                '<span class="issue-span-status testcycle_status">'+testplanTestCycleSelectedList[j].status+'</span>'+
+                                '<img class="operation-icon" onclick="deleteTracebilityCycleRowData(`'+testplanTestCycleSelectedList[j]._id+'`)" src={{furl "/images/trash.svg"}} />'+
+                            '</td>'+
+                        '</tr>');
+            }
+        } 
+        else 
+        {
+            $('#testplan-testcycle-data-add-link').css('display', 'block')
+            $('#testplan-testcycle-data-table-seaction').css('display', 'none')
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function submitWebLinkCreation() 
+    {
+        console.log("sdfsfdssdfsd");
+        
+        const weblinks_url = $('#weblink_url').val();
+        const weblink_description = $('#weblink_description').val();
+
+        $('#weblink_url').val('');
+        $('#weblink_description').val('');
+        AJS.dialog2("#action-weblinks-dialog").hide();
+
+        traceabilityWeblinks.push({
+            'url': weblinks_url,
+            'description': weblink_description
+        });
+
+        testHistoryDataForWeblinks.push({
+            url: weblinks_url,
+            field: "Traceability - (Web Link Added)",
+            original_value: '-',
+            new_value: weblink_description+' : '+weblinks_url
+        });
+
+        appendWeblinksRow();
+    }
+
+
+    function deleteIssueWeblinkRowData(index)
+    {
+        let historyIndex = testHistoryDataForWeblinks.findIndex(x => x.url === traceabilityWeblinks[index].url);
+
+        if(historyIndex !== -1)
+        {
+            testHistoryDataForWeblinks.splice(historyIndex, 1);
+        }
+        else
+        {
+            testHistoryDataForWeblinks.push({
+                field: "Traceability - (Web Link Deleted)",
+                original_value: traceabilityWeblinks[index].description+' : '+traceabilityWeblinks[index].url,
+                new_value: '-'
+            })
+        }
+
+        traceabilityWeblinks.splice(index, 1);
+        appendWeblinksRow();
+    }
+
+
+    function appendWeblinksRow() 
+    {
+        if(traceabilityWeblinks.length > 0 ) 
+        {
+            $('#weblink-list-data-table-seaction').css('display', 'block')
+            $('#weblink-list-data-add-link').css('display', 'none')
+
+            $('#weblink_list_table_tbody').html("");
+
+            for (let j = 0; j < traceabilityWeblinks.length; j++) 
+            {   
+                $('#weblink_list_table_tbody').append('<tr>'+
+                            '<td class="issue-td"><a target="_blank" href="'+traceabilityWeblinks[j].url+'"><img style="margin-right: 4.5px;" class="operation-icon" src={{furl "/images/link.svg"}} />'+ traceabilityWeblinks[j].description+'</a></td>'+
+                            '<td class="issue-td-action"><img class="operation-icon" onclick="deleteIssueWeblinkRowData('+j+')" src={{furl "/images/trash.svg"}} /></td>'+
+                        '</tr>');
+            }
+        } 
+        else 
+        {
+            $('#weblink-list-data-table-seaction').css('display', 'none')
+            $('#weblink-list-data-add-link').css('display', 'block')    
+        }
+    }
+
+
+
+
+    appendWeblinksRow();
+    appendTestPlanTestCycleRow();
+    updateProjectListInDropDown()
+    
+
+
+
+    function navigateToLink(link)
+    {
+        AP.navigator.go('site', {relativeUrl: link});
+    }
+
+
+
+
+</script>

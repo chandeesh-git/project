@@ -1,0 +1,881 @@
+<!-- Page Content -->
+<div id="page-content-wrapper">
+
+    <nav class="navbar navbar-expand-lg navbar-light border-bottom" style="background-color: #FAFAFA;">
+        <button class="btn btn-default menu-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17.51325" height="18" viewBox="0 0 23.351 24">
+                <g transform="translate(-5.768)">
+                    <g transform="translate(5.768)">
+                        <path
+                            d="M28.889,15.156,26.357,13.17A9.424,9.424,0,0,0,26.441,12a9.424,9.424,0,0,0-.084-1.17l2.538-1.986a.6.6,0,0,0,.144-.768l-2.4-4.158a.594.594,0,0,0-.732-.258L22.919,4.866a9.105,9.105,0,0,0-2.028-1.182L20.441.5a.617.617,0,0,0-.6-.5h-4.8a.606.606,0,0,0-.594.5L14,3.684a8.88,8.88,0,0,0-2.028,1.182L8.981,3.66a.6.6,0,0,0-.732.258l-2.4,4.158a.6.6,0,0,0,.144.768L8.525,10.83A9.424,9.424,0,0,0,8.441,12a9.424,9.424,0,0,0,.084,1.17L5.993,15.156a.6.6,0,0,0-.144.768l2.4,4.158a.594.594,0,0,0,.732.258l2.988-1.206A9.105,9.105,0,0,0,14,20.316l.45,3.18a.606.606,0,0,0,.594.5h4.8a.606.606,0,0,0,.594-.5l.45-3.18a8.88,8.88,0,0,0,2.028-1.182L25.9,20.34a.6.6,0,0,0,.732-.258l2.4-4.158A.6.6,0,0,0,28.889,15.156ZM17.441,16.2a4.2,4.2,0,1,1,4.2-4.2A4.2,4.2,0,0,1,17.441,16.2Z"
+                            transform="translate(-5.768)" fill="#344563" />
+                    </g>
+                </g>
+            </svg>
+            <label class="main-title" id="current_page_tag">Environment</label>
+        </button>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                <li class="nav-item active" style="display: inline-block;">
+                    <a onclick="getTokendata()" class="aui-button aui-button-primary" href="#">
+                        Get Token
+                    </a>
+                    {{!-- <button class="aui-button" id="button-spin-1">Cancel and Go Back</button>
+                    <a onclick="getTokendata()" class="aui-button aui-button-primary" href="#">
+                        Save
+                    </a> --}}
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!---sub-sidebar-section--->
+
+    <div id="sub-sidebar-div">
+        <div class="aui-page-panel">
+            <aside class="aui-page-panel-sidebar sub-sidebar" style="width: 226.5px; ">
+                <ul>
+                    <li class="heading disabled">
+                        <a href="#">CONFIGURATION</a>
+                    </li>
+                    <li class="active globalsetting-common-class" id="globalsetting-environment" onclick="changeGlobalsettingPage('globalsetting-environment')">
+                        <a href="#">Environment</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="globalsetting-label" onclick="changeGlobalsettingPage('globalsetting-label')">
+                        <a href="#">Label</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="globalsetting-dataset" onclick="changeGlobalsettingPage('globalsetting-dataset')">
+                        <a href="#">Dataset</a>
+                    </li>
+                    <li class="small-li"></li>
+                    <li class="heading disabled">
+                        <a href="#">STATUSES</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="status-test-cases" onclick="changeGlobalsettingPage('status-test-cases')">
+                        <a href="#">Test Case</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="status-test-plans" onclick="changeGlobalsettingPage('status-test-plans')">
+                        <a href="#">Test Plans</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="status-test-cycles" onclick="changeGlobalsettingPage('status-test-cycles')">
+                        <a href="#">Test Cycles</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="status-test-executions" onclick="changeGlobalsettingPage('status-test-executions')">
+                        <a href="#">Test Executions</a>
+                    </li>
+                    <li class="small-li"></li>
+                    <li class="heading">
+                        <a href="#">CUSTOM FIELDS</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="custom-fields-test-cases" onclick="changeGlobalsettingPage('custom-fields-test-cases')">
+                        <a href="#" >Test Case</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="custom-fields-test-plans" onclick="changeGlobalsettingPage('custom-fields-test-plans')">
+                        <a href="#">Test Plans</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="custom-fields-test-cycles" onclick="changeGlobalsettingPage('custom-fields-test-cycles')">
+                        <a href="#">Test Cycles</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="custom-fields-test-steps" onclick="changeGlobalsettingPage('custom-fields-test-steps')">
+                        <a href="#">Test Steps</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="custom-fields-test-executions" onclick="changeGlobalsettingPage('custom-fields-test-executions')">
+                        <a href="#">Test Executions</a>
+                    </li>
+                    <li class="small-li"></li>
+                    <li class="heading">
+                        <a href="#">PRIORITY</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="priority-test-cases" onclick="changeGlobalsettingPage('priority-test-cases')">
+                        <a href="#" >Test Case</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="priority-test-plans" onclick="changeGlobalsettingPage('priority-test-plans')">
+                        <a href="#">Test Plans</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="priority-test-cycles" onclick="changeGlobalsettingPage('priority-test-cycles')">
+                        <a href="#">Test Cycles</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="priority-test-executions" onclick="changeGlobalsettingPage('priority-test-executions')">
+                        <a href="#">Test Executions</a>
+                    </li>
+                    <li class="small-li"></li>
+                    <li class="heading">
+                        <a href="#">COMPONENT</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="component-test-cases" onclick="changeGlobalsettingPage('component-test-cases')">
+                        <a href="#" >Test Case</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="component-test-plans" onclick="changeGlobalsettingPage('component-test-plans')">
+                        <a href="#">Test Plans</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="component-test-cycles" onclick="changeGlobalsettingPage('component-test-cycles')">
+                        <a href="#">Test Cycles</a>
+                    </li>
+                    <li class="globalsetting-common-class" id="component-test-executions" onclick="changeGlobalsettingPage('component-test-executions')">
+                        <a href="#">Test Executions</a>
+                    </li>
+                </ul>
+            </aside>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <section class="aui-page-panel-content content-section">
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="globalsetting-common-class-div" id="globalsetting-environment-div" style="display: none;">
+                    <form class="aui" action="javascript:void(0);">                      
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 232.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="globalsettingEnvironmentNameInput" name="globalsettingEnvironmentNameInput" placeholder="Type a name" style="width: 189.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="globalsettingEnvironmentDescInput" name="globalsettingEnvironmentDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectGlobalsettingEnvironmentData()">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="globalsetting_environment_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="globalsetting-label-div" style="display: none;">
+                    <form class="aui" action="javascript:void(0);">
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 232.5px;">Name</th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="globalsettingLabelNameInput" name="globalsettingLabelNameInput" placeholder="Type a name" style="width: 386.25px;">
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectGlobalsettingLabelData()">
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </form>
+                    <div id="globalsetting_label_tbody"></div>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="globalsetting-dataset-div" style="display: none;">
+                    <form class="aui" action="javascript:void(0);">
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 413.25px;">Name</th>     
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th style="white-space: nowrap;"> 
+                                        <input class="text medium-field" type="text" id="globalsettingDatasetNameInput" name="globalsettingDatasetNameInput" placeholder="Type a name" style="width: 386.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectGlobalsettingDatasetData()">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="globalsetting_dataset_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="globalsetting-common-class-div" id="status-test-cases-div" style="display: none;">  
+                    <form class="aui" action="javascript:void(0);">                 
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestCaseNameInput" name="statusTestCaseNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestCaseDescInput" name="statusTestCaseDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="statusTestCaseColorInput" name="statusTestCaseColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectStatusDataWithType('TestCase')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="status_testcases_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="status-test-plans-div" style="display: none;">  
+                    <form class="aui" action="javascript:void(0);">     
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestPlanNameInput" name="statusTestPlanNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestPlanDescInput" name="statusTestPlanDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="statusTestPlanColorInput" name="statusTestPlanColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectStatusDataWithType('TestPlan')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="status_testplans_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+                
+                <div class="globalsetting-common-class-div" id="status-test-cycles-div" style="display: none;">    
+                    <form class="aui" action="javascript:void(0);">       
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestCycleNameInput" name="statusTestCycleNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestCycleDescInput" name="statusTestCycleDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="statusTestCycleColorInput" name="statusTestCycleColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectStatusDataWithType('TestCycle')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="status_testcycles_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+                
+                
+                <div class="globalsetting-common-class-div" id="status-test-executions-div" style="display: none;">
+                    <form class="aui" action="javascript:void(0);">
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestExecutionNameInput" name="statusTestExecutionNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="statusTestExecutionDescInput" name="statusTestExecutionDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="statusTestExecutionColorInput" name="statusTestExecutionColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectStatusDataWithType('TestExecution')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="status_testexecutions_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="globalsetting-common-class-div" id="custom-fields-test-cases-div" style="display: none;">   
+                    <form class="aui" action="javascript:void(0);">                 
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 225px;">Name</th>
+                                    <th class="required-field" style="width: 262.5px;">Field Type</th>
+                                    <th style="width: 135px;">Is Required</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="customFieldsTestCaseNameInput" name="customFieldsTestCaseNameInput" placeholder="Type a name" style="width: 187.5px;">
+                                    </th>
+                                    <th class="select-field-type"> 
+                                        <select class="select customFieldTypeSelect" id="customFieldsTestCaseFieldTypeSelect" name="customFieldsTestCaseFieldTypeSelect" style="width: 187.5px;">
+                                        </select>
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field checkbox" type="checkbox" id="customFieldsTestCaseIsRequired" name="customFieldsTestCaseIsRequired">
+                                        <label class="checkbox-label" for="customFieldsTestCaseIsRequired">Required</label>
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectCustomFieldDataWithType('TestCase')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="custom-fields_testcases_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>             
+                
+                
+                <div class="globalsetting-common-class-div" id="custom-fields-test-plans-div" style="display: none;">  
+                    <form class="aui" action="javascript:void(0);">                               
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 225px;">Name</th>
+                                    <th class="required-field" style="width: 262.5px;">Field Type</th>
+                                    <th style="width: 135px;">Is Required</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="customFieldsTestPlanNameInput" name="customFieldsTestPlanNameInput" placeholder="Type a name" style="width: 187.5px;">
+                                    </th>
+                                    <th class="select-field-type"> 
+                                        <select class="select customFieldTypeSelect" id="customFieldsTestPlanFieldTypeSelect" name="customFieldsTestPlanFieldTypeSelect" style="width: 187.5px;">
+                                        </select>
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field checkbox" type="checkbox" id="customFieldsTestPlanIsRequired" name="customFieldsTestPlanIsRequired">
+                                        <label class="checkbox-label" for="customFieldsTestPlanIsRequired">Required</label>
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectCustomFieldDataWithType('TestPlan')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="custom-fields_testplans_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="custom-fields-test-cycles-div" style="display: none;">   
+                    <form class="aui" action="javascript:void(0);">                              
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 225px;">Name</th>
+                                    <th class="required-field" style="width: 262.5px;">Field Type</th>
+                                    <th style="width: 135px;">Is Required</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="customFieldsTestCycleNameInput" name="customFieldsTestCycleNameInput" placeholder="Type a name" style="width: 187.5px;">
+                                    </th>
+                                    <th class="select-field-type"> 
+                                        <select class="select customFieldTypeSelect" id="customFieldsTestCycleFieldTypeSelect" name="customFieldsTestCycleFieldTypeSelect" style="width: 187.5px;">
+                                        </select>
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field checkbox" type="checkbox" id="customFieldsTestCycleIsRequired" name="customFieldsTestCycleIsRequired">
+                                        <label class="checkbox-label" for="customFieldsTestCycleIsRequired">Required</label>
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectCustomFieldDataWithType('TestCycle')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="custom-fields_testcycles_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="custom-fields-test-steps-div" style="display: none;">       
+                    <form class="aui" action="javascript:void(0);">                          
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 225px;">Name</th>
+                                    <th class="required-field" style="width: 262.5px;">Field Type</th>
+                                    <th style="width: 135px;">Is Required</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="customFieldsTestStepNameInput" name="customFieldsTestStepNameInput" placeholder="Type a name" style="width: 187.5px;">
+                                    </th>
+                                    <th class="select-field-type"> 
+                                        <select class="select customFieldTypeSelect" id="customFieldsTestStepFieldTypeSelect" name="customFieldsTestStepFieldTypeSelect" style="width: 187.5px;">
+                                        </select>
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field checkbox" type="checkbox" id="customFieldsTestStepIsRequired" name="customFieldsTestStepIsRequired">
+                                        <label class="checkbox-label" for="customFieldsTestStepIsRequired">Required</label>
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectCustomFieldDataWithType('TestStep')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="custom-fields_teststeps_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="custom-fields-test-executions-div" style="display: none;">  
+                    <form class="aui" action="javascript:void(0);">                               
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 225px;">Name</th>
+                                    <th class="required-field" style="width: 262.5px;">Field Type</th>
+                                    <th style="width: 135px;">Is Required</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="customFieldsTestExecutionNameInput" name="customFieldsTestExecutionNameInput" placeholder="Type a name" style="width: 187.5px;">
+                                    </th>
+                                    <th class="select-field-type"> 
+                                        <select class="select customFieldTypeSelect" id="customFieldsTestExecutionFieldTypeSelect" name="customFieldsTestExecutionFieldTypeSelect" style="width: 187.5px;">
+                                        </select>
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field checkbox" type="checkbox" id="customFieldsTestExecutionIsRequired" name="customFieldsTestExecutionIsRequired">
+                                        <label class="checkbox-label" for="customFieldsTestExecutionIsRequired">Required</label>
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectCustomFieldDataWithType('TestExecution')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="custom-fields_testexecutions_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="globalsetting-common-class-div" id="priority-test-cases-div" style="display: none;">  
+                    <form class="aui" action="javascript:void(0);">                               
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 450px;">Name</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="priorityTestCaseNameInput" name="priorityTestCaseNameInput" placeholder="Type a name" style="width: 408.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="priorityTestCaseColorInput" name="priorityTestCaseColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectPriorityDataWithType('TestCase')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="priority_testcases_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="priority-test-plans-div" style="display: none;"> 
+                    <form class="aui" action="javascript:void(0);">                   
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 450px;">Name</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="priorityTestPlanNameInput" name="priorityTestPlanNameInput" placeholder="Type a name" style="width: 408.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="priorityTestPlanColorInput" name="priorityTestPlanColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectPriorityDataWithType('TestPlan')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="priority_testplans_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+                
+
+                <div class="globalsetting-common-class-div" id="priority-test-cycles-div" style="display: none;">     
+                    <form class="aui" action="javascript:void(0);">                   
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 450px;">Name</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="priorityTestCycleNameInput" name="priorityTestCycleNameInput" placeholder="Type a name" style="width: 408.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="priorityTestCycleColorInput" name="priorityTestCycleColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectPriorityDataWithType('TestCycle')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="priority_testcycles_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+                
+                
+                <div class="globalsetting-common-class-div" id="priority-test-executions-div" style="display: none;">
+                    <form class="aui" action="javascript:void(0);">             
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 450px;">Name</th>
+                                    <th style="width: 67.5px;">Color</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="priorityTestExecutionNameInput" name="priorityTestExecutionNameInput" placeholder="Type a name" style="width: 408.75px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field color-picker" type="color" id="priorityTestExecutionColorInput" name="priorityTestExecutionColorInput" value="#DFE1E5">
+                                    </th>
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectPriorityDataWithType('TestExecution')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="priority_testexecutions_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="globalsetting-common-class-div" id="component-test-cases-div" style="display: none;">  
+                    <form class="aui" action="javascript:void(0);">                 
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    {{!-- <th style="width: 67.5px;">Color</th> --}}
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestCaseNameInput" name="componentTestCaseNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestCaseDescInput" name="componentTestCaseDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    {{!-- <th> 
+                                        <input class="text medium-field color-picker" type="color" id="componentTestCaseColorInput" name="componentTestCaseColorInput" value="#DFE1E5">
+                                    </th> --}}
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectComponentDataWithType('TestCase')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="component_testcases_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+                <div class="globalsetting-common-class-div" id="component-test-plans-div" style="display: none;">  
+                    <form class="aui" action="javascript:void(0);">     
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    {{!-- <th style="width: 67.5px;">Color</th> --}}
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestPlanNameInput" name="componentTestPlanNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestPlanDescInput" name="componentTestPlanDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    {{!-- <th> 
+                                        <input class="text medium-field color-picker" type="color" id="componentTestPlanColorInput" name="componentTestPlanColorInput" value="#DFE1E5">
+                                    </th> --}}
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectComponentDataWithType('TestPlan')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="component_testplans_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+                
+
+                <div class="globalsetting-common-class-div" id="component-test-cycles-div" style="display: none;">    
+                    <form class="aui" action="javascript:void(0);">       
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    {{!-- <th style="width: 67.5px;">Color</th> --}}
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestCycleNameInput" name="componentTestCycleNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestCycleDescInput" name="componentTestCycleDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    {{!-- <th> 
+                                        <input class="text medium-field color-picker" type="color" id="componentTestCycleColorInput" name="componentTestCycleColorInput" value="#DFE1E5">
+                                    </th> --}}
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectComponentDataWithType('TestCycle')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="component_testcycles_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+                
+                
+                <div class="globalsetting-common-class-div" id="component-test-executions-div" style="display: none;">
+                    <form class="aui" action="javascript:void(0);">
+                        <table class="aui confuguration-table" style="table-layout:fixed;">
+                            <thead>
+                                <tr class="heading">
+                                    <th class="required-field" style="width: 217.5px;">Name</th>
+                                    <th style="width: 510px;">Description</th>
+                                    {{!-- <th style="width: 67.5px;">Color</th> --}}
+                                    <th></th>
+                                </tr>
+                                <tr class="input-fields">
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestExecutionNameInput" name="componentTestExecutionNameInput" placeholder="Type a name" style="width: 176.25px;">
+                                    </th>
+                                    <th> 
+                                        <input class="text medium-field" type="text" id="componentTestExecutionDescInput" name="componentTestExecutionDescInput" placeholder="Type a description" style="width: 471.75px;">
+                                    </th>
+                                    {{!-- <th> 
+                                        <input class="text medium-field color-picker" type="color" id="componentTestExecutionColorInput" name="componentTestExecutionColorInput" value="#DFE1E5">
+                                    </th> --}}
+                                    <th> 
+                                        <input class="button submit save-btn" type="submit" value="ADD" id="comment-save-button" onclick="addProjectComponentDataWithType('TestExecution')">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="component_testexecutions_tbody"></tbody>
+                        </table>
+                    </form>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </section>
+        </div>
+    </div>
+</div>
+<!-- /#page-content-wrapper -->

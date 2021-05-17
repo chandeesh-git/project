@@ -1,0 +1,44 @@
+{
+  "name": "InquestPro",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "nyc --coverage --reporter=html --reporter=text mocha --timeout 100000000 --exit"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^5.7.0",
+    "atlassian-connect-express": "*",
+    "body-parser": "^1.14.2",
+    "compression": "^1.6.0",
+    "cookie-parser": "^1.4.0",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^8.2.0",
+    "errorhandler": "^1.4.2",
+    "exceljs": "^4.2.0",
+    "express": "^4.13.3",
+    "express-hbs": "*",
+    "express-swagger-generator": "^1.1.17",
+    "express-validator": "^6.6.1",
+    "formidable": "^1.2.2",
+    "json2csv": "^5.0.5",
+    "moment": "^2.29.1",
+    "mongoose": "^5.10.2",
+    "morgan": "^1.6.1",
+    "mysql2": "^2.1.0",
+    "node-async-loop": "^1.2.2",
+    "nodemon": "^2.0.6",
+    "randomstring": "^1.1.5",
+    "read-excel-file": "^4.1.0",
+    "sequelize": "^6.3.4",
+    "static-expiry": ">=0.0.5"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.2.0",
+    "mock-express-request": "^0.2.2",
+    "ngrok": "^3.2.7",
+    "nyc": "^15.1.0"
+  }
+}

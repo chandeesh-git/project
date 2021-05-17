@@ -1,0 +1,3074 @@
+<script>
+
+    var currentTestList = [];
+    var selectedTestList = [];
+    var selectedFolderId = "";
+
+
+    var selectedTestCaseList = [];
+    var selectedTestCycleList = [];
+    var selectedTestPlanList = [];
+
+
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    var full_months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+
+    var testScriptType = "step_by_step";
+    var testScriptStepData = [{
+            'key_id': "ts_"+Math.floor((Math.random() * 100) + 1),
+            'description': "",
+            'test_data': "",
+            'expected_output': "",
+        }];
+
+    var testScriptTestDataHeader = [];
+    var testScriptTestDataRow = [];
+    var testScriptParameters = [];
+
+    var testScriptPlainTestData = "";
+    var testScriptBddGherkinScriptTestData = "";
+
+
+    var traceabilityIssues = [];
+    var traceabilityWeblinks = [];
+
+
+    var folderList = [];
+
+
+    var testcaseTableColumn = ["Priority", "Name", "Create-On"];
+    var testcycleTableColumn = ["Key", "Name", "Progress", "status"];
+    var testplanTableColumn = ["Key", "Name", "Create-On"];
+    var testcycleTestcaseTableColumn = ["Priority", "Key", "Name", "Version", "Tester", "Create-On", "Last-Execution"];
+
+
+
+    let editTestDataForCompare = null;
+    let testcaseHistoryDataForIssues = [];
+    let testHistoryDataForWeblinks = [];
+
+
+    let editTestCaseVersionLockStatus = false;
+
+
+    let jiraUserListArray = [];
+    let jiraTestCaseStatusListArray = [];
+
+
+
+    let jiraProjectListArray = [];
+    let testplanTestCycleSelectedList = [];
+
+
+
+    let testcase_priority_list = [];
+    let testplan_priority_list = [];
+    let testcycle_priority_list = [];
+    let testcycle_environment_list = [];
+    
+    var testcase_status_list = [];
+    var testplan_status_list = [];
+    var testcycle_status_list = [];
+    
+
+
+
+
+    function getColoredFlagIcon(color)
+    {
+       return '<svg xmlns="http://www.w3.org/2000/svg" width="10.5" height="16.239" viewBox="0 0 14 16.239"><path d="M18.383,4.318a1,1,0,0,0-1.09.217,3.248,3.248,0,0,1-4.586,0,5.25,5.25,0,0,0-7.414,0A1,1,0,0,0,5,5.242v13a1,1,0,0,0,2,0V13.689a3.248,3.248,0,0,1,4.293.26,5.25,5.25,0,0,0,7.414,0A1,1,0,0,0,19,13.242v-8A1,1,0,0,0,18.383,4.318Z" transform="translate(-5 -3.003)" fill="'+color+'"/></svg>';
+    }
+
+
+
+    function formatAMPM(date) 
+    {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+
+
+
+
+    function difference(obj1, obj2, type) 
+    {        
+        const result = {};
+        let testHistoryData = [];
+        if (Object.is(obj1, obj2)) {
+            return undefined;
+        }
+        
+        if (!obj2 || typeof obj2 !== 'object') {
+            return obj2;
+        }
+        Object.keys(obj1 || {}).concat(Object.keys(obj2 || {})).forEach(key => {           
+            if(obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
+                result[key] = obj2[key];
+            }
+            if(typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
+                const value = difference(obj1[key], obj2[key], type);
+                if (value !== undefined) {
+                    result[key] = value;
+                }
+            }
+        });
+
+        Object.keys(result).forEach(key => {
+
+            if(type == 'testcase')
+            {
+                if(
+                    !(
+                        key == 'attachments' ||
+                        key == 'createdAt' || 
+                        key == 'id' || 
+                        key == 'is_active' || 
+                        key == 'submit_status' || 
+                        key == 'testcase_id' || 
+                        key == 'updatedAt' || 
+                        key == 'customFields' || 
+                        key == 'test_key' || 
+                        key == 'test_data' ||
+                        key == 'testscript' || 
+                        key == 'parameters' ||
+                        key == 'Acc_id' ||
+                        key == 'weblinks'
+                    ) 
+                )
+                {
+                    testHistoryData.push({
+                        field: "Basic Detail - ("+key+")",
+                        original_value: obj1[key],
+                        new_value: obj2[key]
+                    })
+                }
+            }
+            else if (type == 'testplan') 
+            {
+                if(
+                    !(
+                        key == 'attachments' ||
+                        key == 'createdAt' || 
+                        key == 'is_active' || 
+                        key == 'submit_status' || 
+                        key == 'testplan_id' || 
+                        key == 'updatedAt' || 
+                        key == 'custom_field' || 
+                        key == 'label' || 
+                        key == 'weblinks' ||
+                        key == 'testcycles' ||
+                        key == '_id' || 
+                        key == 'version' ||
+                        key == 'Acc_id' || 
+                        key == 'lock'
+                    ) 
+                )
+                {
+                    testHistoryData.push({
+                        field: "Basic Detail - ("+key+")",
+                        original_value: obj1[key],
+                        new_value: obj2[key]
+                    })
+                }
+            }
+            else if (type == 'testcycle') 
+            {
+                if(
+                    !(
+                        key == 'created_at' || 
+                        key == 'estimated_time' || 
+                        key == 'weblinks' ||
+                        key == '_id' || 
+                        key == 'testcases' ||
+                        key == 'testplans' ||
+                        key == 'submit_status' ||
+                        key == 'is_active' ||
+                        key == 'createdAt' ||
+                        key == 'updatedAt' ||
+                        key == 'Acc_id' ||
+                        key == 'testcycle_id'
+                    ) 
+                )
+                {
+                    if(key == 'estimated_time') {
+                        testHistoryData.push({
+                            field: "Basic Detail - (Estimated Time(s))",
+                            original_value: obj1[key],
+                            new_value: obj2[key]
+                        })
+                    } else {
+                        testHistoryData.push({
+                            field: "Basic Detail - ("+key+")",
+                            original_value: obj1[key],
+                            new_value: obj2[key]
+                        })
+                    }
+                }
+            }
+        });
+
+        return [...testHistoryData, ...testcaseHistoryDataForIssues, ...testHistoryDataForWeblinks];
+    }
+
+    //to identify the difference between the test-script data
+    function testScriptDifference(oldObj, newObj){
+        var testScriptHistoryData=[];
+        if(oldObj.testscript_type != newObj.testscript_type){
+                testScriptHistoryData.push({
+                    field: "Test Scripts ("+newObj.testscript_type.replace(/_/g, ' ')+"-added)",
+                    original_value: '-',
+                    new_value: '-'
+                })
+        }
+        else{
+            if(newObj.testscript_type == 'plain_test' || newObj.testscript_type == 'bdd_gherkin_script'){
+                if(oldObj.testscript != newObj.testscript){
+                    testScriptHistoryData.push({
+                        field: "Test Scripts ("+newObj.testscript_type.replace(/_/g, ' ')+"-updated)",
+                        original_value: oldObj.testscript,
+                        new_value: newObj.testscript
+                    })
+                }
+            }
+            else{
+                let elem_old =JSON.parse(oldObj.testscript);
+                let elem_new = JSON.parse(newObj.testscript);                
+                let i=0;
+                for (item of elem_old){
+                    var nwIndex  =   elem_new.findIndex(x=>
+                        x.key_id == item.key_id
+                    );
+                    if(nwIndex == -1){
+                        testScriptHistoryData.push({
+                            field: "Test Scripts (Step-"+(i+1)+"-removed)",
+                            original_value: item['description'],
+                            new_value: '-'
+                        })
+                    }
+                    else{
+                        Object.keys(item).forEach(key => {
+                            if(item[key] != elem_new[nwIndex][key]){
+
+                                testScriptHistoryData.push({
+                                field: "Test Scripts (Step-"+(i+1)+"-updated) - ("+key.replace(/_/g, ' ')+")",
+                                original_value: item[key],
+                                new_value: elem_new[nwIndex][key]
+                                })
+                            }
+                        });
+                        elem_new.splice(nwIndex, 1);
+                    }
+                    i++;
+                }
+                for (item of elem_new){
+                    if(!(item.description == null && item.test_data == null && item.expected_output == null)){
+                        testScriptHistoryData.push({
+                            field: "Test Scripts (Step-"+(i+1)+"-added)",
+                            original_value: '-',
+                            new_value: '-'
+                        })
+                    }
+                }
+            }
+        }
+        return testScriptHistoryData;
+        
+    }
+
+
+
+    AP.cookie.read('testcaseTableColumn', function(value) { 
+        testcaseTableColumn = JSON.parse(value);
+    });
+    
+
+    AP.cookie.read('testcycleTableColumn', function(value) { 
+        testplanTableColumn = JSON.parse(value);
+    });
+    
+
+    AP.cookie.read('testcycleTableColumn', function(value) { 
+        testcycleTableColumn = JSON.parse(value);
+    });
+
+
+    AP.cookie.read('testcycleTestcaseTableColumn', function(value) { 
+        testcycleTestcaseTableColumn = JSON.parse(value);
+    });
+
+
+    AP.cookie.read('jiraUserListArray', function(value) { 
+        jiraUserListArray = JSON.parse(value);
+    });
+
+
+
+    AP.request('/rest/api/2/project', {
+        success: function (responceProjectList) {
+
+            let projectList = JSON.parse(responceProjectList)
+
+            jiraProjectListArray = [];
+
+            for (let j = 0; j < projectList.length; j++) 
+            {
+                jiraProjectListArray.push({
+                    name: projectList[j].name,
+                    id: projectList[j].id
+                })
+            }
+
+            AP.cookie.save('jiraProjectListArray', JSON.stringify(jiraProjectListArray));
+        }
+    });
+
+
+
+    AP.request('/rest/api/2/user/search?query=', {
+        success: function (responceUserList) {
+            let userList = JSON.parse(responceUserList).filter(ru => ru.accountType === "atlassian")
+
+            jiraUserListArray = [];
+
+            for (let j = 0; j < userList.length; j++) 
+            {
+                jiraUserListArray.push({
+                    name: userList[j].displayName,
+                    id: userList[j].accountId
+                })
+            }
+
+            AP.cookie.save('jiraUserListArray', JSON.stringify(jiraUserListArray));
+        }
+    });
+
+
+
+    function getFormattedDate(date) {
+        if (date <= 9) {
+            return "0" + date;
+        } else {
+            return date;
+        }
+    }
+
+
+
+
+    function getJiraUserNameByJiraId(id) 
+    {
+        let jiraUser = jiraUserListArray.filter(user => user.id == id);
+        return jiraUser[0] ? jiraUser[0].name : "User not found";
+    }
+    
+            
+
+
+    function commonOwnerSelectListing(type, isEdit=false) 
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        AP.request('/rest/api/2/user/search?query=', {
+            success: function (responceUserList) {
+
+                $('#' + type + '_owner_select').html('');
+                $('#' + type + '_owner_select').append('<option value="">Select Owner</option>');
+
+                userList = JSON.parse(responceUserList).filter(ru => ru.accountType === "atlassian")
+
+                for (let j = 0; j < userList.length; j++) {
+                    $('#' + type + '_owner_select').append('<option value="' + userList[j].accountId + '">' + userList[j].displayName + '</option>');
+                }
+
+                if(!isEdit){
+                    document.getElementById(type + '_owner_select').value = "{{userAccountId}}";
+                }
+
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+    /**
+    * Function for get Project priority details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getCommonFolderData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": '/folder/list?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&folder_category=' + type + '&domain_id=' + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    let data_list = data.res.data.folderList;
+
+                    for (let j = 0; j < data_list.length; j++) {
+                        $('#' + type + '_folder_select').append('<option value="' + data_list[j].id + '">' + data_list[j].folder_name + '</option>');
+                    }
+
+                    if("{{selectedFolderId}}" !== "null") {
+                        document.getElementById(type + '_folder_select').value = "{{selectedFolderId}}";
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+    /**
+    * Function for get Project priority details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getCommonPriorityData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": '/priority/allList?project_id={{projectId}}&user={{userAccountId}}&priority_type=' + type + '&domain_id=' + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let data_list = data.res.data.priority;
+
+                    for (let j = 0; j < data_list.length; j++) {
+                        $('#' + type + '_priority_select').append('<option value="' + data_list[j].pc_name + '">' + data_list[j].pc_name + '</option>');
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+    /**
+    * Function for get Project component details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return component data
+    */
+    function getCommonComponentData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/component/componentList?project_id={{projectId}}&user={{userAccountId}}&cp_type="+type+"&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let data_list = data.res.data;
+
+                    for (let j = 0; j < data_list.length; j++) {
+                        $('#' + type + '_component_select').append('<option value="' + data_list[j].cp_name + '">' + data_list[j].cp_name + '</option>');
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+    /**
+    * Function for get Project custom fields details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getCommonCustomFieldData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": '/customField/allList?project_id={{projectId}}&user={{userAccountId}}&cfc_type=' + type + '&domain_id=' + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    $('#' + type + 'CustomFieldDiv').html("");
+
+                    let data_list = data.res.data.customField;
+                    if (data_list.length > 0) {
+
+                        $('.' + type + 'CustomFieldDiv-head').css('display', 'block')
+
+                        let checkBoxHtml = "";
+                        for (let j = 0; j < data_list.length; j++) {
+                            let requiredCheck = '';
+                            let madatoryTag = ''
+                            let requiredCheckClass = '';
+
+                            if (data_list[j].cfc_required_flag === 1) {
+                                requiredCheck = 'required';
+                                madatoryTag = 'data-aui-validation-field';
+                                requiredCheckClass = 'required-field';
+                            }
+
+                            if (data_list[j].cfc_field_type === 'CheckBox') {
+                                $('#' + type + 'CustomFieldDiv').append('<div class="form-group">' +
+                                    '<label class="' + requiredCheckClass + '" for="' + data_list[j].id + '_' + data_list[j].domain_id + '">' + data_list[j].cfc_name + '</label>' +
+                                    '<div class="checkbox">' +
+                                    '<label class="' + requiredCheckClass + '" for="' + data_list[j].id + '_' + data_list[j].domain_id + '" style="opacity: 0;">' + data_list[j].cfc_name + '</label>'+
+                                    '<input class="checkbox" '+madatoryTag+' type="checkbox" name="' + data_list[j].cfc_name + '" id="' + data_list[j].id + '_' + data_list[j].domain_id + '" ' + requiredCheck + '>' +
+                                    '</div></div>');
+                            }
+                            else if (data_list[j].cfc_field_type === 'TextBox') {
+                                $('#' + type + 'CustomFieldDiv').append('<div class="form-group">' +
+                                    '<label class="label ' + requiredCheckClass + '">' + data_list[j].cfc_name + '</label>' +
+                                    '<input type="text" '+madatoryTag+' class="form-control text medium-field" name="' + data_list[j].cfc_name + '" placeholder="Enter ' + data_list[j].cfc_name + '" ' + requiredCheck + ' style="width: 540px;">' +
+                                    '</div>');
+                            }
+                            else if (data_list[j].cfc_field_type === 'TextArea') {
+                                $('#' + type + 'CustomFieldDiv').append('<div class="form-group">' +
+                                    '<label class="label ' + requiredCheckClass + '">' + data_list[j].cfc_name + '</label>' +
+                                    '<textarea class="textarea form-control" '+madatoryTag+' rows="7" name="' + data_list[j].cfc_name + '" style="width: 540px; height: unset !important; padding: .28125rem .5625rem !important;" ' + requiredCheck + '></textarea>' +
+                                    '</div>');
+                            }
+                        }
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+    /**
+    * Function for get Project Configuration Label details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getCommonConfigurationLabelData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/label/allList?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let label_list = data.res.data.label;
+
+                    for (let j = 0; j < label_list.length; j++) {
+                        $('#' + type + '_label_select').append('<option class="none-img" value="' + label_list[j].lc_name + '">' + label_list[j].lc_name + '</option>');
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+    /** -------------------- Project status test case Data Section ----------------- **/
+
+    /**
+    * Function for get Project status details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getCommonStatusData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/configuration/statusList?project_id={{projectId}}&user={{userAccountId}}&sc_type=" + type + "&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let data_list = data.res.data;
+
+                    jiraTestCaseStatusListArray = data_list;
+
+                    for (let j = 0; j < data_list.length; j++) {
+                        $('#' + type + '_status_select').append('<option value="' + data_list[j].sc_name + '">' + data_list[j].sc_name + '</option>');
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+    /** -------------------- Project Configuration Environment Data Section ----------------- **/
+
+    /**
+    * Function for get Project Configuration Environment details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getCommonConfigurationEnvironmentData(type) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "GET",
+            "url": "/environment/allList?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    $('#' + type + '_environment_select').html('');
+
+                    let data_list = data.res.data.environment;
+
+                    for (let j = 0; j < data_list.length; j++) {
+                        $('#' + type + '_environment_select').append('<option value="' + data_list[j].ec_name + '">' + data_list[j].ec_name + '</option>');
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+    /** -------------------- Project Configuration dataset Data Section ----------------- **/
+
+    /**
+    * Function for get Project Configuration dataset details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getCommonConfigurationDatasetData(type) {
+        $.ajax({
+            "type": "GET",
+            "url": "/dataset/allList?project_id={{projectId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let data_list = data.res.data.dataset;
+
+                    let select_dataset_box = '<aui-select id="test-data-selection" name="user_input" placeholder="User Input" style="margin-right: 30px;" onchange="updateSelectedValueToInputBox()">';
+
+                    for (let j = 0; j < data_list.length; j++) {
+                        select_dataset_box += '<aui-option>'+data_list[j].dc_name+'</aui-option>';
+                    }
+
+                    select_dataset_box += '</aui-select>';
+
+                    $('#testcase_dataset_select_box').html(select_dataset_box);
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project Test Case, Plan and Cycle Creation Section ----------------- **/
+
+    /**
+    * Function for get Project Test Case, Plan and Cycle Creation Section from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    * @return form data
+    */
+    function submitCreationDataByType(type, isReload=true) 
+    {
+        let updatePresent = document.getElementById("updateID");
+        let submitType = document.getElementById("submitFormType");        
+
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        var formFieldsData = {};
+        var customFieldsData = [];
+
+        formFieldsData['project_id'] = parseInt("{{projectId}}");
+        formFieldsData['acct_id'] = "{{userAccountId}}";
+        formFieldsData['test_key'] = "{{projectKey}}";
+        formFieldsData['domain_id'] = domain_id;
+
+        $('#' + type + 'CustomFieldDiv').find("input[name]").each(function (index, node) {
+            let value = node.value;
+
+            if (node.type === 'checkbox') {
+                let checkedChekStatus = document.getElementById(node.id);
+                if (checkedChekStatus.checked) {
+                    value = 1
+                } else {
+                    value = 0
+                }
+            }
+
+            customFieldsData.push({
+                'id': node.id,
+                'cfc_name': node.name,
+                'cfc_field_type': node.type,
+                'cfc_required_flag': node.required,
+                'value': value,
+                'cfc_options': null
+            });
+        });
+
+        $('#' + type + 'CustomFieldDiv').find("textarea[name]").each(function (index, node) {
+            customFieldsData.push({
+                'id': node.id,
+                'cfc_name': node.name,
+                'cfc_field_type': node.type,
+                'cfc_required_flag': node.required,
+                'value': node.value,
+                'cfc_options': null
+            });
+        });
+
+        $('#'+type+'BasicDetails').find("input[name]").each(function (index, node) {
+            formFieldsData[node.name] = node.value;
+        });
+
+        $('#'+type+'BasicDetails').find("select[name]").each(function (index, node) {
+            formFieldsData[node.name] = node.value;
+        });
+
+        $('#'+type+'BasicDetails').find("textarea[name]").each(function (index, node) {
+            formFieldsData[node.name] = node.value;
+        });
+
+        if($('#' + type + '_label_select').val() !== null) {
+            formFieldsData['label'] = JSON.stringify($('#' + type + '_label_select').val());
+        } else {
+            formFieldsData['label'] = JSON.stringify([]);
+        }
+
+        if (type === 'testplan') {
+            formFieldsData['custom_field'] = JSON.stringify(customFieldsData);
+        } else {
+            formFieldsData['customFields'] = JSON.stringify(customFieldsData);
+        }
+
+        formFieldsData['submit_status'] = submitType.value === 'draft' ? '0' : '1';
+
+        if(updatePresent) {
+            formFieldsData[type+'_id'] = updatePresent.value;
+        } else {
+            if (type == 'testcase') {
+                formFieldsData['lock'] = false;
+            }
+        }
+
+        if (type == 'testcase' && updatePresent) 
+        {           
+            let btnLockValue = document.getElementById('lockTestCases');
+
+            if (btnLockValue.value === "lock") {
+                formFieldsData['lock'] = true;
+            } else {
+                formFieldsData['lock'] = false;
+            }
+
+        }
+
+        if(type === 'testcase')
+        {
+            formFieldsData['testscript_type'] = testScriptType;
+
+            if (testScriptType === "step_by_step")
+            {
+                formFieldsData['testscript'] = JSON.stringify(testScriptStepData);
+                formFieldsData['test_data'] = JSON.stringify(testScriptTestDataRow);
+                formFieldsData['parameters'] = JSON.stringify(testScriptParameters);
+            }
+            else if (testScriptType === "plain_test")
+            {
+                formFieldsData['testscript'] = testScriptPlainTestData;
+                formFieldsData['test_data'] = JSON.stringify([]);
+                formFieldsData['parameters'] = JSON.stringify([]);
+            }
+            else if (testScriptType === "bdd_gherkin_script")
+            {
+                formFieldsData['testscript'] = testScriptBddGherkinScriptTestData;
+                formFieldsData['test_data'] = JSON.stringify([]);
+                formFieldsData['parameters'] = JSON.stringify([]);
+            }
+            formFieldsData['issues'] = traceabilityIssues;
+        }
+        else if(type === 'testplan')
+        {
+            let filterTestplanTestCycleSelectedList = testplanTestCycleSelectedList.map(testcycle => {
+				return testcycle._id;
+			})
+
+            formFieldsData['testcycles'] = filterTestplanTestCycleSelectedList;
+        }
+
+        formFieldsData['weblinks'] = JSON.stringify(traceabilityWeblinks);
+
+        const formData = new FormData();        
+        let testAttachment = [];
+        let testCycleTestCaseHistory=[];
+        
+        if(type === 'testcase' || type === 'testplan')
+        {
+            if(attach_file_list.length > 0)
+            {
+                let i=0;
+                for (const file of attach_file_list) 
+                {                    
+                    if(file.operation == 'new')
+                    {
+                        formData.append('file_'+i, file['file']);
+                        file['file']=null;
+
+                        testAttachment.push({
+                            field: "Attachment - (added - "+file.file_name+")",
+                            original_value: '-',
+                            new_value: '-'
+                        })
+                    }
+                    else if(file.operation == 'remove'){
+                        testAttachment.push({
+                            field: "Attachment - (remove - "+file.file_name+")",
+                            original_value: '-',
+                            new_value: '-'
+                        })
+                    }
+                    i++;
+                }
+            }
+
+            formFieldsData['attachments'] = attach_file_list;
+        }
+        else if (type === 'testcycle'){
+            formFieldsData['issues'] = traceabilityIssues;
+
+            let tcycle_tcase=[];
+            testCycleCaseDetail.viewList.forEach(elem => {
+                if(elem['action'] != 'remove'){
+                    tcycle_tcase.push({
+                        testcase_id: elem.id,
+                        version:elem.version,
+                        tester: elem.tester,
+                        doc_id: elem.doc_id
+                    });
+                }
+                if(!!elem['action']){
+                    testCycleTestCaseHistory.push({
+                            field: "Test-case - ("+elem['action']+" - "+elem.name+")",
+                            original_value: '-',
+                            new_value: '-'
+                    });
+                }
+            });
+
+            formFieldsData['testcases'] = tcycle_tcase;
+            formFieldsData['testplans'] = [];
+
+            let filterTestcycleTestPlanSelectedList = testcycleTestPlanSelectedList.map(testcycle => {
+				return testcycle._id;
+			})
+
+            formFieldsData['testplans'] = filterTestcycleTestPlanSelectedList;
+            formFieldsData['last_execution']= null;            
+        }
+
+        if (formFieldsData['folder_id'] === "") {
+            formFieldsData['folder_id'] = null;
+        }
+        
+
+        if (updatePresent) 
+        { 
+            let testScriptData = [];
+            let fieldData=[];
+            if(type === 'testcase')
+            {
+                testScriptData = testScriptDifference(editTestDataForCompare, formFieldsData);
+                fieldData= [...difference(editTestDataForCompare, formFieldsData, type), ...testAttachment, ...testScriptData];
+            }
+            if(type==="testplan"){
+                 fieldData= [...difference(editTestDataForCompare, formFieldsData, type), ...testAttachment, ...testScriptData, ...testCycleTestCaseHistory];
+            }
+            if( type === 'testcycle'){
+                formFieldsData['last_execution']= !editTestDataForCompare['last_execution']?null:editTestDataForCompare['last_execution'];
+                fieldData= [...difference(editTestDataForCompare, formFieldsData, type), ...testScriptData, ...testCycleTestCaseHistory];    
+            }
+            formFieldsData['field_data'] = JSON.stringify(fieldData);
+        }
+
+        formFieldsData['description'] = CKEDITOR.instances[type+'_description'].getData();
+
+        console.log('form data' , formFieldsData);
+
+        formData.append('data', JSON.stringify(formFieldsData)) 
+        
+        $.ajax({
+            "type": updatePresent ? "PUT" : "POST",
+            "url": "/" + type + "?user={{userAccountId}}",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": formData,
+            "processData": false,
+            "contentType": false,
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    let messageDisplay = updatePresent ? 'Information Updated successfully' : 'Information Added successfully';
+                    toaster('Information Added successfully');
+
+                    let selected_form_folder_id = $('#' + type + '_folder_select').val();
+                    selectedFolderId = selected_form_folder_id; 
+                    
+                    if(isReload)
+                    {
+                        if (type === 'testcase') {
+                            window.location.href = "/project/testCasesView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + selected_form_folder_id + "&page=list"
+                        } else if (type === 'testcycle') {
+                            window.location.href = "/project/testCycleView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + selected_form_folder_id + "&page=list"
+                        } else if (type === 'testplan') {
+                            window.location.href = "/project/testPlanView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + selected_form_folder_id + "&page=list"
+                        }
+                    }
+                    else
+                    {
+                        editTest(type)
+                    }
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function cloneTestByType(type, folder_id, id) {
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        let key = type+"_id";
+
+        let data = {
+            'acct_id': "{{userAccountId}}",
+            'project_id': "{{projectId}}",
+            'domain_id': domain_id,
+        }
+
+        data[key] = id
+
+        $.ajax({
+            "type": "POST",
+            "url": "/"+type+"/clone?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": data,
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    toaster('Clone created successfully');
+                    selectedFolderId = folder_id;
+
+                    if(folder_id === "" || folder_id === "null" || folder_id === null) {
+                        getFolderListByDataType(type)
+                    } else {
+                        getFolderListByDataType(type, false, folder_id)
+                    }
+
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+    /** -------------------- Project status test case Data Section ----------------- **/
+
+    /**
+    * Function for get Project status details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getFolderListByDataType(type, loadTest = true, folder_id = "") {
+        $('#action-loader-wrapper').css('display', 'flex');
+        selectedFolderId = folder_id;
+
+        if (type === 'testcase') {
+            $(".create-test-button").attr("href", "/project/testCasesView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + folder_id + "&page=add");
+        }
+        else if (type === 'testcycle') {
+            $(".create-test-button").attr("href", "/project/testCycleView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + folder_id + "&page=add");
+        }
+        else if (type === 'testplan') {
+            $(".create-test-button").attr("href", "/project/testPlanView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + folder_id + "&page=add");
+        }
+
+        if(type === "testcase" || type === "testplan") {
+            updateTestTableColumBestOnSelection();
+        }
+        $.ajax({
+            "type": "GET",
+            "url": "/project/idOtherUser?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#loader-wrapper').css('display', 'none');
+                $('#wrapper').remove();
+            },
+            "success": function (data) {
+
+                if (data.res.status === 200) 
+                {
+                    projectOldHistory = true;
+
+                    $('#projectRegionSelector').css('pointer-events', 'none');
+
+                    otherUserApiCallCheck = 1;
+
+                    if (data.res.data.inquestPro_enabled === 1) {
+                        enableInquestPermissionToggle = true;
+                    }
+
+                    let userRole = null;
+                    let userRoleCheck = false;
+
+                    if (data.res.data.userRole && data.res.data.userRole[0]) {
+                        userRole = data.res.data.userRole[0];
+                        userRoleCheck = true;
+                    }
+
+                    if (userRoleCheck) 
+                    {
+                        // test case permission
+                        allow_testcase_create = userRole.allow_testcase_create;
+                        allow_testcase_delete = userRole.allow_testcase_delete;
+                        allow_testcase_execute = userRole.allow_testcase_execute;
+                        testcase_lock = userRole.testcase_lock;
+                        allow_testcase_edit = userRole.allow_testcase_edit;
+
+                        if (userRole.allow_testcase_read === 1) {
+                            $("#li-testcases").css("display", "block");
+                        }
+                        if (userRole.allow_testcase_create === 1) {
+                            $(".create-testcase-button").css("display", "inline");
+                        }
+                        if (userRole.allow_testcase_folders === 1) {
+                            $("#addFolderButton").css("display", "block");
+                            $(".folder_action").css("display", "block");
+                            $("#addFolderButtonImg").css("display", "block");
+                        }
+
+                        // test cycle permission
+                        allow_testcycle_create = userRole.allow_testcycle_create;
+                        allow_testcycle_delete = userRole.allow_testcycle_delete;
+                        allow_testcycle_edit = userRole.allow_testcycle_edit;
+                        allow_testcycle_execute = userRole.allow_testcycle_execute;
+
+                        if (userRole.allow_testcycle_view === 1) {
+                            $("#li-testcycle").css("display", "block");
+                        }
+                        if (userRole.allow_testcycle_create === 1) {
+                            $(".create-testcycle-button").css("display", "inline");
+                        }
+                        if (userRole.allow_testcycle_folders === 1) {
+                            $("#addFolderButton").css("display", "block");
+                            $(".folder_action").css("display", "block");
+                            $("#addFolderButtonImg").css("display", "block");
+                        }
+
+                        // test plan permission
+                        allow_testplan_create = userRole.allow_testplan_create;
+                        allow_testplan_delete = userRole.allow_testplan_delete;
+                        allow_testplan_edit = userRole.allow_testplan_edit;
+
+                        if (userRole.allow_testplan_view === 1) {
+                            $("#li-testplan").css("display", "block");
+                        }
+                        if (userRole.allow_testplan_create === 1) {
+                            $(".create-testplan-button").css("display", "inline");
+                        }
+                        if (userRole.allow_testplan_folders === 1) {
+                            $("#addFolderButton").css("display", "block");
+                            $(".folder_action").css("display", "block");
+                            $("#addFolderButtonImg").css("display", "block");
+                        }
+
+                        // report permission
+                        if (userRole.allow_reports_create === 1) {
+                            $("#li-report").css("display", "block");
+                        }
+
+                        // configuration permission
+                        if (userRole.allow_configuration === 1) {
+                            $("#li-configuration").css("display", "block");
+                            $("#li-globalsetting").css("display", "block");
+                        }
+                    }
+                }
+                else
+                {
+                    $('#addFolderButton').css('display', 'block');
+                    $(".folder_action").css("display", "block");
+                    $('#addFolderInputBox').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+
+                if(type === "testcase" || type === "testplan") {
+                    updateTestTableColumBestOnSelection();
+                }
+
+                $.ajax({
+                    "type": "GET",
+                    "url": "/folder/list?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&folder_category=" + type + "&domain_id=" + domain_id,
+                    "headers": {
+                        'Authorization': "JWT "+user_token,
+                    },
+                    "dataType": "json",
+                    "error": function (xhr, textStatus, errorThrown) {
+                        toaster('Error while fetching project details', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    },
+                    "success": function (data) {
+                        if (data.res.status === 200) {
+
+                            let typeString = "'" + type + "'";
+                            folderList = data.res.data.folderList;
+
+                            $('#' + type + '_folder_list').html('');
+                            if (folderList.length > 0) {
+                                for (let i = 0; i < folderList.length; i++) {
+                                    $('#' + type + '_folder_list').append('<li id="sub_li_' + folderList[i].id + '" class="sub_section_class">' +
+                                        '<span id="folderInfoBox' + folderList[i].id + '" style="display: flex;">'+
+                                        '<span class="folder_info" onclick="getFolderClickListByDataTypeAndFolderId(' + typeString + ', ' + folderList[i].id + ')">' +
+                                        '<img class="folder-img" src={{furl "/images/folder.svg"}} />' +
+                                        '<a href="javascript:void(0);" title="' + folderList[i].folder_name + '" class="folder_name">' + folderList[i].folder_name + '</a>' +
+                                        '<aui-badge style="margin: 12px 0px;">'+folderList[i].test_count+'</aui-badge>'+
+                                        '</span>'+
+                                        '<a class="folder_action" data-aui-trigger aria-controls="folder-action-box-' + folderList[i].id + '" href="#more-details"><img class="action-img" src={{furl "/images/menu.svg"}} /></a>'+
+                                        '<aui-inline-dialog id="folder-action-box-' + folderList[i].id + '" aria-label="Folder action dialog">'+
+                                        '<a href="javascript:void(0);" onclick="editFolderByType(' +typeString+ ', ' + folderList[i].id + ')">Edit</a>'+
+                                        '<a href="javascript:void(0);" onclick="deleteFolderByType(' +typeString+ ', ' + folderList[i].id + ')">Delete</a>'+
+                                        '</aui-inline-dialog>'+
+                                        '</span>'+
+                                        '<div id="editFolderNameInputBox' + folderList[i].id + '" style="display: none;">'+
+                                        '<form class="aui" action="javascript:void(0);" onsubmit="editFolderNameFormSubmit(' + typeString + ', ' + folderList[i].id + ')" style="display: flex; margin: 0 9px; align-items: center;">'+                     
+                                        '<input class="text medium-field" type="text" id="folderName' + folderList[i].id + '" name="folderName" value="' + folderList[i].folder_name + '" required="required"/>'+
+                                        '<button type="submit" style="border: none;padding: 0;">'+
+                                        '<img src={{furl "/images/folder-save.svg"}} />'+
+                                        '</button>'+
+                                        '</form>'+
+                                        '<a href="javascript:void(0)" onclick="disabledEditFolderBoxPopup('+typeString+', '+folderList[i].id +')" style="float: right;margin-right: 9px;font-size: 10.5px;color: #007bff;">cancel</a>'+
+                                        '</div>'+
+                                        '</li>');
+                                }
+                            }
+
+                            if (loadTest) 
+                            {
+                                const testDetail = data.res.data.testDetail;
+
+                                currentTestList = testDetail;
+                                selectedTestList = [];
+
+                                if (type === 'testcase') 
+                                {
+                                    selectedTestCaseList = testDetail;
+                                    getTestCaseList(testDetail, type, "deleteTestByType")
+                                    updateTableColumnFilterValue();
+                                    updateTestTableColumBestOnSelection();
+                                }
+                                else if (type === 'testcycle') 
+                                {
+                                    selectedTestCycleList = testDetail;
+                                    getTestCycleList(testDetail, type, "deleteTestByType")
+                                    updateTableColumnFilterValue();
+                                    updateTestTableColumBestOnSelection();
+                                }
+                                else if (type === 'testplan') 
+                                {
+                                    selectedTestPlanList = testDetail;
+                                    getTestPlanList(testDetail, type, "deleteTestByType")
+                                    updateTableColumnFilterValue();
+                                    updateTestTableColumBestOnSelection();
+                                }
+                            }
+                            else {
+                                getFolderClickListByDataTypeAndFolderId(type, folder_id)
+                            }
+
+
+
+                            
+
+                            $('#action-loader-wrapper').css('display', 'none');
+
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+    function updateTestCaseListing()
+    {
+        var search = $('#testcaseSearchKeyword').val();
+        let tempData = selectedTestCaseList.filter(t => t.name.toLowerCase().match(search.toLowerCase()));
+
+        if(search == "") {
+            tempData = selectedTestCaseList
+        }
+
+        getTestCaseList(tempData, "testcase", "deleteTestByType")
+        updateTableColumnFilterValue();
+        updateTestTableColumBestOnSelection();
+    }
+
+
+
+
+    function updateTestCaseListingWithFilter(ff = [])
+    {
+        let tempData = selectedTestCaseList;
+
+        if(ff.length > 0 && selectedTestCaseList.length > 0)
+        {
+            for (let i = 0; i < ff.length; i++) {
+                
+                if(ff[i].filter == "Name" && ff[i].value !== 'All')
+                {
+                    tempData = tempData.filter(t => t.name.toLowerCase().match(ff[i].value.toLowerCase()));
+                }
+                
+                if(ff[i].filter == "Version" && ff[i].value !== 'All')
+                {
+                    tempData = tempData.filter(t => t.version.toLowerCase().match(ff[i].value.toLowerCase()));
+                }
+                
+                if(ff[i].filter == "Priority" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.priority) !== -1);
+                }
+                
+                if(ff[i].filter == "Owner" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.owner) !== -1);
+                }
+                
+                if(ff[i].filter == "Status" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.status) !== -1);
+                }
+                
+                if(ff[i].filter == "Created-On" && ff[i].value !== 'All')
+                {
+                    let date_arr = ff[i].value.split(" to ");
+                    tempData = tempData.filter(t => {
+                        return new Date(t.created_at).getTime() >= new Date(date_arr[0]).getTime() &&
+                            new Date(t.created_at).getTime() <= new Date(date_arr[1]).getTime();
+                    });
+                }
+                
+                if(ff[i].filter == "Last-Execution" && ff[i].value !== 'All')
+                {
+                    let date_arr = ff[i].value.split(" to ");
+                    tempData = tempData.filter(t => {
+                        return new Date(t.last_execution).getTime() >= new Date(date_arr[0]).getTime() &&
+                            new Date(t.last_execution).getTime() <= new Date(date_arr[1]).getTime();
+                    });
+                }
+            }
+        }
+
+        getTestCaseList(tempData, "testcase", "deleteTestByType");
+        updateTableColumnFilterValue();
+        updateTestTableColumBestOnSelection();
+    }
+
+
+
+
+    function updateTestCycleListing()
+    {
+        var search = $('#testcycleSearchKeyword').val();
+        let tempData = selectedTestCycleList.filter(t => t.name.toLowerCase().match(search.toLowerCase()));
+
+        if(search == "") {
+            tempData = selectedTestCycleList
+        }
+
+        getTestCycleList(tempData, "testcycle", "deleteTestByType")
+        updateTableColumnFilterValue();
+        updateTestTableColumBestOnSelection();
+    }
+
+
+
+
+    function updateTestCycleListingWithFilter(ff = [])
+    {
+        let tempData = selectedTestCycleList;
+
+        if(ff.length > 0 && selectedTestCycleList.length > 0)
+        {
+            for (let i = 0; i < ff.length; i++) {
+                
+                if(ff[i].filter == "Name" && ff[i].value !== 'All')
+                {
+                    tempData = tempData.filter(t => t.name.toLowerCase().match(ff[i].value.toLowerCase()));
+                }
+                
+                if(ff[i].filter == "Environment" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.environment) !== -1);
+                }
+                
+                if(ff[i].filter == "Owner" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.owner) !== -1);
+                }
+                
+                if(ff[i].filter == "Status" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.status) !== -1);
+                }
+                
+                if(ff[i].filter == "Start-Date" && ff[i].value !== 'All')
+                {
+                    let date_arr = ff[i].value.split(" to ");
+                    tempData = tempData.filter(t => {
+                        return new Date(t.planned_start_date).getTime() >= new Date(date_arr[0]).getTime() &&
+                            new Date(t.planned_start_date).getTime() <= new Date(date_arr[1]).getTime();
+                    });
+                }
+                
+                if(ff[i].filter == "end-Date" && ff[i].value !== 'All')
+                {
+                    let date_arr = ff[i].value.split(" to ");
+                    tempData = tempData.filter(t => {
+                        return new Date(t.planned_end_date).getTime() >= new Date(date_arr[0]).getTime() &&
+                            new Date(t.planned_end_date).getTime() <= new Date(date_arr[1]).getTime();
+                    });
+                }
+                
+                if(ff[i].filter == "Last-Execution" && ff[i].value !== 'All')
+                {
+                    let date_arr = ff[i].value.split(" to ");
+                    tempData = tempData.filter(t => {
+                        return new Date(t.last_execution).getTime() >= new Date(date_arr[0]).getTime() &&
+                            new Date(t.last_execution).getTime() <= new Date(date_arr[1]).getTime();
+                    });
+                }
+           }
+        }
+
+        getTestCycleList(tempData, "testcycle", "deleteTestByType");
+        updateTableColumnFilterValue();
+        updateTestTableColumBestOnSelection();
+    }
+
+
+
+
+    function updateTestPlanListing()
+    {
+        var search = $('#testplanSearchKeyword').val();
+        let tempData = selectedTestPlanList.filter(t => t.name.toLowerCase().match(search.toLowerCase()));
+
+        if(search == "") {
+            tempData = selectedTestPlanList
+        }
+
+        getTestPlanList(tempData, "testplan", "deleteTestByType")
+        updateTableColumnFilterValue();
+        updateTestTableColumBestOnSelection();
+    }
+
+
+
+
+    function updateTestPlanListingWithFilter(ff = [])
+    {
+        let tempData = selectedTestPlanList;
+
+        if(ff.length > 0 && selectedTestPlanList.length > 0)
+        {
+            for (let i = 0; i < ff.length; i++) {
+                
+                if(ff[i].filter == "Name" && ff[i].value !== 'All')
+                {
+                    tempData = tempData.filter(t => t.name.toLowerCase().match(ff[i].value.toLowerCase()));
+                }
+                
+                if(ff[i].filter == "Owner" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.owner) !== -1);
+                }
+                
+                if(ff[i].filter == "Status" && ff[i].value.length > 0)
+                {
+                    tempData = tempData.filter(t => ff[i].value.indexOf(t.status) !== -1);
+                }
+                
+                if(ff[i].filter == "Created-On" && ff[i].value !== 'All')
+                {
+                    let date_arr = ff[i].value.split(" to ");
+                    tempData = tempData.filter(t => {
+                        return new Date(t.created_at).getTime() >= new Date(date_arr[0]).getTime() &&
+                            new Date(t.created_at).getTime() <= new Date(date_arr[1]).getTime();
+                    });
+                }
+                
+                if(ff[i].filter == "Last-Execution" && ff[i].value !== 'All')
+                {
+                    let date_arr = ff[i].value.split(" to ");
+                    tempData = tempData.filter(t => {
+                        return new Date(t.last_execution).getTime() >= new Date(date_arr[0]).getTime() &&
+                            new Date(t.last_execution).getTime() <= new Date(date_arr[1]).getTime();
+                    });
+                }
+           }
+        }
+
+        getTestPlanList(tempData, "testplan", "deleteTestByType")
+        updateTableColumnFilterValue();
+        updateTestTableColumBestOnSelection();
+    }
+
+
+
+
+    /** -------------------- Project status test case Data Section ----------------- **/
+
+    /**
+    * Function for get Project status details from inquestPRO DB
+    *
+    * @param {{token}}
+    * @param {{userAccountId}}
+    * @param {{projectId}}
+    * @param domain_id
+    * @return Project data
+    */
+    function getFolderClickListByDataTypeAndFolderId(type, folder_id) {
+
+        if(type === "testcase" || type === "testplan") {
+            updateTestTableColumBestOnSelection();
+        }
+
+        selectedFolderId = folder_id;
+
+        if (type === 'testcase') {
+            $(".create-test-button").attr("href", "/project/testCasesView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + folder_id + "&page=add");
+        }
+        else if (type === 'testcycle') {
+            $(".create-test-button").attr("href", "/project/testCycleView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + folder_id + "&page=add");
+        }
+        else if (type === 'testplan') {
+            $(".create-test-button").attr("href", "/project/testPlanView?projectId={{projectId}}&projectKey={{projectKey}}&jwt="+user_token+"&user={{userAccountId}}&selectedFolderId=" + folder_id + "&page=add");
+        }
+
+        $('#action-loader-wrapper').css('display', 'flex');
+        
+        $.ajax({
+            "type": "GET",
+            "url": "/folder/subFolder/list?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&folder_category=" + type + "&domain_id=" + domain_id + "&parent_folder_id=" + folder_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+
+                    let typeString = "'" + type + "'";
+
+                    $(".sub_section_class").removeClass("sub_active");
+                    $("#sub_li_" + folder_id).addClass("sub_active");
+                    const testDetail = data.res.data.testDetail;
+
+                    currentTestList = testDetail;
+                    selectedTestList = [];
+
+                    if (type === 'testcase') {
+                        getTestCaseList(testDetail, type, "deleteFolderTestByType", folder_id)
+                        updateTableColumnFilterValue();
+                        updateTestTableColumBestOnSelection();
+                    }
+                    else if (type === 'testcycle') {
+                        getTestCycleList(testDetail, type, "deleteFolderTestByType", folder_id)
+                        updateTableColumnFilterValue();
+                        updateTestTableColumBestOnSelection();
+                    }
+                    else if (type === 'testplan') {
+                        getTestPlanList(testDetail, type, "deleteFolderTestByType", folder_id);
+                        updateTableColumnFilterValue();
+                        updateTestTableColumBestOnSelection();
+                    }
+
+                    $('#addFolderButton').css('display', 'block');
+                    $('#addFolderInputBox').css('display', 'none');
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+    function enabledAddFolderBox() {
+        $('#addFolderButton').css('display', 'none');
+        $('#addFolderInputBox').css('display', 'block');
+    }
+
+
+
+
+    function disabledAddFolderBoxPopup() {
+        $('#addFolderButton').css('display', 'block');
+        $('#addFolderInputBox').css('display', 'none');
+        $('#folderName').val('');
+    }
+
+
+
+
+    function disabledEditFolderBoxPopup(type, folder_id) {
+        $('#folderInfoBox'+folder_id).css('display', 'flex');
+        $('#editFolderNameInputBox'+folder_id).css('display', 'none');
+
+        $('#' + type + '_folder_list').html('');
+        
+        let typeString = "'" + type + "'";
+
+        if (folderList.length > 0) {
+            for (let i = 0; i < folderList.length; i++) {
+                $('#' + type + '_folder_list').append('<li id="sub_li_' + folderList[i].id + '" class="sub_section_class">' +
+                    '<span id="folderInfoBox' + folderList[i].id + '" style="display: flex;">'+
+                    '<span class="folder_info" onclick="getFolderClickListByDataTypeAndFolderId(' + typeString + ', ' + folderList[i].id + ')">' +
+                    '<img class="folder-img" src={{furl "/images/folder.svg"}} />' +
+                    '<a href="javascript:void(0);" title="' + folderList[i].folder_name + '" class="folder_name">' + folderList[i].folder_name + '</a>' +
+                    '<aui-badge style="margin: 12px 0px;">'+folderList[i].test_count+'</aui-badge>'+
+                    '</span>'+
+                    '<a class="folder_action" data-aui-trigger aria-controls="folder-action-box-' + folderList[i].id + '" href="#more-details"><img class="action-img" src={{furl "/images/menu.svg"}} /></a>'+
+                    '<aui-inline-dialog id="folder-action-box-' + folderList[i].id + '" aria-label="Folder action dialog">'+
+                    '<a href="javascript:void(0);" onclick="editFolderByType(' +typeString+ ', ' + folderList[i].id + ')">Edit</a>'+
+                    '<a href="javascript:void(0);" onclick="deleteFolderByType(' +typeString+ ', ' + folderList[i].id + ')">Delete</a>'+
+                    '</aui-inline-dialog>'+
+                    '</span>'+
+                    '<div id="editFolderNameInputBox' + folderList[i].id + '" style="display: none;">'+
+                    '<form class="aui" action="javascript:void(0);" onsubmit="editFolderNameFormSubmit(' + typeString + ', ' + folderList[i].id + ')" style="display: flex; margin: 0 9px; align-items: center;">'+                     
+                    '<input class="text medium-field" type="text" id="folderName' + folderList[i].id + '" name="folderName" value="' + folderList[i].folder_name + '" required="required"/>'+
+                    '<button type="submit" style="border: none;padding: 0;">'+
+                    '<img src={{furl "/images/folder-save.svg"}} />'+
+                    '</button>'+
+                    '</form>'+
+                    '<a href="javascript:void(0)" onclick="disabledEditFolderBoxPopup('+typeString+', '+folderList[i].id +')" style="float: right;margin-right: 9px;font-size: 10.5px;color: #007bff;">cancel</a>'+
+                    '</div>'+
+                    '</li>');
+            }
+        }
+    }
+
+
+
+
+    function deleteFolderByType(type, folder_id) {
+        $('#action-loader-wrapper').css('display', 'flex');
+        $.ajax({
+            "type": "DELETE",
+            "url": "/folder?project_id={{projectId}}&user={{userAccountId}}&folder_id=" + folder_id + "&domain_id=" + domain_id,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    if(selectedFolderId === "" || selectedFolderId === "null" || selectedFolderId === null) {
+                        getFolderListByDataType(type);
+                    } else {
+                        if(folder_id === selectedFolderId) {
+                            getFolderListByDataType(type);
+                        } else {
+                            getFolderListByDataType(type, false, selectedFolderId);
+                        }
+                    }
+                    toaster('Folder deleted successfully');
+                } else if(data.res.status === 401 && data.res.message === "Folder can not be delete") {
+                    toaster('Folder can not be deleted', 'warning');
+                }
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+    }
+
+
+
+
+    function editFolderByType(type, folder_id) {
+        
+        $('#folderInfoBox'+folder_id).css('display', 'none');
+        $('#editFolderNameInputBox'+folder_id).css('display', 'block');
+    }
+
+
+
+
+    function addNewFolderFormSubmit(type) {
+        var folder_name = $('#folderName').val();
+
+        if (folder_name !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "POST",
+                "url": "/folder?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'acct_id': "{{userAccountId}}",
+                    'project_id': "{{projectId}}",
+                    'domain_id': domain_id,
+                    'folder_name': folder_name,
+                    'folder_category': type,
+                    'parent_folder_id': ""
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        $('#folderName').val("");
+                        getFolderListByDataType(type)
+                        toaster('New folder created successfully');
+                        $('#action-loader-wrapper').css('display', 'none');
+                        $('#addFolderButton').css('display', 'block');
+                        $('#addFolderInputBox').css('display', 'none');
+                    }
+                }
+            });
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+
+
+
+
+    function editFolderNameFormSubmit(type, folder_id) {
+        var folder_name = $('#folderName'+folder_id).val();
+
+        if (folder_name !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "PUT",
+                "url": "/folder?user={{userAccountId}}",
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'acct_id': "{{userAccountId}}",
+                    'project_id': "{{projectId}}",
+                    'domain_id': domain_id,
+                    'folder_id': folder_id,
+                    'folder_name': folder_name,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        if(selectedFolderId === "" || selectedFolderId === "null" || selectedFolderId === null) {
+                            getFolderListByDataType(type);
+                        } else {
+                            getFolderListByDataType(type, false, selectedFolderId);
+                        }
+                        toaster('Folder updated successfully');
+                    }
+                }
+            });
+        }
+        else {
+            toaster('Please enter required details', 'warning');
+        }
+    }
+
+
+
+
+
+
+    function funMsToTimeConv(ms) {
+        var seconds = (ms / 1000);
+        var minutes = (ms / (1000 * 60)).toFixed(1);
+        var hours = (ms / (1000 * 60 * 60)).toFixed(1);
+        var days = (ms / (1000 * 60 * 60 * 24)).toFixed(1);
+
+        if (seconds < 60) {
+            return seconds + " s";
+        } else if (minutes < 60) {
+            return minutes + " m";
+        } else if (hours < 24) {
+            return hours + " h";
+        } else {
+            return days + " d"
+        }
+    }
+
+
+
+
+
+    function deleteTestByType(type, id) {
+        if (id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/" + type + "?user={{userAccountId}}&acct_id={{userAccountId}}&project_id={{projectId}}&" + type + "_id=" + id + "&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getFolderListByDataType(type)
+                        toaster('Deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+
+
+    function deleteFolderTestByType(type, folder_id, id) {
+        if (id !== "") {
+            $('#action-loader-wrapper').css('display', 'flex');
+            $.ajax({
+                "type": "DELETE",
+                "url": "/" + type + "?user={{userAccountId}}&acct_id={{userAccountId}}&project_id={{projectId}}&" + type + "_id=" + id + "&domain_id=" + domain_id,
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "dataType": "json",
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while fetching project details', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if (data.res.status === 200) {
+                        getFolderListByDataType(type, false, folder_id);
+                        toaster('Deleted successfully');
+                    }
+                }
+            });
+        }
+    }
+
+
+
+    function redirectTestEditPage(type, folder_id = "", editId) 
+    {
+        if (type === 'testcase') {
+            window.location.href = "/project/testCasesView?projectId={{projectId}}&jwt="+user_token+"&projectKey={{projectKey}}&selectedFolderId=" + folder_id + "&user={{userAccountId}}&page=edit&editId=" + editId;
+        }
+        else if (type === 'testcycle') {
+            window.location.href = "/project/testCycleView?projectId={{projectId}}&jwt="+user_token+"&projectKey={{projectKey}}&selectedFolderId=" + folder_id + "&user={{userAccountId}}&page=edit&editId=" + editId;
+        }
+        else if (type === 'testplan') {
+            window.location.href = "/project/testPlanView?projectId={{projectId}}&jwt="+user_token+"&projectKey={{projectKey}}&selectedFolderId=" + folder_id + "&user={{userAccountId}}&page=edit&editId=" + editId;
+        }
+    }
+
+
+
+    function submitTestCaseExcution()
+    {
+        let version = $('#testcase_version_select').val();
+        let environment = $('#testcase_environment_select').val();
+        let owner = $('#testcase_owner_select_2').val();
+        let folder_id = $('#hidden_folder_id').val();
+        let editId = $('#hidden_editId').val();
+        
+        window.location.href = "/project/testCasesView?projectId={{projectId}}&jwt="+user_token+"&projectKey={{projectKey}}&version=" + version + "&environment=" + environment + "&owner=" + owner + "&selectedFolderId=" + folder_id + "&user={{userAccountId}}&page=execute&executeId=" + editId;
+    }
+
+
+
+    function redirectTestCaseExecutionPage(type, folder_id = "", editId, title="", version="", owner)
+    {
+        if(getJiraUserNameByJiraId(owner) === 'User not found'){
+            toaster('Please select the owner for execution.', 'error');
+            return false;
+        }
+        $('#action-loader-wrapper').css('display', 'flex');
+        AP.request('/rest/api/2/user/search?query=', {
+            success: function (responceUserList) {
+
+                $('#testcase_owner_select_2').html('');
+
+                userList = JSON.parse(responceUserList).filter(ru => ru.accountType === "atlassian")
+                for (let j = 0; j < userList.length; j++) {
+                    $('#testcase_owner_select_2').append('<option value="' + userList[j].accountId + '">' + userList[j].displayName + '</option>');
+                }
+
+                $('#action-loader-wrapper').css('display', 'none');
+            }
+        });
+
+        if(version !== "") {
+            getTestCaseVersionApiCall(editId, version, true);
+        }
+
+        getCommonConfigurationEnvironmentData(type)
+        $('#excute_title').html(title);
+        $('#hidden_folder_id').val(folder_id);
+        $('#hidden_editId').val(editId);
+        AJS.dialog2("#action-excute-dialog").show();
+    }
+
+
+
+
+    function redirectTestCycleExecutionPage(folder_id = "", editId, environment)
+    {
+        $('#action-loader-wrapper').css('display', 'flex');
+        window.location.href = "/project/testCycleView?projectId={{projectId}}&jwt="+user_token+"&projectKey={{projectKey}}&environment=" + environment + "&selectedFolderId=" + folder_id + "&user={{userAccountId}}&page=execute&executeId=" + editId;
+    }
+
+
+
+    function getFormateDateForEdit(date) {
+        let test_date = new Date(date);
+        let formated_date = test_date.getFullYear()+"-"+('0' + (test_date.getMonth() + 1)).slice(-2)+"-"+getFormattedDate(test_date.getDate());
+        return formated_date;
+    }
+
+
+
+
+
+    function getFormateDateForHistory(date) {
+        let test_date = new Date(date);
+        let formated_date = getFormattedDate(test_date.getDate()) + ' ' + months[test_date.getMonth()] + ' ' + test_date.getFullYear();
+        return formated_date;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function editTest(type, new_version_check=true, update_version="") 
+    {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const editId = urlParams.get('editId')
+
+        $('#action-loader-wrapper').css('display', 'flex');
+
+        let url = "";
+
+        if(update_version !== "") {
+            url = "/"+type+"/id?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id + "&"+type+"_id=" + editId + "&version=" + update_version;
+        } else {
+            url = "/"+type+"/id?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id + "&"+type+"_id=" + editId;
+        }
+
+        $.ajax({
+            "type": "GET",
+            "url": url,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    const { res } = data;
+                    editTestDataForCompare = res.data;
+
+                    let inputHidden = document.createElement("INPUT");
+                    inputHidden.setAttribute("type", "text");
+                    
+                    if(type === "testcase")
+                    {
+                        inputHidden.setAttribute("value", res.data.id);
+                    } 
+                    else 
+                    {
+                        inputHidden.setAttribute("value", res.data._id);
+                    }
+
+                    inputHidden.style.display = 'none';
+                    inputHidden.setAttribute('id', 'updateID');
+                    document.getElementById(type+'BasicDetails').append(inputHidden);
+
+                    if(type === "testcase") {
+                        document.getElementById("current_page_tag").innerText = 'Update Test Case';
+                    } else if(type === "testcycle") {
+                        document.getElementById("current_page_tag").innerText = 'Update Test Cycle';
+                    } else if(type === "testplan") {
+                        document.getElementById("current_page_tag").innerText = 'Update Test Plan';
+                    } 
+
+                    if(res.data.folder_id === "" || res.data.folder_id === "null" || res.data.folder_id === null) {
+                        document.getElementById(type+"_folder_select").value = "";
+                    } else {
+                        document.getElementById(type+"_folder_select").value = res.data.folder_id;
+                    }
+
+                    document.getElementById(type+"_name").value = res.data.name;
+                    document.getElementById(type+"_description").value = res.data.description;
+                    document.getElementById(type+"_status_select").value = res.data.status;
+
+                    if(getJiraUserNameByJiraId(res.data.owner) != 'User not found'){
+                        document.getElementById(type+"_owner_select").value = res.data.owner;
+                    }
+
+                    CKEDITOR.instances[type+'_description'].setData(res.data.description);
+
+                    if(type === "testcase")
+                    {
+                        editTestCaseVersionLockStatus = res.data.lock;
+                        document.getElementById(type+"_priority_select").value = res.data.priority;
+                        document.getElementById(type+"_objective").value = res.data.objective;
+                        document.getElementById(type+"_precondition").value = res.data.precondition;
+                        document.getElementById(type+"_estimated_time").value = res.data.estimated_time;
+                        document.getElementById(type+"_component_select").value = res.data.component;
+
+                        getTestCaseVersionApiCall(editId, res.data.version, new_version_check)
+
+                        testScriptType = res.data.testscript_type;
+                        
+                        if (res.data.testscript_type === "step_by_step")
+                        {
+                            testScriptStepData = JSON.parse(res.data.testscript);
+                            testScriptTestDataHeader = JSON.parse(res.data.test_data).length > 0 ? Object.keys(JSON.parse(res.data.test_data)[0])  : [];
+                            testScriptTestDataRow = JSON.parse(res.data.test_data);
+                            testScriptParameters = JSON.parse(res.data.parameters);
+                        }
+                        else if (res.data.testscript_type === "plain_test")
+                        {
+                            testScriptPlainTestData = res.data.testscript;
+                            $('#plain_text_textarea').html(res.data.testscript);
+                            testScriptTestDataHeader = [];
+                            testScriptTestDataRow = [];
+                            testScriptParameters = [];
+                        }
+                        else if (res.data.testscript_type === "bdd_gherkin_script")
+                        {
+                            testScriptBddGherkinScriptTestData = res.data.testscript;
+                            $('#bdd_gherkin_script_textarea').html(res.data.testscript);
+                            testScriptTestDataHeader = [];
+                            testScriptTestDataRow = [];
+                            testScriptParameters = [];
+                        }
+                    
+                        traceabilityIssues = res.data.issues;
+                        if(!!res.data.weblinks){
+                            traceabilityWeblinks = JSON.parse(res.data.weblinks);
+                        }
+
+                        if(testScriptParameters.length > 0) {
+                            showTestDateSection('parameters')
+                        } else if(testScriptTestDataRow.length > 0) {
+                            showTestDateSection('test_data')
+                        }
+                        
+                        appendTestCaseLockStatusInBasicDetails()
+                        activeTestScriptSection(testScriptType)
+                        appendSteps();
+                        appendParameterRow();
+                        appendTestDataTableHeaderAndRow();
+                        appendIssueRow();
+                        appendWeblinksRow();
+
+                        //set attachment data
+                        attach_file_list=[];
+                        $('#'+type+'AttachList').html('');
+                        if(!!res.data.attachments && res.data.attachments.length > 0) {
+                            let i=0;
+                            for (const file of res.data.attachments) {
+                                    file['operation'] = 'no_change';
+                                    attach_file_list.push(file);
+                                    appendFileInAttachment(file, type);
+                                    i++;
+                            }
+                        }
+
+                        if(res.data.submit_status === '0') {
+                            $('#testcaseVersionSection').css('display', 'none');
+                        }
+                    }
+                    else if(type === "testcycle")
+                    {
+                        document.getElementById(type+"_environment_select").value = res.data.environment;
+                        document.getElementById(type+"_planned_start_date").value = res.data.planned_start_date= !res.data.planned_start_date?null:getFormateDateForEdit(res.data.planned_start_date);
+                        document.getElementById(type+"_planned_end_date").value = res.data.planned_end_date= !res.data.planned_end_date?null:getFormateDateForEdit(res.data.planned_end_date);
+                        document.getElementById(type+"_version").value = res.data.version;   
+                        
+                        editTestDataForCompare = res.data;
+
+                        traceabilityIssues = res.data.issues;
+                        testCycleCaseDetail['viewList'] = testCycleCaseDetail['searchViewList'] = res.data.testcases;
+                        testcycleTestPlanSelectedList = res.data.testplans;
+                        traceabilityWeblinks = JSON.parse(res.data.weblinks);  
+                        loadViewTestCaseList(res.data.testcases)
+                                               
+                        appendIssueRow();
+                        appendWeblinksRow(); 
+                        appendTestCycleTestPlanRow();                     
+                    }
+                    else if(type === "testplan")
+                    {                        
+                        traceabilityWeblinks = JSON.parse(res.data.weblinks);  
+                        testplanTestCycleSelectedList = res.data.testcycles;
+
+                        appendTestPlanTestCycleRow();
+                        appendWeblinksRow(); 
+
+                        //set attachment data
+                        attach_file_list=[];
+                        $('#'+type+'AttachList').html('');
+                        if(!!res.data.attachments && res.data.attachments.length > 0){
+                            let i=0;
+                            for (const file of res.data.attachments) {
+                                    file['operation'] = 'no_change';
+                                    attach_file_list.push(file);
+                                    appendFileInAttachment(file, type);
+                                    i++;
+                            }
+                        }                   
+                    }
+
+
+                    if (new_version_check && (res.data.customFields || res.data.custom_field)) 
+                    {
+                        let custom_fields = [];
+
+                        if(res.data.customFields !== undefined) {
+                            custom_fields = JSON.parse(res.data.customFields);
+                        } else if(res.data.custom_field !== undefined) {
+                            custom_fields = JSON.parse(res.data.custom_field);
+                        }
+
+                        if (custom_fields.length > 0) {
+
+                            $('#' + type + 'CustomFieldDiv').html("");
+
+                            $('.' + type + 'CustomFieldDiv-head').css('display', 'block')
+
+                            let checkBoxHtml = "";
+                            for (let j = 0; j < custom_fields.length; j++) {
+                                let requiredCheck = '';
+                                let madatoryTag = '';
+                                let requiredCheckClass = '';
+
+                                if (custom_fields[j].cfc_required_flag) {
+                                    requiredCheck = 'required';
+                                    madatoryTag = 'data-aui-validation-field';
+                                    requiredCheckClass = 'required-field';
+                                }
+
+                                if (custom_fields[j].cfc_field_type === 'checkbox') {
+
+                                    let isChecked = ''
+                                    if (custom_fields[j].value === 1) {
+                                        isChecked = 'checked';
+                                    }
+
+                                    $('#' + type + 'CustomFieldDiv').append('<div class="form-group">' +
+                                        '<label class="' + requiredCheckClass + '" for="' + custom_fields[j].id + '">' + custom_fields[j].cfc_name + '</label>' +
+                                        '<div class="checkbox">' +
+                                        '<label class="' + requiredCheckClass + '" for="' + custom_fields[j].id + '" style="opacity: 0;">' + custom_fields[j].cfc_name + '</label>'+
+                                        '<input class="checkbox" type="checkbox" '+madatoryTag+' name="' + custom_fields[j].cfc_name + '" id="' + custom_fields[j].id + '" ' + requiredCheck + ' ' + isChecked + '>' +
+                                        '</div></div>');
+                                }
+                                else if (custom_fields[j].cfc_field_type === 'text') {
+                                    $('#' + type + 'CustomFieldDiv').append('<div class="form-group">' +
+                                        '<label class="label ' + requiredCheckClass + '">' + custom_fields[j].cfc_name + '</label>' +
+                                        '<input type="text" class="form-control text medium-field" '+madatoryTag+' value="' + custom_fields[j].value + '" name="' + custom_fields[j].cfc_name + '" placeholder="Enter ' + custom_fields[j].cfc_name + '" ' + requiredCheck + ' style="width: 540px;">' +
+                                        '</div>');
+                                }
+                                else if (custom_fields[j].cfc_field_type === 'textarea') {
+                                    $('#' + type + 'CustomFieldDiv').append('<div class="form-group">' +
+                                        '<label class="label ' + requiredCheckClass + '">' + custom_fields[j].cfc_name + '</label>' +
+                                        '<textarea class="textarea form-control" rows="7" '+madatoryTag+' name="' + custom_fields[j].cfc_name + '" style="width: 540px; height: unset !important; padding: .28125rem .5625rem !important;" ' + requiredCheck + '>' + custom_fields[j].value + '</textarea>' +
+                                        '</div>');
+                                }
+                            }
+                        }
+                    }
+                    else if(!new_version_check)
+                    {
+                        getCommonCustomFieldData(type)
+                    }
+                    
+                    if (res.data.label) {
+                        const label_list = JSON.parse(res.data.label);
+
+                        for (let k = 0; k < label_list.length; k++) {
+                            if( $('#'+type+'_label_select option[value="' + label_list[k] + '"]').length <= 0){
+                               $('#' + type + '_label_select').append('<option class="none-img" value="' + label_list[k] + '">' + label_list[k] + '</option>'); 
+                            }
+                            $('#'+type+'_label_select option[value="' + label_list[k] + '"]').attr('selected', 'selected');
+                        }
+
+                        AJS.$('#'+type+'_label_select').auiSelect2();getJiraUserNameByJiraId
+                    }
+
+                    $('#action-loader-wrapper').css('display', 'none');
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+    function showHideFilter(id)
+    {
+        if($('#'+id+'-filter-section').hasClass('hide'))
+        {
+            $('#'+id+'-filter-section').removeClass('hide');
+            $('#'+id+'-filter-section').addClass('show');
+            $('#filter-enable-disable-button').addClass('active');
+            $('#filter-enable-disable-button').addClass('aui-dropdown2-active');
+        }
+        else
+        {
+            $('#'+id+'-filter-section').removeClass('show');
+            $('#'+id+'-filter-section').addClass('hide');
+            $('#filter-enable-disable-button').removeClass('active');
+            $('#filter-enable-disable-button').removeClass('aui-dropdown2-active');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function getTestCaseVersionApiCall(editId, selected_value, new_version_check) 
+    {
+        $.ajax({
+            "type": "GET",
+            "url": "/testcase/versionList?project_id={{projectId}}&acct_id={{userAccountId}}&user={{userAccountId}}&domain_id=" + domain_id + "&testcase_id=" + editId,
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "dataType": "json",
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+                $('#action-loader-wrapper').css('display', 'none');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) 
+                {
+                    $('#testcase_version_select').html('');
+
+                    let version_list = data.res.data;
+
+                    for (let j = 0; j < version_list.length; j++) 
+                    {
+                        $('#testcase_version_select').append('<option value="' + version_list[j].version + '">' + version_list[j].version + '</option>');
+                    }
+
+                    if(new_version_check) {
+                        document.getElementById("testcase_version_select").value = selected_value;
+                    } else {
+                        let latest_version = version_list[version_list.length - 1];
+                        latest_version = parseInt(latest_version.version) + 1;
+                        latest_version = latest_version+'.0'
+                        $('#testcase_version_select').append('<option value="' + latest_version + '">' + latest_version + '</option>');
+                        document.getElementById("testcase_version_select").value = latest_version;
+                        document.getElementById("testcase_version_select").disabled = true;
+                        document.getElementById("testcase_version_add_button").disabled = true;
+                    }
+
+                    if(version_list.length > 1) {
+                        if(selected_value != version_list[version_list.length - 1].version) 
+                        {
+                            $("#saveTestBtn").attr("disabled", true);
+                            $("#testcase-content-section-new :input").attr("disabled", true);
+                            $(".cke_chrome").css('pointer-events', 'none');
+                            $(".cke_chrome").css('opacity', '.7');
+                            $('.operation-icon').css('pointer-events', 'none');
+                        } 
+                        else if(editTestCaseVersionLockStatus) 
+                        {
+                            $("#saveTestBtn").attr("disabled", true);
+                            $("#testcase-content-section-new :input").attr("disabled", true);
+                            $('.operation-icon').css('pointer-events', 'none');
+                            $(".cke_chrome").css('pointer-events', 'none');
+                            $(".cke_chrome").css('opacity', '.7');
+                            $('#lockTestCases').attr("disabled", false);
+                        } 
+                        else 
+                        {
+                            $("#saveTestBtn").attr("disabled", false);
+                            $("#testcase-content-section-new :input").attr("disabled", false);
+                            $('.operation-icon').css('pointer-events', 'unset');
+                            $(".cke_chrome").css('opacity', '1');
+                            $(".cke_chrome").css('pointer-events', 'unset');
+                        }
+                        $('#testcase_version_select').attr("disabled", false);
+                        $('.skip-disabled-class').attr("disabled", false);
+                    }
+                        
+                    if(testcase_lock == 0) {
+                        $('#lockTestCases').css('display', 'none');
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    function deleteSelectTestLabel(id) {
+        let myobj = document.getElementById(id);
+        myobj.outerHTML = '';
+    }
+
+
+
+
+    function getTestCaseList(testDetail, type, deleteCallBack, folder_id = null) {
+        let typeString = "'" + type + "'";
+        $('#' + type + '_table_body').html('');
+        selectedFolderId = folder_id;
+
+        if (testDetail.length > 0) {
+            for (let i = 0; i < testDetail.length; i++) {
+                let id = "'" + testDetail[i].id + "'";
+
+                let created_at = new Date(testDetail[i].created_at);
+
+                let title = "Execute - "+testDetail[i].test_key;
+                
+                let htmlData = '<tr>' +
+                    '<td headers="basic-number">' +
+                    '<input class="checkbox checkbox-' + type + '" type="checkbox" onclick="testCheckboxAction(' + typeString + ', '+id+')" name="checkBoxOne" id="checkBoxOne">' +
+                    '</td>' +
+                    '<td class="basic-Priority">'+getColoredFlagIcon(testDetail[i].priority_color)+'</td>' +
+                    '<td class="basic-Key">' + testDetail[i].test_key + '</td>' +
+                    '<td class="basic-Name">' + testDetail[i].name + '</td>' +
+                    '<td class="basic-Version">' + testDetail[i].version + '</td>' +
+                    '<td class="basic-Owner">' + getJiraUserNameByJiraId(testDetail[i].owner) + '</td>' +
+                    '<td class="basic-Status">' + testDetail[i].status + '</td>'+
+                    '<td class="basic-Create-On" >' + getFormattedDate(created_at.getDate()) + ' ' + months[created_at.getMonth()] + ' ' + created_at.getFullYear() + '</td>';
+
+                    if(testDetail[i].last_execution != null) {
+
+                        let last_execution_date = new Date(testDetail[i].last_execution);
+
+                        htmlData += '<td class="basic-Last-Execution" style="color: #008000;">' + getFormattedDate(last_execution_date.getDate()) + ' ' + months[last_execution_date.getMonth()] + ' ' + last_execution_date.getFullYear() + '</td>';
+                    
+                    } else {
+                        
+                        htmlData += '<td class="basic-Last-Execution">-</td>';
+                      
+                    }                    
+                    
+                    htmlData += '<td class="basic-Actions test-action"  style="text-align: right; padding-right: 18.75px;">';
+                    
+
+                if (allow_testcase_execute == 1) {
+                    htmlData += '<button id="dialog-show-button" title="Execute" class="aui-button-action tooltip_btn '+(testDetail[i].status!='Approved'?'disabled_btn':'')+'" '+(testDetail[i].status!='Approved'?'disabled':'')+' onclick="redirectTestCaseExecutionPage(' + typeString + ', ' + folder_id + ', ' + id + ', `'+title+'`, `'+testDetail[i].version+'`, `'+testDetail[i].owner+'`)">' +
+                    '<img src={{furl "/images/Polygon.svg"}} />' +
+                    '</button>';
+                }
+
+
+                if (allow_testcase_edit == 1) {
+                    htmlData += '<button class="aui-button-action tooltip_btn" title="Edit" onclick="redirectTestEditPage(' + typeString + ', ' + folder_id + ', ' + id + ')">' +
+                        '<img src={{furl "/images/orange_pencil.svg"}} style="height: 18px;"/>' +
+                        '</button>';
+                }
+
+
+                if (allow_testcase_delete == 1) {
+                    if (deleteCallBack === "deleteTestByType") {
+                        htmlData += '<button class="aui-button-action tooltip_btn" title="Delete" onclick="deleteTestByType(' + typeString + ', ' + id + ')">' +
+                            '<img src={{furl "/images/red_trash.svg"}} />' +
+                            '</button>';
+                    }
+                    else {
+                        htmlData += '<button class="aui-button-action tooltip_btn" title="Delete" onclick="deleteFolderTestByType(' + typeString + ', ' + folder_id + ', ' + id + ')">' +
+                            '<img src={{furl "/images/red_trash.svg"}} />' +
+                            '</button>';
+                    }
+                }
+
+                if (allow_testcase_create == 1) {
+                    htmlData += '<button class="aui-button-action tooltip_btn" title="Clone" onclick="cloneTestByType(' + typeString + ', ' + folder_id + ', ' + id + ')" style="margin-left: 4.5px;">' +
+                            '<img src={{furl "/images/copy.svg"}} style="width: 15px;height: 15px;" />' +
+                        '</button>';
+                }
+
+
+                htmlData += '</td>' +
+                    '</tr>';
+
+                $('#' + type + '_table_body').append(htmlData);
+                AJS.$(".tooltip_btn").tooltip();
+            }
+        }
+    }
+
+
+
+
+
+
+    function getTestCycleList(testDetail, type, deleteCallBack, folder_id = null) {
+        let typeString = "'" + type + "'";
+        $('#' + type + '_table_body').html('');
+        selectedFolderId = folder_id;
+
+        if (testDetail.length > 0) {
+            for (let i = 0; i < testDetail.length; i++) 
+            {
+                let _id = "'" + testDetail[i]._id + "'";
+
+                let title = "Execute - "+testDetail[i].test_key;
+
+                let passExecution = testDetail[i].passExecution;
+                let failExecution = testDetail[i].failExecution;
+                let inProgressExecution = testDetail[i].inProgressExecution;
+
+                let blockedExecution = testDetail[i].blockedExecution;
+                let notExecutedExecution = testDetail[i].notExecutedExecution;
+
+                let totalExecution = testDetail[i].totalExecution;
+
+                let percent = 0;
+                let passExecutionPercent = 0;
+                let failExecutionPercent = 0;
+                let inProgressExecutionPercent = 0;
+                
+                if(totalExecution !== 0) {
+                    percent = ((passExecution + failExecution + inProgressExecution) / totalExecution) * 100;
+                    passExecutionPercent = (passExecution / totalExecution) * 100;
+                    failExecutionPercent = (failExecution / totalExecution) * 100;
+                    inProgressExecutionPercent = (inProgressExecution / totalExecution) * 100;
+
+                    percent = percent.toFixed(2);
+                }
+
+                let htmlData = '<tr>' +
+                    '<td headers="basic-number">' +
+                    '<input class="checkbox checkbox-' + type + '" type="checkbox" onclick="testCheckboxAction(' + typeString + ', '+_id+')" name="checkBoxOne" id="checkBoxOne">' +
+                    '</td>' +
+                    '<td class="basic-Key">' + testDetail[i].test_key + '</td>' +
+                    '<td class="basic-Name">' + testDetail[i].name + '</td>' +
+                    '<td class="basic-Owner">' + getJiraUserNameByJiraId(testDetail[i].owner) + '</td>' +
+                    '<td class="basic-Environment">' + testDetail[i].environment + '</td>' +
+                    '<td class="basic-Date">' + getFormateDateForHistory(testDetail[i].planned_start_date) + ' / '+ getFormateDateForHistory(testDetail[i].planned_end_date) +'</td>' +
+                    '<td class="basic-Progress" style="align-items: center;white-space: nowrap;display: flex;">'+
+                        '<span class="_inprogress" style="width: '+passExecutionPercent+'%"></span>'+
+                        '<span class="_pass" style="width: '+failExecutionPercent+'%"></span>'+
+                        '<span class="_fail" style="width: '+inProgressExecutionPercent+'%"></span>'+percent+'%</td>' +
+                    '<td class="basic-Status">' + testDetail[i].status + '</td>';
+
+                    if(testDetail[i].last_execution != null) {
+                        let last_execution_date = new Date(testDetail[i].last_execution);
+                        htmlData += '<td class="basic-Last-Execution" style="color: #008000;">' + getFormattedDate(last_execution_date.getDate()) + ' ' + months[last_execution_date.getMonth()] + ' ' + last_execution_date.getFullYear() + '</td>';
+                    } else {
+                        htmlData += '<td class="basic-Last-Execution">-</td>';  
+                    } 
+
+                    htmlData +='<td class="basic-Actions test-action" class="test-action"  style="text-align: right; padding-right: 18.75px;">';
+                    
+                    if (allow_testcycle_execute == 1) {
+                        htmlData += '<button id="dialog-show-button" class="aui-button-action tooltip_btn" title="Execute" onclick="redirectTestCycleExecutionPage(' + folder_id + ', ' + _id + ', `'+testDetail[i].environment+'`)">' +
+                                '<img src={{furl "/images/Polygon.svg"}} />' +
+                            '</button>';
+                    }
+
+                    if (allow_testcycle_edit == 1) {
+                        htmlData += '<button class="aui-button-action tooltip_btn" title="Edit" onclick="redirectTestEditPage(' + typeString + ', ' + folder_id + ', ' + _id + ')">' +
+                                '<img src={{furl "/images/orange_pencil.svg"}} style="height: 18px;"/>' +
+                            '</button>';
+                    }
+
+                    if (allow_testcycle_delete == 1) {
+                        if (deleteCallBack === "deleteTestByType") {
+                            htmlData += '<button class="aui-button-action tooltip_btn" title="Delete" onclick="deleteTestByType(' + typeString + ', ' + _id + ')">' +
+                                '<img src={{furl "/images/red_trash.svg"}} />' +
+                                '</button>';
+                        }
+                        else {
+                            htmlData += '<button class="aui-button-action tooltip_btn" title="Delete" onclick="deleteFolderTestByType(' + typeString + ', ' + folder_id + ', ' + _id + ')">' +
+                                '<img src={{furl "/images/red_trash.svg"}} />' +
+                                '</button>';
+                        }
+                    }
+
+                    if (allow_testcycle_create == 1) {
+                        htmlData += '<button class="aui-button-action tooltip_btn" title="Clone" onclick="cloneTestByType(' + typeString + ', ' + folder_id + ', ' + _id + ')" style="margin-left: 4.5px;">' +
+                                '<img src={{furl "/images/copy.svg"}} style="width: 15px;height: 15px;" />' +
+                            '</button>';
+                    }
+
+                htmlData += '</td>' +
+                    '</tr>';
+
+                $('#' + type + '_table_body').append(htmlData);
+                AJS.$(".tooltip_btn").tooltip();
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+    function getTestPlanList(testDetail, type, deleteCallBack, folder_id = null) {
+        let typeString = "'" + type + "'";
+        $('#' + type + '_table_body').html('');
+        selectedFolderId = folder_id;
+
+        if (testDetail.length > 0) {
+            for (let i = 0; i < testDetail.length; i++) {
+                let _id = "'" + testDetail[i]._id + "'";
+
+                let created_at = new Date(testDetail[i].createdAt);
+
+                let htmlData = '<tr>' +
+                    '<td headers="basic-number">' +
+                    '<input class="checkbox checkbox-' + type + '" type="checkbox"  onclick="testCheckboxAction(' + typeString + ', '+_id+')" name="checkBoxOne" id="checkBoxOne">' +
+                    '</td>' +
+                    '<td class="basic-Key">' + testDetail[i].test_key + '-'+(i+1)+'</td>' +
+                    '<td class="basic-Name">' + testDetail[i].name + '</td>' +
+                    '<td class="basic-Owner">' + getJiraUserNameByJiraId(testDetail[i].owner) + '</td>' +
+                    '<td class="basic-Status">' + testDetail[i].status + '</td>' +
+                    '<td class="basic-Create-On">' + getFormattedDate(created_at.getDate()) + ' ' + months[created_at.getMonth()] + ' ' + created_at.getFullYear() + '</td>' +
+                    '<td class="basic-Last-Execution" style="color: #008000;"></td>' +
+                    '<td class="basic-Actions test-action"  style="text-align: right; padding-right: 18.75px;">';
+
+                    if (allow_testplan_edit == 1) {
+                        htmlData += '<button class="aui-button-action tooltip_btn" title="Edit" onclick="redirectTestEditPage(' + typeString + ', ' + folder_id + ', ' + _id + ')">' +
+                                '<img src={{furl "/images/orange_pencil.svg"}} style="height: 18px;"/>' +
+                            '</button>';
+                    }
+
+                    if (allow_testplan_delete == 1) {
+                        if (deleteCallBack === "deleteTestByType") {
+                            htmlData += '<button class="aui-button-action tooltip_btn" title="Delete" onclick="deleteTestByType(' + typeString + ', ' + _id + ')">' +
+                                '<img src={{furl "/images/red_trash.svg"}} />' +
+                                '</button>';
+                        }
+                        else {
+                            htmlData += '<button class="aui-button-action tooltip_btn" title="Delete" onclick="deleteFolderTestByType(' + typeString + ', ' + folder_id + ', ' + _id + ')">' +
+                                '<img src={{furl "/images/red_trash.svg"}} />' +
+                                '</button>';
+                        }
+                    }
+
+                htmlData += '</td>' +
+                    '</tr>';
+
+                $('#' + type + '_table_body').append(htmlData);
+                AJS.$(".tooltip_btn").tooltip();
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function checkedAllListRow(type) {
+        var allCheckStatus = document.getElementById(type + '-header-checkbox');
+
+        if (allCheckStatus.checked) {
+            $('.checkbox-' + type).attr("checked", true);
+
+        } else {
+            $('.checkbox-' + type).attr("checked", false);
+        }
+    }
+
+
+
+
+    function testCheckboxAction(type, id) {
+
+    }
+
+
+  //start attachment -----------------------------------------------
+    var attach_file_list=[];
+    function fileAdded(event, dropped = false, type) {
+      let files = null;
+      // If file is dropped  
+        if (dropped) {
+          event.preventDefault();
+          event.stopPropagation();
+             files = event.dataTransfer.files;
+        } else {
+            files = event.srcElement.files;
+        }
+        if(files.length>0){
+            
+            for (const file of files) {
+
+                var currentIndex = attach_file_list.length;
+                attach_file_list.push({
+                    'operation': 'new',
+                    'file_name' : file.name,
+                    'file_key_name': 'file_'+(attach_file_list.length),
+                    'file_url': null,
+                    'uploaded_by': getJiraUserNameByJiraId("{{userAccountId}}"),
+                    'uploaded_on': new Date().toLocaleDateString(),
+                    'size': file.size,
+                    'file_type': file.type,
+                    'file': file
+                });
+                appendFileInAttachment(attach_file_list[currentIndex], type);
+            }
+        }      
+   }
+
+    function appendFileInAttachment(file, type){
+        
+        var file_name_ext='OTR';
+        let uploaded_on = new Date(file.uploaded_on);
+         
+        if(file.file_name.split('.').length == 2){
+            file_name_ext = file.file_name.split('.')[1].toUpperCase();
+        }
+        var file_name_color = '#0052cc';
+        if(file_name_ext == 'PDF'){
+            file_name_color = '#f15642';
+        }
+        else if (file_name_ext == 'CSV'){
+            file_name_color = '#41a72e';
+        }
+        else if(file_name_ext == 'PNG' || file_name_ext == 'SVG'  || file_name_ext == 'JPEG' || file_name_ext == 'JPG'){
+            color = '#7c589c';
+        }
+        let uploadId="attach_upload_"+Math.floor((Math.random() * 100) + 1);
+        $('#'+type+'AttachList').append(                       
+                `<tr>
+                    <td headers="basic-type" style="vertical-align: middle;"><svg xmlns="http://www.w3.org/2000/svg" width="23.536" height="26.898" viewBox="0 0 23.536 26.898">
+                        <g transform="translate(-32)">
+                          <path d="M97.681,0A1.686,1.686,0,0,0,96,1.681V25.217A1.686,1.686,0,0,0,97.681,26.9h16.812a1.686,1.686,0,0,0,1.681-1.681V6.725L109.449,0Z" transform="translate(-60.638)" fill="#e2e5e7"></path>
+                          <path d="M353.681,6.725h5.044L352,0V5.043A1.686,1.686,0,0,0,353.681,6.725Z" transform="translate(-303.188)" fill="#b0b7bd"></path>
+                          <path d="M389.043,133.043,384,128h5.043Z" transform="translate(-333.507 -121.275)" fill="#cad1d8"></path>
+                          <path d="M52.174,249.246a.843.843,0,0,1-.841.841H32.841a.843.843,0,0,1-.841-.841v-8.406a.843.843,0,0,1,.841-.841H51.333a.843.843,0,0,1,.841.841Z" transform="translate(0 -227.391)" fill="${file_name_color}"></path>
+                          <g transform="translate(35.664 15.462)">
+                              <text font-size="8" fill="#fff" transform="translate(-2 5)">${file_name_ext}</text>                           
+                          </g>
+                          <path d="M111.971,416.841H96v.841h15.971a.843.843,0,0,0,.841-.841V416A.843.843,0,0,1,111.971,416.841Z" transform="translate(-60.638 -394.145)" fill="#cad1d8"></path>
+                        </g>
+                      </svg></td>
+                    <td headers="basic-name" style="vertical-align: middle;"><a onclick="startDownloadFileAttached('${file.file_key_name}')">${file.file_name}</a></td>
+                    <td headers="basic-size" style="vertical-align: middle;">${(file.size/(1024*1024)).toFixed(2)} MB</td>
+                    <td headers="basic-upby" style="vertical-align: middle;">${file.uploaded_by}</td>
+                    <td headers="basic upon" style="vertical-align: middle;" id="${uploadId}">${!file['signed_file_url'] ? '<aui-progressbar value="10" max="100"></aui-progressbar>' : getFormateDateForHistory(uploaded_on) }</td>
+                </tr>`
+        );
+        if(!file['signed_file_url']){
+            setTimeout(() => {
+                document.querySelector('#'+uploadId+' aui-progressbar').value=100;
+                    setTimeout(() => {
+                        $('#'+uploadId).html(file.uploaded_on)
+                    }, 1000);
+            }, 2000);
+        }
+    }
+   //end attachment -----------------------------------------------
+
+    function startDownloadFileAttached(keyName){   
+        let eIndex = attach_file_list.findIndex(x=> x.file_key_name == keyName);
+        let elem = attach_file_list[eIndex];
+        if(!!elem['signed_file_url']){
+          downloadAttachmentURI(elem.signed_file_url, elem.file_name);
+        }
+    }
+
+    function downloadAttachmentURI(uri, name) {
+      var link = document.createElement("a");
+      link.href = uri;
+      link.setAttribute("download", name);
+      link.target="_blank";
+      link.click();
+    }
+   
+    //{{!-- import test case csv --}}
+    var importCsvFile=null;
+
+    function selectTestCaseCsv(event, dropped = false) {
+      let file = null;
+      // If file is dropped  
+        if (dropped) {
+          event.preventDefault();
+          event.stopPropagation();
+             file = event.dataTransfer.files[0];
+        } else {
+            file = event.srcElement.files[0];
+        }
+        $('#dialog-import-csv-dropzone h6').text(file.name);
+        importCsvFile =file;       
+    }
+
+    //upload csv (for import details)
+    function uploadCsv(type){
+        if(!importCsvFile){
+            toaster('Please add the csv or xls file', 'error');
+            return false;
+        }
+
+        const formData = new FormData();        
+        formData.append('file', importCsvFile);
+
+        var formFieldsData = {};
+        formFieldsData['project_id'] = parseInt("{{projectId}}");
+        formFieldsData['acct_id'] = "{{userAccountId}}";
+        formFieldsData['domain_id'] = domain_id;
+        if(type == 'testcycle')
+            formFieldsData['test_key'] = "{{projectKey}}";
+
+        formData.append('data', JSON.stringify(formFieldsData));
+        document.getElementById("dialog-submit-button-import").disabled = true;
+
+        $('#dialog-import-csv-dropzone').css("display", "none");
+        $('#dialog-import-csv-progress-div').css("display", "block");
+        
+        $.ajax({
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        document.getElementById("dialog-import-csv-progress").value=percentComplete*100;
+                    }
+                }, false);
+                return xhr;
+            },
+            "type": "POST",
+            "url": "/"+type+"/importData",
+            "headers": {
+                'Authorization': "JWT "+user_token,
+            },
+            "data": formData,
+            "processData": false,
+            "contentType": false,
+            "error": function (xhr, textStatus, errorThrown) {
+                toaster('Error while fetching project details', 'error');
+            },
+            "success": function (data) {
+                if (data.res.status === 200) {
+                    toaster('File uploaded successfully');
+                    $('#dialog-import-csv-dropzone h6').text('');
+                    AJS.dialog2("#demo-dialog-import").hide();
+                    if(selectedFolderId === "" || selectedFolderId === "null" || selectedFolderId === null) {
+                        getFolderListByDataType(type)
+                    } else {
+                        getFolderListByDataType(type, false, selectedFolderId)
+                    }
+                }
+                else if (data.res.status === 401){
+                    toaster(data.res.message, 'error');
+                }
+                else{
+                    toaster('Please add the correct csv or xls file', 'error');
+                }
+                
+                $('#dialog-import-csv-dropzone').css("display", "flex");
+                $('#dialog-import-csv-progress-div').css("display", "none");
+                document.getElementById("dialog-import-csv-progress").value=0;
+                document.getElementById("dialog-submit-button-import").disabled = false;
+            }
+        });
+    }
+
+    //export csv file
+    function exportCsv(type, file_type="csv") {
+
+        AP.request('/rest/api/2/user/search?query=', {
+        success: function (responceUserList) {
+
+            let userList = JSON.parse(responceUserList).filter(ru => ru.accountType === "atlassian")
+
+            let exportJiraUserListArray = [];
+
+            for (let j = 0; j < userList.length; j++) 
+            {
+                exportJiraUserListArray.push({
+                    name: userList[j].displayName,
+                    accountId: userList[j].accountId
+                })
+            }
+
+            $('#action-loader-wrapper').css('display', 'flex');
+            
+            $.ajax({
+                "type": "POST",
+                "url": '/'+type+'/exportFile?user={{userAccountId}}',
+                "headers": {
+                    'Authorization': "JWT "+user_token,
+                },
+                "data": {
+                    'acct_id': "{{userAccountId}}",
+                    'project_id': "{{projectId}}",
+                    'file_type': file_type,
+                    'domain_id': domain_id,
+                    'owner_array': JSON.stringify(exportJiraUserListArray),
+                },
+                'xhrFields':{
+                    responseType: 'blob'
+                },
+                "error": function (xhr, textStatus, errorThrown) {
+                    toaster('Error while export csv file.', 'error');
+                    $('#action-loader-wrapper').css('display', 'none');
+                },
+                "success": function (data) {
+                    if(!!data['res'] && data['res']['status']==401){
+                        toaster('Error while downloading the csv file.', 'error');
+                        $('#action-loader-wrapper').css('display', 'none');
+                    }
+                    else {
+                        $('#action-loader-wrapper').css('display', 'none');
+                        var blob = data;
+                        var objectURL = URL.createObjectURL(blob);
+                        var a = document.createElement("a");
+                        document.body.appendChild(a);
+                        
+                        if(file_type === "csv") {
+                            a.href = objectURL;
+                            a.download = `${type}-detail.csv`;
+                        } else {
+                            a.href = objectURL;
+                            a.download = `${type}-detail.xlsx`;
+                        }
+                        
+                        a.click();
+                        window.URL.revokeObjectURL(objectURL);
+                    }
+                }
+            });
+
+
+            }
+        });
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
